@@ -1,3 +1,13 @@
+---
+title: The Peoples Assembly
+emoji: 🏛️
+colorFrom: indigo
+colorTo: blue
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # The People's Assembly (TPA)
 
 The People's Assembly is a real-time governance simulation tool designed to moderate face-to-face workshop discussions, ASEAN governance lectures, and civic education seminars.
