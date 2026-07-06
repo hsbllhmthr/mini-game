@@ -39,4 +39,4 @@ ENV PORT=3000
 ENV OFFLINE_MODE=true
 
 # Prepare db schema and launch server
-CMD ["sh", "-c", "node prisma/setup.js && npx prisma db push && node dist/index.js"]
+CMD ["sh", "-c", "node prisma/setup.js && node dist/index.js"]
