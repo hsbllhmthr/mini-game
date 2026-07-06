@@ -8,6 +8,7 @@ RUN npm run build
 
 FROM node:20-alpine AS server-builder
 WORKDIR /app/server
+RUN apk add --no-cache python3 make g++
 COPY server/package*.json ./
 RUN npm ci
 COPY server/ ./
