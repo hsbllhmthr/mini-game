@@ -1,0 +1,121 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum SessionStatus {
+  waiting
+  active
+  completed
+}
+
+enum SessionPhase {
+  lobby
+  role_reveal
+  scenario_display
+  discussion
+  voting
+  mayor_decision
+  outcome_reveal
+  final_reflection
+  score_export
+}
+
+enum PlayerRole {
+  mayor
+  journalist
+  community_rep
+  business_rep
+  social_welfare
+  environmental
+  investor
+  youth_rep
+}
+
+model Session {
+  id               String        @id @default(uuid())
+  roomCode         String        @unique @map("room_code")
+  status           SessionStatus @default(waiting)
+  phase            SessionPhase  @default(lobby)
+  scenarioIndex    Int           @default(0) @map("scenario_index")
+  facilitatorToken String        @map("facilitator_token")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  startedAt        DateTime?     @map("started_at")
+  endedAt          DateTime?     @map("ended_at")
+  
+  players          Player[]
+  votes            Vote[]
+  gameState        GameState?
+
+  @@map("sessions")
+}
+
+model Player {
+  id           String      @id @default(uuid())
+  sessionId    String      @map("session_id")
+  fullName     String      @map("full_name")
+  displayName  String      @map("display_name")
+  country      String
+  role         PlayerRole?
+  isConnected  Boolean     @default(true) @map("is_connected")
+  joinedAt     DateTime    @default(now()) @map("joined_at")
+
+  session      Session     @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  votes        Vote[]
+
+  @@unique([sessionId, fullName])
+  @@map("players")
+}
+
+model Vote {
+  id            String   @id @default(uuid())
+  sessionId     String   @map("session_id")
+  playerId      String   @map("player_id")
+  scenarioIndex Int      @map("scenario_index")
+  choice        String   // 'A', 'B', or 'C'
+  votedAt       DateTime @default(now()) @map("voted_at")
+
+  session       Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  player        Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([sessionId, playerId, scenarioIndex])
+  @@map("votes")
+}
+
+model GameState {
+  sessionId            String  @id @map("session_id")
+  economicGrowth       Int     @default(50) @map("economic_growth")
+  governmentBudget     Int     @default(50) @map("government_budget")
+  peopleWelfare        Int     @default(50) @map("people_welfare")
+  publicTrust          Int     @default(50) @map("public_trust")
+  environmentalQuality Int     @default(50) @map("environmental_quality")
+  transparency         Int     @default(50) @map("transparency")
+
+  scenario0Choice      String? @map("scenario_0_choice")
+  scenario1Choice      String? @map("scenario_1_choice")
+  scenario2Choice      String? @map("scenario_2_choice")
+
+  scenario0Veto        Boolean @default(false) @map("scenario_0_veto")
+  scenario0VetoReason  String? @map("scenario_0_veto_reason")
+  scenario1Veto        Boolean @default(false) @map("scenario_1_veto")
+  scenario1VetoReason  String? @map("scenario_1_veto_reason")
+  scenario2Veto        Boolean @default(false) @map("scenario_2_veto")
+  scenario2VetoReason  String? @map("scenario_2_veto_reason")
+
+  ps                   Float?
+  gqs                  Float?
+  ss                   Float?
+  fps                  Float?
+  archetypes           String? // comma-separated list of archetypes
+  beneficiaries        String? // comma-separated list of role beneficiaries
+
+  session              Session @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@map("game_states")
+}

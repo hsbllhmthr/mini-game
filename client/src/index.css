@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-lime-100: #e8fcdb;
+  --color-lime-200: #bbf893;
+  --color-lime-400: #7be139;
+  --color-lime-500: #58CC02;
+  --color-lime-600: #58CC02;
+  --color-lime-700: #46A302;
+  --color-lime-800: #347a01;
+}
+
+body {
+  background-color: #F3F4F6;
+  font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}

@@ -1,0 +1,15 @@
+version: '3.9'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: production
+      OFFLINE_MODE: "true"
+      DATABASE_URL: "file:/data/tpa.db"
+    volumes:
+      - db_data:/data
+
+volumes:
+  db_data:
