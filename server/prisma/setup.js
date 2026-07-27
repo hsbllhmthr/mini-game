@@ -21,9 +21,9 @@ try {
   // Replace DATABASE_PROVIDER placeholder
   let schemaContent = template.replace('DATABASE_PROVIDER', provider);
   
-  // If we are using SQLite, we must replace env("DATABASE_URL") with file-based fallback if DATABASE_URL is not set
-  if (offlineMode && !process.env.DATABASE_URL) {
-    console.log(`[Prisma Setup] DATABASE_URL not set in environment. Defaulting to local SQLite db file.`);
+  // If we are using SQLite, ensure DATABASE_URL starts with file:
+  if (offlineMode && (!process.env.DATABASE_URL || !process.env.DATABASE_URL.startsWith('file:'))) {
+    console.log(`[Prisma Setup] Overriding DATABASE_URL for SQLite offline mode to local 'file:./dev.db'.`);
     process.env.DATABASE_URL = 'file:./dev.db';
   }
 

@@ -2,7 +2,10 @@ import "dotenv/config";
 import { defineConfig } from "prisma/config";
 
 const offlineMode = process.env.OFFLINE_MODE === 'true';
-const defaultUrl = offlineMode ? 'file:./dev.db' : '';
+let dbUrl = process.env.DATABASE_URL;
+if (offlineMode && (!dbUrl || !dbUrl.startsWith('file:'))) {
+  dbUrl = 'file:./dev.db';
+}
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -10,6 +13,6 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: process.env.DATABASE_URL || defaultUrl,
+    url: dbUrl || 'file:./dev.db',
   },
 });

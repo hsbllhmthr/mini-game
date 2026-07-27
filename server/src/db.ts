@@ -25,7 +25,10 @@ if (offlineMode) {
   // Dynamically import adapter to avoid loading pg dependencies in offline mode
   const { PrismaBetterSqlite3 } = await import('@prisma/adapter-better-sqlite3');
   
-  const dbPath = process.env.DATABASE_URL || 'file:./dev.db';
+  let dbPath = process.env.DATABASE_URL;
+  if (!dbPath || !dbPath.startsWith('file:')) {
+    dbPath = 'file:./dev.db';
+  }
   console.log(`[Database] Initializing SQLite connection at: ${dbPath}`);
   
   const adapter = new PrismaBetterSqlite3({ url: dbPath });
