@@ -355,7 +355,8 @@ export const ReflectionView: React.FC<ReflectionViewProps> = ({
   const handleExport = async () => {
     setExporting(true);
     try {
-      const url = `${import.meta.env.VITE_API_URL || 'http://localhost:3000'}/api/v1/rooms/${roomCode}/export`;
+      const baseUrl = import.meta.env.VITE_API_URL || (import.meta.env.DEV ? 'http://localhost:3000' : window.location.origin);
+      const url = `${baseUrl}/api/v1/rooms/${roomCode}/export`;
       
       const response = await fetch(url, {
         method: 'GET',
