@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { createRoom } from '../api.js';
-import { Loader2, ArrowLeft } from 'lucide-react';
+import { Loader2, ArrowLeft, Plus } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 
 interface CreateRoomViewProps {
@@ -9,7 +9,7 @@ interface CreateRoomViewProps {
 }
 
 export const CreateRoomView: React.FC<CreateRoomViewProps> = ({ onSuccess, onBack }) => {
-  const { t, lang } = useI18n();
+  const { t } = useI18n();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -31,22 +31,22 @@ export const CreateRoomView: React.FC<CreateRoomViewProps> = ({ onSuccess, onBac
   };
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-start font-['Nunito']">
-      <div className="relative w-full sm:max-w-[480px] min-h-screen bg-white flex flex-col justify-between px-8 py-8 sm:py-12">
+    <div className="min-h-screen w-full bg-white flex justify-center items-start">
+      <div className="relative w-full sm:max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between px-8 py-8 sm:py-12">
         
-        {/* Header containing the back icon button and Back to Home title */}
+        {/* Header containing the back icon button and title */}
         <div className="flex items-center gap-3 w-full shrink-0">
           <button
             type="button"
             onClick={onBack}
-            className="p-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all border border-slate-100 cursor-pointer focus:outline-none flex items-center justify-center shadow-sm"
+            className="p-1 text-white hover:opacity-80 transition-all flex items-center justify-center cursor-pointer active:scale-95 focus:outline-none"
             title={t('common.back')}
           >
-            <ArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <span className="text-slate-700 text-lg font-black leading-7 select-none">
-            {t('join.back_home')}
-          </span>
+          <div className="text-center justify-center text-white text-lg font-extrabold font-['Nunito'] leading-7 select-none">
+            {t('create.title')}
+          </div>
         </div>
 
         {/* Central Action (Plus Button & Title & Description) */}
@@ -55,40 +55,32 @@ export const CreateRoomView: React.FC<CreateRoomViewProps> = ({ onSuccess, onBac
             type="button"
             onClick={handleCreate}
             disabled={loading}
-            className="w-24 h-20 bg-white rounded-3xl flex items-center justify-center shadow-[0px_4px_0px_0px_rgba(229,229,229,1.00)] border-2 border-neutral-200 hover:bg-neutral-50 hover:translate-y-0.5 hover:shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] active:translate-y-1 active:shadow-none transition-all disabled:bg-neutral-100 disabled:cursor-not-allowed cursor-pointer focus:outline-none"
+            className="w-20 h-20 relative cursor-pointer active:translate-y-0.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none flex items-center justify-center"
           >
-            {loading ? (
-              <Loader2 className="w-8 h-8 text-slate-500 animate-spin" />
-            ) : (
-              <div className="w-12 h-12 relative overflow-hidden flex items-center justify-center">
-                <div className="w-7 h-1.5 bg-slate-500 rounded-full absolute" />
-                <div className="w-1.5 h-7 bg-slate-500 rounded-full absolute" />
-              </div>
-            )}
+            <div className="w-20 h-20 left-0 top-0 absolute bg-[#5CACE2] rounded-2xl shadow-[0px_3px_0px_0px_rgba(36,112,162,1.00)] border-2 border-black/20" />
+            <div className="relative z-10 flex items-center justify-center pointer-events-none">
+              {loading ? (
+                <Loader2 className="w-8 h-8 text-white animate-spin" />
+              ) : (
+                <Plus className="w-9 h-9 text-white stroke-[3.5]" />
+              )}
+            </div>
           </button>
 
           {/* Title & Description */}
           <div className="space-y-4 text-center max-w-[410px]">
-            <div className="w-full text-neutral-600 text-2xl sm:text-3xl font-extrabold font-['Nunito'] leading-9 select-none">
+            <div className="w-full text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-9 select-none">
               {t('create.title')}
             </div>
-            <div className="w-full text-zinc-400 text-sm font-medium font-['Nunito'] leading-relaxed">
-              {lang === 'id' ? (
-                <span>
-                  Ini akan menghasilkan kode ruangan unik. Bagikan kode ini kepada pemain Anda (8 hingga 12 peserta) agar mereka dapat terhubung menggunakan nama mereka.
-                </span>
-              ) : (
-                <span>
-                  This will generate a unique room code. Share it with your players (8 to 12 participants) so they can connect using their name.
-                </span>
-              )}
+            <div className="w-full text-slate-300 text-sm font-medium font-['Nunito'] leading-relaxed">
+              {t('create.desc')}
             </div>
           </div>
         </div>
 
         {/* Error Message */}
         {error ? (
-          <div className="w-full p-3.5 bg-rose-500/10 border border-rose-200 dark:border-rose-900/40 rounded-2xl text-xs font-bold text-rose-600 dark:text-rose-400 text-center leading-relaxed animate-fade-in shrink-0">
+          <div className="w-full p-3.5 bg-rose-500/20 border border-rose-400/30 rounded-2xl text-xs font-bold text-rose-300 text-center leading-relaxed animate-fade-in shrink-0">
             {error}
           </div>
         ) : (

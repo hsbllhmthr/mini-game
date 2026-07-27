@@ -98,6 +98,16 @@ export const ROLE_DESCRIPTIONS: Record<string, Record<PlayerRole, string>> = {
     environmental: "Aktivis yang berdedikasi untuk melindungi ekosistem dan konservasi.",
     investor: "Penyokong keuangan utama yang mencari stabilitas dan proyek yang menarik.",
     youth_rep: "Perwakilan demografi muda, mendorong kebijakan yang berorientasi masa depan.",
+  },
+  th: {
+    mayor: "ผู้บริหารสูงสุดของเมือง รับผิดชอบการตัดสินใจนโยบายขั้นสุดท้าย",
+    journalist: "ผู้สื่อข่าวอิสระที่มุ่งมั่นในความโปร่งใสและตรวจสอบการทุจริต",
+    community_rep: "ผู้จัดตั้งระดับฐานราก ตัวแทนความต้องการประจำวันของประชาชน",
+    business_rep: "ผู้นำการค้าท้องถิ่นที่สนับสนุนการเติบโตและการจ้างงาน",
+    social_welfare: "ผู้สนับสนุนกลุ่มเปราะบาง ความเท่าเทียม และตาข่ายความปลอดภัยทางสังคม",
+    environmental: "นักกิจกรรมที่อุทิศตนเพื่อปกป้องระบบนิเวศและการอนุรักษ์",
+    investor: "ผู้สนับสนุนทางการเงินรายใหญ่ที่แสวงหาความมั่นคงและโครงการที่น่าสนใจ",
+    youth_rep: "ตัวแทนกลุ่มเยาวชน ผลักดันนโยบายที่มุ่งเน้นอนาคต",
   }
 };
 
@@ -121,6 +131,16 @@ export const ROLE_OBJECTIVES: Record<string, Record<PlayerRole, string>> = {
     environmental: "Melindungi sumber daya alam dan keberlanjutan lingkungan jangka panjang.",
     investor: "Memaksimalkan pengembalian ekonomi dan menarik/mendukung proyek yang merangsang pertumbuhan.",
     youth_rep: "Mendorong partisipasi pemuda, inovasi, dan keuntungan jangka panjang/berorientasi masa depan.",
+  },
+  th: {
+    mayor: "รักษาความไว้วางใจของสาธารณชนพร้อมสร้างความสมดุลระหว่างการพัฒนาเศรษฐกิจ สวัสดิการสังคม และการบริหารจัดการที่ยั่งยืน",
+    journalist: "ส่งเสริมความโปร่งใสโดยการเปิดเผยข้อมูล ตัดสินใจว่าจะสนับสนุน คัดค้าน หรือเป็นกลาง",
+    community_rep: "สร้างหลักประกันว่านโยบายตอบสนองความต้องการและความเป็นอยู่ที่ดีของประชาชน",
+    business_rep: "ส่งเสริมการเติบโตทางเศรษฐกิจ โอกาสทางธุรกิจ และความมั่นคงของการลงทุน",
+    social_welfare: "ส่งเสริมความเป็นธรรม การมีส่วนร่วมอย่างเท่าเทียม และการคุ้มครองกลุ่มเปราะบาง",
+    environmental: "ปกป้องทรัพยากรธรรมชาติและความยั่งยืนของสิ่งแวดล้อมในระยะยาว",
+    investor: "สร้างผลตอบแทนทางเศรษฐกิจสูงสุดและสนับสนุนโครงการกระตุ้นการเติบโต",
+    youth_rep: "ส่งเสริมการมีส่วนร่วมของเยาวชน นวัตกรรม และผลประโยชน์ระยะยาวในอนาคต",
   }
 };
 
@@ -144,6 +164,16 @@ export const SECRET_INFO: Record<string, Record<PlayerRole, string>> = {
     environmental: "Anda memiliki data yang belum dirilis yang menunjukkan bahwa dampak lingkungan mungkin lebih buruk daripada yang diakui secara publik.",
     investor: "Investor sedang mempertimbangkan untuk menarik diri jika proyek-proyek besar menghadapi penundaan; Anda secara pribadi diminta untuk mendorong persetujuan secepat mungkin.",
     youth_rep: "Sebuah perusahaan media telah menawarkan sponsor dan visibilitas sebagai imbalan atas dukungan Anda terhadap kebijakan infrastruktur tertentu yang menguntungkan mitra korporasi mereka.",
+  },
+  th: {
+    mayor: "พันธมิตรใกล้ชิดในสภาเมืองกำลังกดดันคุณเป็นการส่วนตัวให้สนับสนุนการตัดสินใจที่สอดคล้องกับผลประโยชน์ทางธุรกิจของพวกเขา คุณจะยอมตามหรือคัดค้าน",
+    journalist: "แหล่งข่าวลับอ้างว่าอาจมีความไม่ชอบมาพากลในการอนุมัติโครงการ — ข้อมูลที่อาจเปลี่ยนความคิดเห็นของสาธารณชนหากถูกเปิดเผย",
+    community_rep: "ผู้นำชุมชนท้องถิ่นสัญญาว่าจะสนับสนุนทางการเมืองในการเลือกตั้งครั้งถัดไป แลกกับการสนับสนุนนโยบายเฉพาะ",
+    business_rep: "บริษัทของคุณจะได้กำไรอย่างมากจากตัวเลือกใดตัวเลือกหนึ่ง ต่อหน้าสาธารณะคุณสนับสนุนการเติบโตทางเศรษฐกิจ แต่เป็นการส่วนตัวคุณชอบผลลัพธ์นี้",
+    social_welfare: "คุณได้รับรายงานลับว่าโครงการสวัสดิการอาจถูกนำไปใช้ในทางที่ผิด คุณสามารถเปิดเผยหรือเงียบไว้เพื่อรักษาพันธมิตร",
+    environmental: "คุณมีข้อมูลที่ยังไม่ได้เปิดเผยซึ่งระบุว่าผลกระทบต่อสิ่งแวดล้อมอาจแย่กว่าที่ยอมรับต่อสาธารณะ",
+    investor: "นักลงทุนกำลังพิจารณาถอนตัวหากโครงการใหญ่เผชิญความล่าช้า คุณได้รับแจ้งเป็นการส่วนตัวให้ผลักดันการอนุมัติโดยเร็วที่สุด",
+    youth_rep: "บริษัทสื่อเสนอการเป็นผู้สนับสนุนและสร้างชื่อเสียงให้คุณ แลกกับการสนับสนุนนโยบายโครงสร้างพื้นฐานเฉพาะที่ให้ผลประโยชน์แก่พันธมิตรของพวกเขา",
   }
 };
 
@@ -172,15 +202,18 @@ export const SCENARIOS: RawScenario[] = [
     id: 1,
     title: {
       en: "New Industrial Zone",
-      id: "Kawasan Industri Baru"
+      id: "Kawasan Industri Baru",
+      th: "เขตอุตสาหกรรมใหม่"
     },
     description: {
       en: "A consortium proposes a new industrial zone promising jobs, tax revenue, and investment...",
-      id: "Sebuah konsorsium mengusulkan kawasan industri baru yang menjanjikan lapangan kerja, pendapatan pajak, dan investasi..."
+      id: "Sebuah konsorsium mengusulkan kawasan industri baru yang menjanjikan lapangan kerja, pendapatan pajak, dan investasi...",
+      th: "กลุ่มคอนซอร์เทียมเสนอเขตอุตสาหกรรมใหม่ที่สัญญาว่าจะสร้างงาน รายได้ภาษี และการลงทุน..."
     },
     challengeSummary: {
       en: "A consortium proposes a new industrial zone promising jobs, tax revenue, and investment, against concerns over environmental impact, land acquisition, and transparency.",
-      id: "Sebuah konsorsium mengusulkan kawasan industri baru yang menjanjikan pekerjaan dan pendapatan, namun menghadapi kekhawatiran dampak lingkungan, pembebasan lahan, dan transparansi."
+      id: "Sebuah konsorsium mengusulkan kawasan industri baru yang menjanjikan pekerjaan dan pendapatan, namun menghadapi kekhawatiran dampak lingkungan, pembebasan lahan, dan transparansi.",
+      th: "กลุ่มคอนซอร์เทียมเสนอเขตอุตสาหกรรมใหม่ที่สร้างงานและรายได้ แต่ต้องแลกกับความกังวลเรื่องสิ่งแวดล้อม การเวนคืนที่ดิน และความโปร่งใส"
     },
     stakeholderPositions: {
       en: {
@@ -202,14 +235,24 @@ export const SCENARIOS: RawScenario[] = [
         environmental: "Sangat menentang jalur cepat karena risiko limbah beracun.",
         investor: "Menginginkan persetujuan cepat untuk menjamin imbal hasil; memperingatkan pelarian modal.",
         youth_rep: "Mendukung pusat inovasi tetapi menuntut standar energi bersih.",
+      },
+      th: {
+        mayor: "ต้องการการเติบโตทางเศรษฐกิจและงบประมาณเกินดุล แต่กลัวความไว้วางใจของประชาชนลดลง",
+        journalist: "เรียกร้องให้เปิดเผยความเชื่อมโยงกับผู้พัฒนาอย่างเต็มที่และความโปร่งใส",
+        community_rep: "แตกเป็นสองฝ่ายระหว่างความต้องการงานและการกลัวการไล่ที่/มลพิษ",
+        business_rep: "สนับสนุนการอนุมัติอย่างรวดเร็วเพื่อการรวมธุรกิจท้องถิ่น",
+        social_welfare: "กังวลเกี่ยวกับสิทธิของแรงงานและที่อยู่อาศัยใกล้เขตอุตสาหกรรม",
+        environmental: "คัดค้านกระบวนการเร่งด่วนเนื่องจากความเสี่ยงมลพิษสารพิษ",
+        investor: "ต้องการการอนุมัติที่รวดเร็วเพื่อการประกันผลตอบแทน เตือนเรื่องทุนไหลออก",
+        youth_rep: "สนับสนุนศูนย์นวัตกรรมแต่เรียกร้องมาตรฐานพลังงานสะอาด",
       }
     },
     options: {
       A: {
-        label: { en: "Fast-Track Approval", id: "Persetujuan Jalur Cepat" },
-        description: { en: "Approve the zone immediately with minimal restrictions to secure maximum foreign investment.", id: "Setujui kawasan segera dengan pembatasan minimal untuk mengamankan investasi asing maksimal." },
-        advantages: { en: "Creates maximum jobs rapidly; provides immediate massive tax revenue.", id: "Menciptakan lapangan kerja maksimal dengan cepat; memberikan pendapatan pajak masif segera." },
-        risks: { en: "Severe pollution, displacement of communities, major transparency issues.", id: "Polusi parah, penggusuran komunitas, masalah transparansi utama." },
+        label: { en: "Fast-Track Approval", id: "Persetujuan Jalur Cepat", th: "การอนุมัติแบบเร่งด่วน" },
+        description: { en: "Approve the zone immediately with minimal restrictions to secure maximum foreign investment.", id: "Setujui kawasan segera dengan pembatasan minimal untuk mengamankan investasi asing maksimal.", th: "อนุมัติเขตอุตสาหกรรมทันทีโดยมีข้อจำกัดน้อยที่สุดเพื่อดึงดูดการลงทุนต่างชาติสูงสุด" },
+        advantages: { en: "Creates maximum jobs rapidly; provides immediate massive tax revenue.", id: "Menciptakan lapangan kerja maksimal dengan cepat; memberikan pendapatan pajak masif segera.", th: "สร้างงานสูงสุดอย่างรวดเร็ว รายได้ภาษีมหาศาลทันที" },
+        risks: { en: "Severe pollution, displacement of communities, major transparency issues.", id: "Polusi parah, penggusuran komunitas, masalah transparansi utama.", th: "มลพิษรุนแรง การย้ายถิ่นฐานของชุมชน ปัญหาความโปร่งใสหลัก" },
         indicators: {
           economicGrowth: 20,
           governmentBudget: 15,
@@ -220,10 +263,10 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       B: {
-        label: { en: "Balanced Development Plan", id: "Rencana Pembangunan Seimbang" },
-        description: { en: "Approve with strict environmental regulations and partial community ownership.", id: "Setujui dengan regulasi lingkungan yang ketat dan kepemilikan komunitas sebagian." },
-        advantages: { en: "Sustainable growth, positive community involvement, high transparency.", id: "Pertumbuhan berkelanjutan, keterlibatan komunitas yang positif, transparansi tinggi." },
-        risks: { en: "Moderate budget costs for regulation enforcement; slightly slower implementation.", id: "Biaya anggaran moderat untuk penegakan regulasi; implementasi sedikit lebih lambat." },
+        label: { en: "Balanced Development Plan", id: "Rencana Pembangunan Seimbang", th: "แผนการพัฒนาที่สมดุล" },
+        description: { en: "Approve with strict environmental regulations and partial community ownership.", id: "Setujui dengan regulasi lingkungan yang ketat dan kepemilikan komunitas sebagian.", th: "อนุมัติพร้อมกฎระเบียบสิ่งแวดล้อมที่เข้มงวดและการมีส่วนร่วมของชุมชน" },
+        advantages: { en: "Sustainable growth, positive community involvement, high transparency.", id: "Pertumbuhan berkelanjutan, keterlibatan komunitas yang positif, transparansi tinggi.", th: "การเติบโตที่ยั่งยืน การมีส่วนร่วมของชุมชน ความโปร่งใสสูง" },
+        risks: { en: "Moderate budget costs for regulation enforcement; slightly slower implementation.", id: "Biaya anggaran moderat untuk penegakan regulasi; implementasi sedikit lebih lambat.", th: "งบประมาณปานกลางสำหรับการบังคับใช้กฎระเบียบ การดำเนินการช้าลงเล็กน้อย" },
         indicators: {
           economicGrowth: 12,
           governmentBudget: 8,
@@ -234,10 +277,10 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       C: {
-        label: { en: "Community and Environment First", id: "Utamakan Komunitas dan Lingkungan" },
-        description: { en: "Reject the heavy industrial zone in favor of small-scale eco-tourism and green agriculture.", id: "Tolak kawasan industri berat demi ekowisata skala kecil dan pertanian hijau." },
-        advantages: { en: "Improves long-term environmental quality and protects local communities.", id: "Meningkatkan kualitas lingkungan jangka panjang dan melindungi komunitas lokal." },
-        risks: { en: "Reduces economic growth and budget revenues; investors might pull out.", id: "Mengurangi pertumbuhan ekonomi dan pendapatan anggaran; investor mungkin menarik diri." },
+        label: { en: "Community and Environment First", id: "Utamakan Komunitas dan Lingkungan", th: "ชุมชนและสิ่งแวดล้อมต้องมาก่อน" },
+        description: { en: "Reject the heavy industrial zone in favor of small-scale eco-tourism and green agriculture.", id: "Tolak kawasan industri berat demi ekowisata skala kecil dan pertanian hijau.", th: "ปฏิเสธเขตอุตสาหกรรมหนักเพื่อสนับสนุนการท่องเที่ยวเชิงนิเวศและการเกษตรสีเขียว" },
+        advantages: { en: "Improves long-term environmental quality and protects local communities.", id: "Meningkatkan kualitas lingkungan jangka panjang dan melindungi komunitas lokal.", th: "ปรับปรุงคุณภาพสิ่งแวดล้อมระยะยาวและคุ้มครองชุมชนท้องถิ่น" },
+        risks: { en: "Reduces economic growth and budget revenues; investors might pull out.", id: "Mengurangi pertumbuhan ekonomi dan pendapatan anggaran; investor mungkin menarik diri.", th: "ลดการเติบโตทางเศรษฐกิจและรายได้งบประมาณ นักลงทุนอาจถอนตัว" },
         indicators: {
           economicGrowth: -15,
           governmentBudget: -10,
@@ -250,14 +293,15 @@ export const SCENARIOS: RawScenario[] = [
     },
     reflection: {
       en: "Sustainable industrialization requires balancing immediate economic gains against long-term environmental and social safeguards to avoid future \"governance debt.\"",
-      id: "Industrialisasi berkelanjutan membutuhkan keseimbangan antara keuntungan ekonomi segera dengan perlindungan lingkungan dan sosial jangka panjang."
+      id: "Industrialisasi berkelanjutan membutuhkan keseimbangan antara keuntungan ekonomi segera dengan perlindungan lingkungan dan sosial jangka panjang.",
+      th: "การปรับตัวสู่เมืองอุตสาหกรรมที่ยั่งยืนต้องรักษาสมดุลระหว่างผลตอบแทนทางเศรษฐกิจกับการคุ้มครองสิ่งแวดล้อม"
     },
   },
   {
     id: 2,
-    title: { en: "Universal Free Education", id: "Pendidikan Gratis Universal" },
-    description: { en: "A proposal to fund free education from primary school through university...", id: "Sebuah proposal untuk mendanai pendidikan gratis dari sekolah dasar hingga universitas..." },
-    challengeSummary: { en: "A proposal to fund free education from primary school through university, weighed against fiscal burden and effects on other public services.", id: "Proposal pendidikan gratis universal, ditimbang dengan beban fiskal dan dampaknya pada layanan publik lainnya." },
+    title: { en: "Universal Free Education", id: "Pendidikan Gratis Universal", th: "การศึกษาฟรีถ้วนหน้า" },
+    description: { en: "A proposal to fund free education from primary school through university...", id: "Sebuah proposal untuk mendanai pendidikan gratis dari sekolah dasar hingga universitas...", th: "ข้อเสนอจัดหาทุนการศึกษาฟรีตั้งแต่ระดับประถมศึกษาจนถึงมหาวิทยาลัย..." },
+    challengeSummary: { en: "A proposal to fund free education from primary school through university, weighed against fiscal burden and effects on other public services.", id: "Proposal pendidikan gratis universal, ditimbang dengan beban fiskal dan dampaknya pada layanan publik lainnya.", th: "ข้อเสนอจัดหาทุนการศึกษาฟรีถ้วนหน้า โดยชั่งน้ำหนักกับภาระทางการคลังและผลกระทบต่อบริการสาธารณะอื่น ๆ" },
     stakeholderPositions: {
       en: {
         mayor: "Values human capital but worries about budget bankruptcy.",
@@ -278,14 +322,24 @@ export const SCENARIOS: RawScenario[] = [
         environmental: "Netral, tetapi ingin ilmu lingkungan ditambahkan ke kurikulum.",
         investor: "Takut defisit pemerintah akan memicu suku bunga yang lebih tinggi.",
         youth_rep: "Mendukung pendanaan penuh; menuntut kurikulum keterampilan teknologi modern.",
+      },
+      th: {
+        mayor: "เห็นคุณค่าของทุนมนุษย์แต่กังวลเรื่องภาวะล้มละลายทางงบประมาณ",
+        journalist: "ต้องการติดตามเงินทุนการศึกษาและตัวชี้วัดคุณภาพอย่างเข้มงวด",
+        community_rep: "เรียกร้องการเข้าถึงสำหรับทุกคน มองว่าการศึกษาเป็นสิทธิขั้นพื้นฐาน",
+        business_rep: "ชอบรูปแบบร่วมจ่ายหรือเน้นกลุ่มเป้าหมายเพื่อลดภาษีนิติบุคคล",
+        social_welfare: "สนับสนุนการเรียนฟรีอย่างเต็มที่เพื่อขจัดวงจรความยากจน",
+        environmental: "เป็นกลาง แต่ต้องการให้เพิ่มวิทยาศาสตร์สิ่งแวดล้อมในหลักสูตร",
+        investor: "กลัวว่าการขาดดุลงบประมาณจะทำให้เกิดอัตราดอกเบี้ยที่สูงขึ้น",
+        youth_rep: "สนับสนุนงบประมาณเต็มจำนวน เรียกร้องหลักสูตรทักษะเทคโนโลยีสมัยใหม่",
       }
     },
     options: {
       A: {
-        label: { en: "Universal Free Education", id: "Pendidikan Gratis Universal" },
-        description: { en: "Fund full tuition for all citizens from public budget.", id: "Danai biaya kuliah penuh untuk semua warga negara dari anggaran publik." },
-        advantages: { en: "Major boost to people welfare and long-term public trust.", id: "Peningkatan besar bagi kesejahteraan rakyat dan kepercayaan publik jangka panjang." },
-        risks: { en: "Huge budget deficit, forcing cuts in other public services.", id: "Defisit anggaran besar, memaksa pemotongan pada layanan publik lainnya." },
+        label: { en: "Universal Free Education", id: "Pendidikan Gratis Universal", th: "การศึกษาฟรีถ้วนหน้า" },
+        description: { en: "Fund full tuition for all citizens from public budget.", id: "Danai biaya kuliah penuh untuk semua warga negara dari anggaran publik.", th: "อุดหนุนค่าเล่าเรียนเต็มจำนวนสำหรับพลเมืองทุกคนจากงบประมาณแผ่นดิน" },
+        advantages: { en: "Major boost to people welfare and long-term public trust.", id: "Peningkatan besar bagi kesejahteraan rakyat dan kepercayaan publik jangka panjang.", th: "ส่งเสริมสวัสดิการประชาชนและความไว้วางใจระยะยาวอย่างมหาศาล" },
+        risks: { en: "Huge budget deficit, forcing cuts in other public services.", id: "Defisit anggaran besar, memaksa pemotongan pada layanan publik lainnya.", th: "การขาดดุลงบประมาณมหาศาล บังคับให้ต้องลดงบประมาณบริการสาธารณะอื่น" },
         indicators: {
           economicGrowth: 5,
           governmentBudget: -30,
@@ -296,10 +350,10 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       B: {
-        label: { en: "Targeted Free Education", id: "Pendidikan Gratis Terarah" },
-        description: { en: "Provide free education only to low-income families based on means testing.", id: "Berikan pendidikan gratis hanya untuk keluarga berpenghasilan rendah berdasarkan tes kelayakan." },
-        advantages: { en: "Reduces budget strain, helps those who need it most.", id: "Mengurangi ketegangan anggaran, membantu mereka yang paling membutuhkan." },
-        risks: { en: "Administrative complexity, some middle-income families left behind.", id: "Kompleksitas administratif, beberapa keluarga berpenghasilan menengah tertinggal." },
+        label: { en: "Targeted Free Education", id: "Pendidikan Gratis Terarah", th: "การศึกษาฟรีแบบระบุกลุ่มเป้าหมาย" },
+        description: { en: "Provide free education only to low-income families based on means testing.", id: "Berikan pendidikan gratis hanya untuk keluarga berpenghasilan rendah berdasarkan tes kelayakan.", th: "ให้ทุนเรียนฟรีเฉพาะครอบครัวที่มีรายได้น้อยตามการประเมินสิทธิ์" },
+        advantages: { en: "Reduces budget strain, helps those who need it most.", id: "Mengurangi ketegangan anggaran, membantu mereka yang paling membutuhkan.", th: "ลดภาระงบประมาณ และช่วยผู้ที่ต้องการอย่างแท้จริง" },
+        risks: { en: "Administrative complexity, some middle-income families left behind.", id: "Kompleksitas administratif, beberapa keluarga berpenghasilan menengah tertinggal.", th: "ความซับซ้อนทางการบริหาร ครอบครัวปานกลางบางส่วนอาจตกสำรวจ" },
         indicators: {
           economicGrowth: 5,
           governmentBudget: -15,
@@ -310,10 +364,10 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       C: {
-        label: { en: "Shared-Cost Education", id: "Pendidikan Berbagi Biaya" },
-        description: { en: "Implement student loans and public-private partnerships.", id: "Terapkan pinjaman mahasiswa dan kemitraan publik-swasta." },
-        advantages: { en: "Protects public budget; encourages private sector investment.", id: "Melindungi anggaran publik; mendorong investasi sektor swasta." },
-        risks: { en: "Increases youth debt; decreases accessibility for poor citizens.", id: "Meningkatkan hutang pemuda; mengurangi aksesibilitas bagi warga miskin." },
+        label: { en: "Shared-Cost Education", id: "Pendidikan Berbagi Biaya", th: "การศึกษาร่วมจ่าย" },
+        description: { en: "Implement student loans and public-private partnerships.", id: "Terapkan pinjaman mahasiswa dan kemitraan publik-swasta.", th: "ใช้ระบบเงินกู้ยืมเพื่อการศึกษาและการร่วมมือระหว่างภาครัฐและเอกชน" },
+        advantages: { en: "Protects public budget; encourages private sector investment.", id: "Melindungi anggaran publik; mendorong investasi sektor swasta.", th: "รักษางบประมาณแผ่นดิน และส่งเสริมการลงทุนจากภาคเอกชน" },
+        risks: { en: "Increases youth debt; decreases accessibility for poor citizens.", id: "Meningkatkan hutang pemuda; mengurangi aksesibilitas bagi warga miskin.", th: "เพิ่มภาระหนี้สินแก่เยาวชน และลดโอกาสของคนยากจน" },
         indicators: {
           economicGrowth: 20,
           governmentBudget: 10,
@@ -326,14 +380,15 @@ export const SCENARIOS: RawScenario[] = [
     },
     reflection: {
       en: "Human capital drives prosperity, but universal access needs a stable fiscal foundation to remain sustainable.",
-      id: "Modal manusia mendorong kemakmuran, tetapi akses universal membutuhkan fondasi fiskal yang stabil."
+      id: "Modal manusia mendorong kemakmuran, tetapi akses universal membutuhkan fondasi fiskal yang stabil.",
+      th: "ทุนมนุษย์ขับเคลื่อนความมั่งคั่ง แต่การเข้าถึงถ้วนหน้าต้องมีฐานทางการคลังที่มั่นคง"
     },
   },
   {
     id: 3,
-    title: { en: "Open Forest for Mining", id: "Buka Hutan untuk Pertambangan" },
-    description: { en: "A mineral deposit beneath a protected forest could be opened for extraction...", id: "Deposit mineral di bawah hutan lindung dapat dibuka untuk ekstraksi..." },
-    challengeSummary: { en: "A mineral deposit beneath a protected forest could be opened for extraction, weighed against deforestation, biodiversity loss, and harm to local communities.", id: "Ekstraksi mineral di hutan lindung, ditimbang dengan deforestasi dan kerusakan komunitas lokal." },
+    title: { en: "Open Forest for Mining", id: "Buka Hutan untuk Pertambangan", th: "เปิดป่าเพื่อทำเหมืองแร่" },
+    description: { en: "A mineral deposit beneath a protected forest could be opened for extraction...", id: "Deposit mineral di bawah hutan lindung dapat dibuka untuk ekstraksi...", th: "แหล่งแร่สำคัญใต้ป่าอนุรักษ์อาจถูกเปิดเพื่อการทำเหมืองแร่..." },
+    challengeSummary: { en: "A mineral deposit beneath a protected forest could be opened for extraction, weighed against deforestation, biodiversity loss, and harm to local communities.", id: "Ekstraksi mineral di hutan lindung, ditimbang dengan deforestasi dan kerusakan komunitas lokal.", th: "การขุดเจาะแร่ใต้ป่าอนุรักษ์ โดยชั่งน้ำหนักระหว่างการตัดไม้ทำลายป่าและการสูญเสียความหลากหลายทางชีวภาพ" },
     stakeholderPositions: {
       en: {
         mayor: "Attracted by mineral revenues but fears massive green backlash.",
@@ -354,14 +409,24 @@ export const SCENARIOS: RawScenario[] = [
         environmental: "Sangat menentang segala gangguan; memperingatkan kerugian ekologis permanen.",
         investor: "Memandang ini sebagai aset tunggal terbesar kota; menuntut persetujuan cepat.",
         youth_rep: "Menentang pertambangan; memperjuangkan perlindungan warisan sumber daya.",
+      },
+      th: {
+        mayor: "ดึงดูดใจด้วยรายได้จากแร่ แต่กลัวการต่อต้านอย่างรุนแรงจากกลุ่มอนุรักษ์",
+        journalist: "เฝ้าระวังการส่วยหรือผลประโยชน์ทับซ้อนในการอนุมัติประทานบัตร",
+        community_rep: "ลังเลระหว่างงานทำเหมืองที่ได้ค่าตอบแทนสูงกับการทำลายที่ดินทำกินเดิม",
+        business_rep: "สนับสนุนการเปิดเหมืองอย่างยิ่งเพื่อป้อนห่วงโซ่การผลิต",
+        social_welfare: "เตือนถึงอันตรายต่อสุขภาพจากการปนเปื้อนของน้ำในหมู่บ้านใกล้เคียง",
+        environmental: "คัดค้านการบุกรุกอย่างรุนแรง เตือนถึงการสูญเสียทางระบบนิเวศอย่างถาวร",
+        investor: "มองว่านี่คือสินทรัพย์ที่ใหญ่ที่สุดของเมือง เรียกร้องให้ อนุมัติโดยเร็ว",
+        youth_rep: "คัดค้านการทำเหมือง สนับสนุนการคุ้มครองมรดกทางทรัพยากร",
       }
     },
     options: {
       A: {
-        label: { en: "Full Mining Approval", id: "Persetujuan Tambang Penuh" },
-        description: { en: "Grant licenses to multinational mining corporations to exploit the deposits.", id: "Berikan lisensi kepada perusahaan pertambangan multinasional untuk mengeksploitasi deposit." },
-        advantages: { en: "Unlocks massive economic growth and budget surplus.", id: "Membuka pertumbuhan ekonomi masif dan surplus anggaran." },
-        risks: { en: "Catastrophic deforestation, water pollution, and community outcry.", id: "Deforestasi katastrofik, polusi air, dan kecaman komunitas." },
+        label: { en: "Full Mining Approval", id: "Persetujuan Tambang Penuh", th: "อนุมัติทำเหมืองเต็มรูปแบบ" },
+        description: { en: "Grant licenses to multinational mining corporations to exploit the deposits.", id: "Berikan lisensi kepada perusahaan pertambangan multinasional untuk mengeksploitasi deposit.", th: "ให้ประทานบัตรแก่บริษัทข้ามชาติเพื่อขุดเจาะแร่เต็มกำลัง" },
+        advantages: { en: "Unlocks massive economic growth and budget surplus.", id: "Membuka pertumbuhan ekonomi masif dan surplus anggaran.", th: "ปลดล็อกการเติบโตทางเศรษฐกิจและงบประมาณเกินดุลมหาศาล" },
+        risks: { en: "Catastrophic deforestation, water pollution, and community outcry.", id: "Deforestasi katastrofik, polusi air, dan kecaman komunitas.", th: "การตัดไม้ทำลายป่าขั้นรุนแรง มลพิษทางน้ำ และการประท้วงจากชุมชน" },
         indicators: {
           economicGrowth: 25,
           governmentBudget: 20,
@@ -372,10 +437,10 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       B: {
-        label: { en: "Regulated Sustainable Mining", id: "Pertambangan Berkelanjutan Teratur" },
-        description: { en: "Permit limited mining with high royalties, mandatory replanting, and local refining.", id: "Izinkan penambangan terbatas dengan royalti tinggi dan penanaman kembali wajib." },
-        advantages: { en: "Good economic return with some ecological mitigation efforts.", id: "Imbal hasil ekonomi yang baik dengan beberapa upaya mitigasi ekologis." },
-        risks: { en: "Enforcement is expensive; ecological damage is reduced but still occurs.", id: "Penegakan hukum mahal; kerusakan ekologis berkurang tetapi tetap terjadi." },
+        label: { en: "Regulated Sustainable Mining", id: "Pertambangan Berkelanjutan Teratur", th: "ทำเหมืองยั่งยืนภายใต้การควบคุม" },
+        description: { en: "Permit limited mining with high royalties, mandatory replanting, and local refining.", id: "Izinkan penambangan terbatas dengan royalti tinggi dan penanaman kembali wajib.", th: "อนุญาตทำเหมืองจำกัดพื้นที่ พร้อมจัดเก็บค่าภาคหลวงสูงและปลูกป่าทดแทน" },
+        advantages: { en: "Good economic return with some ecological mitigation efforts.", id: "Imbal hasil ekonomi yang baik dengan beberapa upaya mitigasi ekologis.", th: "ได้ผลตอบแทนทางเศรษฐกิจดี พร้อมมาตรการบรรเทาผลกระทบสิ่งแวดล้อม" },
+        risks: { en: "Enforcement is expensive; ecological damage is reduced but still occurs.", id: "Penegakan hukum mahal; kerusakan ekologis berkurang tetapi tetap terjadi.", th: "ค่าใช้จ่ายในการกำกับดูแลสูง ความเสียหายทางนิเวศลดลงแต่ยังมีอยู่" },
         indicators: {
           economicGrowth: 15,
           governmentBudget: 12,
@@ -386,15 +451,15 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       C: {
-        label: { en: "Protect the Forest", id: "Lindungi Hutan" },
-        description: { en: "Ban all mining in the forest and declare it a permanent ecological reserve.", id: "Larang semua penambangan di hutan dan jadikan cagar alam permanen." },
-        advantages: { en: "Ensures complete environmental protection and biodiversity conservation.", id: "Menjamin perlindungan lingkungan penuh dan konservasi keanekaragaman hayati." },
-        risks: { en: "Foregoes critical revenue; limits economic growth; potential investor cooling.", id: "Melepaskan pendapatan penting; membatasi pertumbuhan ekonomi." },
+        label: { en: "Protect the Forest", id: "Lindungi Hutan", th: "ปกป้องผืนป่า" },
+        description: { en: "Ban all mining in the forest and declare it a permanent ecological reserve.", id: "Larang semua penambangan di hutan dan jadikan cagar alam permanen.", th: "ห้ามการทำเหมืองทั้งหมดในป่า และประกาศเป็นเขตรักษาพันธุ์สัตว์ป่าและธรรมชาติถาวร" },
+        advantages: { en: "Protects biodiversity, water supply, and carbon sink capacity.", id: "Melindungi keanekaragaman hayati, pasokan air, dan kapasitas penyerap karbon.", th: "ปกป้องความหลากหลายทางชีวภาพ แหล่งน้ำ และพื้นที่ดูดซับคาร์บอน" },
+        risks: { en: "Misses out on huge mineral revenue and immediate job opportunities.", id: "Kehilangan pendapatan mineral masif dan peluang kerja segera.", th: "สูญเสียโอกาสทางรายได้จากแร่มหาศาลและการสร้างงานทันที" },
         indicators: {
           economicGrowth: -15,
-          governmentBudget: -15,
-          peopleWelfare: 0,
-          publicTrust: 10,
+          governmentBudget: -10,
+          peopleWelfare: 5,
+          publicTrust: 15,
           environmentalQuality: 25,
           transparency: 10,
         },
@@ -402,7 +467,8 @@ export const SCENARIOS: RawScenario[] = [
     },
     reflection: {
       en: "Resource extraction offers quick revenue but carries permanent ecological risk; leadership means weighing finite wealth against the heritage of future generations.",
-      id: "Ekstraksi sumber daya menawarkan pendapatan cepat tetapi membawa risiko ekologis permanen."
+      id: "Ekstraksi sumber daya menawarkan pendapatan cepat tetapi membawa risiko ekologis permanen.",
+      th: "การสกัดทรัพยากรให้รายได้รวดเร็วแต่มีความเสี่ยงทางนิเวศถาวร ภาวะผู้นำคือการชั่งน้ำหนักสมบัติที่มีจำกัดกับมรดกคนรุ่นหลัง"
     },
   },
 ];

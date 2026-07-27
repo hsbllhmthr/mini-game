@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-export type Language = 'en' | 'id' | 'th' | 'ph' | 'vi' | 'my';
+export type Language = 'en' | 'id' | 'th';
 
 const translations: Record<Language, any> = {
   en: {
@@ -18,18 +18,22 @@ const translations: Record<Language, any> = {
       country: "Country",
       start: "Start",
       next: "Next",
+      continue: "Continue",
     },
     landing: {
-      badge: "Governance Workshop Simulation",
+      badge: "GOVERNANCE WORKSHOP SIMULATION",
       title: "The People's Assembly",
-      subtitle: "A real-time digital moderator for face-to-face civic decision-making workshops. Cooperate, deliberate, and decide the future of the city.",
+      subtitle: "The People's Assembly\ndiscuss, vote, and see\nthe impact on your city.",
       create_title: "Create a Session",
       create_desc: "For hosts, teachers, and workshop facilitators. Launch a new room code and coordinate the gameplay, scenarios, and results exports.",
-      create_btn: "Start as Host",
+      create_btn: "Create room (facilitator)",
       join_title: "Join a Session",
       join_desc: "For assembly participants and stakeholders. Enter the room code shared by your facilitator to play your secret role and cast your votes.",
-      join_btn: "Enter Room Code",
+      join_btn: "Join Room (Player)",
       select_language: "Select Your Language",
+      no_account: "No account or login needed",
+      choose_language: "Choose your preferred language to continue",
+      tip_change_later: "Tip: you can change this later",
     },
     join: {
       title: "Join Assembly Session",
@@ -54,6 +58,8 @@ const translations: Record<Language, any> = {
       session_cancelled: "Session cancelled by facilitator",
       directory: "Delegate Directory",
       no_delegates: "No delegates have connected yet.",
+      cancel_session: "Cancel Session",
+      load_more: "Load More",
     },
     create: {
       title: "Create Room Session",
@@ -78,18 +84,22 @@ const translations: Record<Language, any> = {
       country: "Negara",
       start: "Mulai",
       next: "Lanjut",
+      continue: "Lanjutkan",
     },
     landing: {
       badge: "Simulasi Lokakarya Tata Kelola",
       title: "Majelis Rakyat",
-      subtitle: "Moderator digital real-time untuk lokakarya pengambilan keputusan sipil tatap muka. Bekerjasama, berunding, dan tentukan masa depan kota.",
+      subtitle: "Simulasi tata kelola kota\ndiskusikan, pilih, dan lihat\ndampaknya pada kota Anda.",
       create_title: "Buat Sesi Baru",
       create_desc: "Untuk host, pengajar, dan fasilitator lokakarya. Luncurkan kode ruangan baru dan koordinasikan gameplay, skenario, serta ekspor hasil.",
-      create_btn: "Mulai sebagai Host",
+      create_btn: "Buat Ruangan (Fasilitator)",
       join_title: "Gabung Sesi",
       join_desc: "Untuk peserta majelis dan pemangku kepentingan. Masukkan kode ruangan yang dibagikan oleh fasilitator Anda untuk memainkan peran rahasia.",
-      join_btn: "Masukkan Kode Ruangan",
+      join_btn: "Gabung Ruangan (Pemain)",
       select_language: "Pilih Bahasa Anda",
+      no_account: "Tidak perlu akun atau login",
+      choose_language: "Pilih bahasa yang Anda inginkan untuk melanjutkan",
+      tip_change_later: "Tips: Anda dapat mengubah bahasa ini nanti",
     },
     join: {
       title: "Gabung Sidang Majelis",
@@ -114,6 +124,8 @@ const translations: Record<Language, any> = {
       session_cancelled: "Sesi dibatalkan oleh fasilitator",
       directory: "Direktori Delegasi",
       no_delegates: "Belum ada delegasi yang terhubung.",
+      cancel_session: "Batalkan Sesi",
+      load_more: "Muat Lebih Banyak",
     },
     create: {
       title: "Buat Sesi Ruangan",
@@ -124,23 +136,69 @@ const translations: Record<Language, any> = {
     }
   },
   th: {
+    common: {
+      back: "ย้อนกลับ",
+      cancel: "ยกเลิก",
+      confirm: "ยืนยัน",
+      loading: "กำลังโหลด...",
+      session: "เซสชัน",
+      delegate: "ผู้แทน",
+      exit: "ออกจากเกม",
+      restart: "เริ่มใหม่",
+      room_code: "รหัสห้อง",
+      full_name: "ชื่อ-นามสกุล",
+      country: "ประเทศ",
+      start: "เริ่ม",
+      next: "ถัดไป",
+      continue: "ดำเนินการต่อ",
+    },
     landing: {
+      badge: "การจำลองการประชุมเชิงปฏิบัติการการบริหารจัดการ",
+      title: "สภาประชาชน (The People's Assembly)",
+      subtitle: "การจำลองการบริหารจัดการเมือง\nอภิปราย ลงมติ และดูผลกระทบ\nที่มีต่อเมืองของคุณ",
+      create_title: "สร้างเซสชันใหม่",
+      create_desc: "สำหรับผู้ดำเนินรายการ ครู และวิทยากร เปิดรหัสห้องใหม่เพื่อควบคุมการเล่น สถารการณ์ และส่งออกผลลัพธ์",
+      create_btn: "สร้างห้อง (ผู้ดำเนินรายการ)",
+      join_title: "เข้าร่วมเซสชัน",
+      join_desc: "สำหรับผู้เข้าร่วมสภาและผู้มีส่วนได้ส่วนเสีย กรอกรหัสห้องที่ได้รับจากผู้ดำเนินรายการเพื่อรับบทบาทลับและลงมติ",
+      join_btn: "เข้าร่วมห้อง (ผู้เล่น)",
       select_language: "เลือกภาษาของคุณ",
-    }
-  },
-  ph: {
-    landing: {
-      select_language: "Pilihin ang iyong Wika",
-    }
-  },
-  vi: {
-    landing: {
-      select_language: "Chọn ngôn ngữ của bạn",
-    }
-  },
-  my: {
-    landing: {
-      select_language: "သင်၏ဘာသာစကားကိုရွေးချယ်ပါ",
+      no_account: "ไม่ต้องมีบัญชีหรือเข้าสู่ระบบ",
+      choose_language: "เลือกภาษาที่คุณต้องการเพื่อดำเนินการต่อ",
+      tip_change_later: "เคล็ดลับ: คุณสามารถเปลี่ยนภาษาได้ในภายหลัง",
+    },
+    join: {
+      title: "เข้าร่วมเซสชันสภา",
+      back_home: "กลับสู่หน้าหลัก",
+      room_placeholder: "ตัวอย่าง: GOV-4821",
+      name_placeholder: "ชื่อของคุณ (สูงสุด 100 ตัวอักษร)",
+      country_label: "ประเทศ / ผู้แทนจาก",
+      specify_country: "ระบุประเทศ",
+      btn_joining: "กำลังเข้าร่วมเซสชัน...",
+      btn_join: "เข้าร่วมเซสชัน",
+      error_fill_all: "กรุณากรอกข้อมูลให้ครบทุกช่อง",
+    },
+    lobby: {
+      badge: "ล็อบบี้เซสชัน",
+      title: "ห้องพักรอ",
+      share_code: "แชร์รหัสห้อง",
+      joined_delegates: "ผู้แทนที่เข้าร่วมแล้ว",
+      min_players_warn: "เกมต้องใช้ผู้เล่นระหว่าง 8 ถึง 12 คนเพื่อเริ่มเกม กรุณารอผู้เข้าร่วมคนอื่นเข้าร่วม",
+      valid_players: "จำนวนผู้เล่นครบถ้วน! คุณสามารถเริ่มเซสชันสภาได้แล้ว",
+      btn_start: "เริ่มการประชุมสภา",
+      waiting_facil: "กำลังรอผู้ดำเนินรายการเริ่มเกม...",
+      session_cancelled: "เซสชันถูกยกเลิกโดยผู้ดำเนินรายการ",
+      directory: "รายชื่อผู้แทน",
+      no_delegates: "ยังไม่มีผู้แทนเชื่อมต่อเข้ามา",
+      cancel_session: "ยกเลิกเซสชัน",
+      load_more: "โหลดเพิ่มเติม",
+    },
+    create: {
+      title: "สร้างห้องเซสชัน",
+      desc: "ระบบจะสร้างรหัสห้องที่ไม่ซ้ำกัน แชร์รหัสนี้ให้ผู้เล่นของคุณ (8 ถึง 12 คน) เพื่อให้พวกเขาสามารถเชื่อมต่อโดยใช้ชื่อของตนเอง",
+      btn_creating: "กำลังสร้างห้อง...",
+      btn_create: "สร้างเซสชันใหม่",
+      error_connect: "ไม่สามารถเชื่อมต่อกับเซิร์ฟเวอร์ได้ กรุณาตรวจสอบว่าแบ็กเอนด์กำลังทำงานอยู่",
     }
   }
 };
@@ -172,11 +230,15 @@ export function useI18n() {
     return result;
   };
 
-  const toggleLang = () => {
-    const newLang = lang === 'en' ? 'id' : 'en';
+  const changeLang = (newLang: Language) => {
     setLang(newLang);
     localStorage.setItem('tpa_lang', newLang);
   };
 
-  return { t, lang, setLang, toggleLang };
+  const toggleLang = () => {
+    const nextLang: Language = lang === 'en' ? 'id' : lang === 'id' ? 'th' : 'en';
+    changeLang(nextLang);
+  };
+
+  return { t, lang, setLang: changeLang, toggleLang };
 }

@@ -47,89 +47,113 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
   const selectedOption = scenario.options[choice as 'A' | 'B' | 'C'];
 
   const getIndicatorLabel = (key: string) => {
-    return key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+    const indicatorLabels: Record<string, Record<string, string>> = {
+      id: {
+        economic_growth: 'Pertumbuhan Ekonomi',
+        government_budget: 'Anggaran Pemerintah',
+        people_welfare: 'Kesejahteraan Masyarakat',
+        public_trust: 'Kepercayaan Publik',
+        environmental_quality: 'Kualitas Lingkungan',
+        transparency: 'Transparansi',
+      },
+      en: {
+        economic_growth: 'Economic Growth',
+        government_budget: 'Government Budget',
+        people_welfare: 'People Welfare',
+        public_trust: 'Public Trust',
+        environmental_quality: 'Environmental Quality',
+        transparency: 'Transparency',
+      },
+      th: {
+        economic_growth: 'การเติบโตทางเศรษฐกิจ',
+        government_budget: 'งบประมาณรัฐบาล',
+        people_welfare: 'สวัสดิการประชาชน',
+        public_trust: 'ความไว้วางใจของสาธารณชน',
+        environmental_quality: 'คุณภาพสิ่งแวดล้อม',
+        transparency: 'ความโปร่งใส',
+      }
+    };
+    const lang = localStorage.getItem('tpa_lang') || 'en';
+    return indicatorLabels[lang]?.[key] || key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
   };
+
+  const lang = localStorage.getItem('tpa_lang') || 'en';
+  const isLastScenario = scenarioIndex === 2;
 
   // 1. FACILITATOR VIEW
   if (isFacilitator) {
-    const lang = localStorage.getItem('tpa_lang') || 'en';
-    const isLastScenario = scenarioIndex === 2;
-
     return (
-      <div className="min-h-screen w-full flex justify-center items-start">
-        <div className="relative w-full sm:max-w-[480px] min-h-screen bg-white flex flex-col overflow-visible">
+      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
+        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
+        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
 
-          {/* Top Header */}
-          <div className="w-full h-24 bg-lime-600 px-[40px] flex items-center justify-between shrink-0 relative">
+          {/* Top Full-Width Header Banner */}
+          <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
-              <div className="text-white text-2xl font-extrabold font-['Nunito'] truncate leading-tight">
+              <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
-              </div>
-              <div className="text-white text-sm font-semibold font-['Nunito'] leading-6 mt-0.5">
-                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : `Scenario ${scenarioIndex + 1} of 3`}
-              </div>
+              </h1>
+              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
+                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+              </span>
             </div>
 
-            <div className="flex items-center gap-2 shrink-0">
+            <div className="flex items-center gap-2.5 shrink-0">
               <button
                 type="button"
                 onClick={() => setShowStatsModal(true)}
-                className="w-12 h-12 rounded-2xl bg-lime-600 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 hover:bg-lime-700 transition-all flex justify-center items-center cursor-pointer"
-                title="Stats"
+                className="w-12 h-12 bg-cyan-700 rounded-2xl shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shrink-0"
+                title="View Stats"
               >
                 <Activity className="w-5 h-5 text-white" />
               </button>
               <button
                 type="button"
                 onClick={onCancelSession}
-                className="w-12 h-12 rounded-2xl bg-lime-600 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 hover:bg-lime-700 transition-all flex justify-center items-center cursor-pointer"
+                className="w-12 h-12 bg-cyan-700 rounded-2xl shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shrink-0"
+                title="Cancel"
               >
                 <LogOut className="w-5 h-5 text-white" />
               </button>
             </div>
           </div>
 
-          {/* Content Area */}
-          <div className="flex-grow flex flex-col gap-5 px-[35px] py-[22px]">
+          {/* Scrollable Content Area */}
+          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
 
-            {/* Badge + Title */}
-            <div className="flex flex-col items-center gap-1">
-              <div className="h-8 px-5 bg-neutral-200 rounded-[59px] flex items-center justify-center">
-                <span className="text-zinc-400 text-[10px] font-extrabold font-['Nunito'] leading-9 tracking-wider uppercase">
-                  {lang === 'id' ? 'HASIL KEBIJAKAN TERUNGKAP' : 'POLICY OUTCOME REVEALED'}
-                </span>
-              </div>
-              <div className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9 text-center">
-                {lang === 'id' ? 'Keputusan Eksekutif' : 'Executive Decision'}
-              </div>
+            {/* Screen Title */}
+            <div className="w-full text-center shrink-0">
+              <h2 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+                {lang === 'id' ? 'Keputusan Eksekutif' : lang === 'th' ? 'การตัดสินใจของผู้บริหาร' : 'Executive Decision'}
+              </h2>
             </div>
 
-            {/* Decision Card */}
-            <div className="w-full bg-white rounded-xl shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] outline outline-2 outline-offset-[-2px] outline-neutral-200 p-[18px] flex flex-col gap-3">
-              {/* Option row */}
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 shrink-0 rounded-2xl bg-white shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex justify-center items-center">
-                  <span className="text-stone-300 text-2xl font-extrabold font-['Nunito'] leading-4">{choice}</span>
+            {/* Decision Card Box */}
+            <div className="w-full bg-gray-800 rounded-xl shadow-[0px_2px_0px_0px_rgba(52,55,64,1.00)] outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5 flex flex-col gap-4 text-left shrink-0">
+              {/* Option Row */}
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 shrink-0 rounded-2xl bg-red-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex justify-center items-center text-white text-2xl font-extrabold font-['Nunito']">
+                  {choice}
                 </div>
-                <div className="flex flex-col gap-1 min-w-0 pt-1">
-                  <span className="text-neutral-600 text-base font-extrabold font-['Nunito'] leading-4">
+                <div className="flex flex-col gap-1 min-w-0 pt-0.5">
+                  <span className="text-white text-base font-extrabold font-['Nunito'] leading-tight">
                     {selectedOption.label}
                   </span>
-                  <p className="text-zinc-400 text-xs font-semibold font-['Nunito'] leading-4 mt-1">
+                  <p className="text-zinc-400 text-xs font-semibold font-['Nunito'] leading-relaxed">
                     {selectedOption.description}
                   </p>
                 </div>
               </div>
 
-              {/* Divider and Veto banner — only shown if vetoUsed */}
+              {/* Veto Banner — only shown if vetoUsed */}
               {vetoUsed && (
                 <>
-                  <div className="-mx-[18px] h-0.5 bg-neutral-200" />
-                  <div className="w-full bg-orange-100 rounded-xl border-2 border-amber-500 p-4 flex flex-col gap-1">
-                    <span className="text-amber-500 text-xl font-extrabold font-['Nunito'] leading-5">
-                      {lang === 'id' ? 'Veto Walikota Digunakan' : "Mayor's Veto Invoked"}
+                  <div className="w-full h-0.5 bg-zinc-700" />
+                  <div className="w-full bg-amber-700/80 rounded-xl p-4 flex flex-col gap-1 border border-amber-500/50">
+                    <span className="text-white text-xl font-extrabold font-['Nunito'] leading-5">
+                      {lang === 'id' ? 'Veto Walikota Digunakan' : lang === 'th' ? 'มีการใช้วีโต้ของนายกเทศมนตรี' : "Mayor's Veto Invoked"}
                     </span>
-                    <p className="text-amber-500 text-sm font-medium font-['Inter'] leading-6">
+                    <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                       "{justification}"
                     </p>
                   </div>
@@ -138,30 +162,28 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
             </div>
 
             {/* City Indicator Adjustments */}
-            <div className="flex flex-col gap-2">
-              <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-                {lang === 'id' ? 'Penyesuaian Indikator Kota' : 'City Indicator Adjustments'}
-              </span>
+            <div className="w-full space-y-2 shrink-0">
+              <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9 text-center w-full">
+                {lang === 'id' ? 'Penyesuaian Indikator Kota' : lang === 'th' ? 'การปรับเปลี่ยนตัวชี้วัดของเมือง' : 'City Indicator Adjustments'}
+              </h3>
 
-              <div className="w-full bg-white rounded-xl border-2 border-neutral-200 overflow-hidden">
+              <div className="w-full bg-gray-800 rounded-xl border-2 border-zinc-700 overflow-hidden text-left">
                 {Object.entries(indicatorChanges).map(([key, change], idx, arr) => {
                   const finalVal = newIndicators[key as keyof IndicatorChanges];
                   return (
                     <div key={key} className="flex flex-col">
-                      <div className="flex items-center justify-between px-5 py-3">
-                        <div className="flex items-center gap-4">
-                          <span className="text-red-500 text-3xl font-extrabold font-['Nunito'] w-10 text-center shrink-0">
-                            {finalVal}
-                          </span>
-                          <span className="text-neutral-600 text-base font-extrabold font-['Nunito'] leading-4">
-                            {getIndicatorLabel(key)}
-                          </span>
-                        </div>
-                        <span className={`text-lg font-extrabold font-['Nunito'] w-8 text-center ${change >= 0 ? 'text-lime-500' : 'text-red-500'}`}>
+                      <div className="flex items-center justify-between px-5 py-3.5 gap-3">
+                        <span className="text-amber-500 text-xl sm:text-2xl font-extrabold font-['Nunito'] w-10 text-center shrink-0">
+                          {finalVal}
+                        </span>
+                        <span className="text-white text-base font-extrabold font-['Nunito'] flex-1 leading-snug">
+                          {getIndicatorLabel(key)}
+                        </span>
+                        <span className={`text-base font-extrabold font-['Nunito'] w-10 text-right shrink-0 ${change >= 0 ? 'text-[#5CACE2]' : 'text-red-400'}`}>
                           {change >= 0 ? `+${change}` : change}
                         </span>
                       </div>
-                      {idx < arr.length - 1 && <div className="w-full h-0.5 bg-neutral-200" />}
+                      {idx < arr.length - 1 && <div className="w-full h-0.5 bg-zinc-700" />}
                     </div>
                   );
                 })}
@@ -169,24 +191,24 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
             </div>
 
             {/* Realized Advantages */}
-            <div className="flex flex-col gap-1">
-              <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-                {lang === 'id' ? 'Keuntungan yang Direalisasikan' : 'Realized Advantages'}
-              </span>
-              <div className="w-full bg-neutral-100 rounded-xl outline outline-2 outline-offset-[-2px] outline-neutral-200 overflow-hidden px-5 py-3">
-                <p className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6">
+            <div className="w-full space-y-2 shrink-0 text-left">
+              <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+                {lang === 'id' ? 'Keuntungan yang Direalisasikan' : lang === 'th' ? 'ผลประโยชน์ที่ได้รับจริง' : 'Realized Advantages'}
+              </h3>
+              <div className="w-full bg-gray-800 rounded-xl outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5">
+                <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                   {selectedOption.advantages}
                 </p>
               </div>
             </div>
 
             {/* Realized Risks */}
-            <div className="flex flex-col gap-1">
-              <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-                {lang === 'id' ? 'Risiko yang Direalisasikan' : 'Realized Risks'}
-              </span>
-              <div className="w-full bg-neutral-100 rounded-xl outline outline-2 outline-offset-[-2px] outline-neutral-200 overflow-hidden px-5 py-3">
-                <p className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6">
+            <div className="w-full space-y-2 shrink-0 text-left">
+              <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+                {lang === 'id' ? 'Risiko yang Direalisasikan' : lang === 'th' ? 'ความเสี่ยงที่เกิดขึ้นจริง' : 'Realized Risks'}
+              </h3>
+              <div className="w-full bg-gray-800 rounded-xl outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5">
+                <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                   {selectedOption.risks}
                 </p>
               </div>
@@ -196,32 +218,33 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
             <button
               type="button"
               onClick={onNextStep}
-              className="w-full h-12 bg-lime-600 rounded-xl shadow-[0px_4px_0px_0px_#46A302] text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide hover:bg-lime-700 active:translate-y-px transition-all cursor-pointer"
+              data-button="Primary"
+              className="w-full h-12 p-2.5 bg-[#5CACE2] rounded-xl shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide hover:opacity-90 active:translate-y-0.5 transition-all cursor-pointer flex justify-center items-center shrink-0 mt-4"
             >
               {isLastScenario ? (
-                lang === 'id' ? 'SELESAIKAN GAME & LIHAT SKOR' : 'Compute Final Scores & End Game'
+                lang === 'id' ? 'SELESAIKAN GAME & LIHAT SKOR' : lang === 'th' ? 'สรุปคะแนนและจบเกม' : 'Compute Final Scores & End Game'
               ) : (
-                lang === 'id' ? `LANJUT KE SKENARIO ${scenarioIndex + 2}` : `Proceed to Scenario ${scenarioIndex + 2}`
+                lang === 'id' ? `LANJUT KE SKENARIO ${scenarioIndex + 2}` : lang === 'th' ? `ดำเนินการต่อไปยังสถานการณ์ที่ ${scenarioIndex + 2}` : `Proceed to Scenario ${scenarioIndex + 2}`
               )}
             </button>
 
-            <div className="h-2 shrink-0" />
+            <div className="h-4 shrink-0" />
           </div>
         </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (
-          <div className="absolute inset-0 z-50 bg-slate-950/40 backdrop-blur-sm animate-fade-in flex justify-center items-center p-4">
-            <div className="w-[410px] max-h-[90%] bg-white rounded-xl shadow-2xl border-2 border-neutral-200 outline outline-2 outline-offset-[-2px] outline-neutral-200 p-6 overflow-y-auto flex flex-col justify-between">
+          <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm animate-fade-in flex justify-center items-start sm:items-center p-4 pt-6 sm:pt-4 overflow-y-auto">
+            <div className="w-[410px] max-h-[90%] bg-neutral-900 rounded-3xl p-6 shadow-2xl overflow-y-auto border-2 border-neutral-700 flex flex-col justify-between text-white">
               <div>
-                <div className="flex items-center justify-between border-b border-neutral-200 pb-3 mb-4">
-                  <span className="text-neutral-600 text-base font-extrabold font-['Nunito']">
+                <div className="flex items-center justify-between border-b border-neutral-800 pb-3 mb-4">
+                  <span className="text-lg font-extrabold font-['Nunito'] text-white uppercase tracking-wider">
                     City Indicators
                   </span>
                   <button
                     type="button"
                     onClick={() => setShowStatsModal(false)}
-                    className="text-xs font-bold text-neutral-400 hover:text-neutral-600 transition-colors cursor-pointer"
+                    className="text-sm font-bold text-zinc-400 hover:text-white cursor-pointer"
                   >
                     Close
                   </button>
@@ -229,13 +252,13 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
                 {indicators ? (
                   <Dashboard indicators={indicators} flat />
                 ) : (
-                  <div className="text-center py-6 text-neutral-500 font-semibold">No data available</div>
+                  <div className="text-center py-6 text-zinc-400 font-semibold font-['Nunito']">No data available</div>
                 )}
               </div>
               <button
                 type="button"
                 onClick={() => setShowStatsModal(false)}
-                className="w-full h-12 bg-lime-600 hover:bg-lime-700 text-white text-sm font-extrabold uppercase tracking-wide rounded-xl shadow-[0px_4px_0px_0px_#46A302] transition-all flex justify-center items-center cursor-pointer active:translate-y-1 active:shadow-none mt-6"
+                className="w-full mt-6 bg-[#5CACE2] hover:opacity-90 text-white py-3 rounded-2xl text-sm font-extrabold font-['Nunito'] uppercase tracking-wide transition-all shadow-md cursor-pointer"
               >
                 Close
               </button>
@@ -247,83 +270,78 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
   }
 
   // 2. PLAYER VIEW
-  const lang = localStorage.getItem('tpa_lang') || 'en';
-
   return (
-    <div className="min-h-screen w-full flex justify-center items-start">
-      <div className="relative w-full sm:max-w-[480px] min-h-screen bg-white flex flex-col overflow-visible">
+    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
+      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
+      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
 
-        {/* Top Header */}
-        <div className="w-full h-24 bg-lime-600 px-[40px] flex items-center justify-between shrink-0 relative">
+        {/* Top Full-Width Header Banner */}
+        <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
-            <div className="text-white text-2xl font-extrabold font-['Nunito'] truncate leading-tight">
+            <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenario.title}
-            </div>
-            <div className="text-white text-sm font-semibold font-['Nunito'] leading-6 mt-0.5">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : `Scenario ${scenarioIndex + 1} of 3`}
-            </div>
+            </h1>
+            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
+              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            </span>
           </div>
 
-          <div className="flex items-center gap-2 shrink-0">
+          <div className="flex items-center gap-2.5 shrink-0">
             <button
               type="button"
               onClick={() => setShowStatsModal(true)}
-              className="w-12 h-12 rounded-2xl bg-lime-600 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 hover:bg-lime-700 transition-all flex justify-center items-center cursor-pointer"
-              title="Stats"
+              className="w-12 h-12 bg-cyan-700 rounded-2xl shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shrink-0"
+              title="View Stats"
             >
               <Activity className="w-5 h-5 text-white" />
             </button>
             <button
               type="button"
               onClick={onCancelSession}
-              className="w-12 h-12 rounded-2xl bg-lime-600 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 hover:bg-lime-700 transition-all flex justify-center items-center cursor-pointer"
+              className="w-12 h-12 bg-cyan-700 rounded-2xl shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex items-center justify-center text-white cursor-pointer hover:opacity-90 active:scale-95 transition-all shrink-0"
+              title="Cancel"
             >
               <LogOut className="w-5 h-5 text-white" />
             </button>
           </div>
         </div>
 
-        {/* Content Area */}
-        <div className="flex-grow flex flex-col gap-5 px-[35px] py-[22px]">
+        {/* Scrollable Content Area */}
+        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
 
-          {/* Badge + Title */}
-          <div className="flex flex-col items-center gap-1">
-            <div className="h-8 px-5 bg-neutral-200 rounded-[59px] flex items-center justify-center">
-              <span className="text-zinc-400 text-[10px] font-extrabold font-['Nunito'] leading-9 tracking-wider uppercase">
-                {lang === 'id' ? 'HASIL KEBIJAKAN TERUNGKAP' : 'POLICY OUTCOME REVEALED'}
-              </span>
-            </div>
-            <div className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9 text-center">
-              {lang === 'id' ? 'Keputusan Eksekutif' : 'Executive Decision'}
-            </div>
+          {/* Screen Title */}
+          <div className="w-full text-center shrink-0">
+            <h2 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+              {lang === 'id' ? 'Keputusan Eksekutif' : lang === 'th' ? 'การตัดสินใจของผู้บริหาร' : 'Executive Decision'}
+            </h2>
           </div>
 
-          {/* Decision Card */}
-          <div className="w-full bg-white rounded-xl shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] outline outline-2 outline-offset-[-2px] outline-neutral-200 p-[18px] flex flex-col gap-3">
-            {/* Option row */}
-            <div className="flex items-start gap-4">
-              <div className="w-12 h-12 shrink-0 rounded-2xl bg-white shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex justify-center items-center">
-                <span className="text-stone-300 text-2xl font-extrabold font-['Nunito'] leading-4">{choice}</span>
+          {/* Decision Card Box */}
+          <div className="w-full bg-gray-800 rounded-xl shadow-[0px_2px_0px_0px_rgba(52,55,64,1.00)] outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5 flex flex-col gap-4 text-left shrink-0">
+            {/* Option Row */}
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 shrink-0 rounded-2xl bg-red-500 shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 flex justify-center items-center text-white text-2xl font-extrabold font-['Nunito']">
+                {choice}
               </div>
-              <div className="flex flex-col gap-1 min-w-0 pt-1">
-                <span className="text-neutral-600 text-base font-extrabold font-['Nunito'] leading-4">
+              <div className="flex flex-col gap-1 min-w-0 pt-0.5">
+                <span className="text-white text-base font-extrabold font-['Nunito'] leading-tight">
                   {selectedOption.label}
                 </span>
-                <p className="text-zinc-400 text-xs font-semibold font-['Nunito'] leading-4 mt-1">
+                <p className="text-zinc-400 text-xs font-semibold font-['Nunito'] leading-relaxed">
                   {selectedOption.description}
                 </p>
               </div>
             </div>
 
-            {/* Divider and Veto banner — only shown if vetoUsed */}
+            {/* Veto Banner — only shown if vetoUsed */}
             {vetoUsed && (
               <>
-                <div className="-mx-[18px] h-0.5 bg-neutral-200" />
-                <div className="w-full bg-orange-100 rounded-xl border-2 border-amber-500 p-4 flex flex-col gap-1">
-                  <span className="text-amber-500 text-xl font-extrabold font-['Nunito'] leading-5">
-                    {lang === 'id' ? 'Veto Walikota Digunakan' : "Mayor's Veto Invoked"}
+                <div className="w-full h-0.5 bg-zinc-700" />
+                <div className="w-full bg-amber-700/80 rounded-xl p-4 flex flex-col gap-1 border border-amber-500/50">
+                  <span className="text-white text-xl font-extrabold font-['Nunito'] leading-5">
+                    {lang === 'id' ? 'Veto Walikota Digunakan' : lang === 'th' ? 'มีการใช้วีโต้ของนายกเทศมนตรี' : "Mayor's Veto Invoked"}
                   </span>
-                  <p className="text-amber-500 text-sm font-medium font-['Inter'] leading-6">
+                  <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                     "{justification}"
                   </p>
                 </div>
@@ -332,30 +350,28 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
           </div>
 
           {/* City Indicator Adjustments */}
-          <div className="flex flex-col gap-2">
-            <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-              {lang === 'id' ? 'Penyesuaian Indikator Kota' : 'City Indicator Adjustments'}
-            </span>
+          <div className="w-full space-y-2 shrink-0">
+            <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9 text-center w-full">
+              {lang === 'id' ? 'Penyesuaian Indikator Kota' : lang === 'th' ? 'การปรับเปลี่ยนตัวชี้วัดของเมือง' : 'City Indicator Adjustments'}
+            </h3>
 
-            <div className="w-full bg-white rounded-xl border-2 border-neutral-200 overflow-hidden">
+            <div className="w-full bg-gray-800 rounded-xl border-2 border-zinc-700 overflow-hidden text-left">
               {Object.entries(indicatorChanges).map(([key, change], idx, arr) => {
                 const finalVal = newIndicators[key as keyof IndicatorChanges];
                 return (
                   <div key={key} className="flex flex-col">
-                    <div className="flex items-center justify-between px-5 py-3">
-                      <div className="flex items-center gap-4">
-                        <span className="text-red-500 text-3xl font-extrabold font-['Nunito'] w-10 text-center shrink-0">
-                          {finalVal}
-                        </span>
-                        <span className="text-neutral-600 text-base font-extrabold font-['Nunito'] leading-4">
-                          {getIndicatorLabel(key)}
-                        </span>
-                      </div>
-                      <span className={`text-lg font-extrabold font-['Nunito'] w-8 text-center ${change >= 0 ? 'text-lime-500' : 'text-red-500'}`}>
+                    <div className="flex items-center justify-between px-5 py-3.5 gap-3">
+                      <span className="text-amber-500 text-xl sm:text-2xl font-extrabold font-['Nunito'] w-10 text-center shrink-0">
+                        {finalVal}
+                      </span>
+                      <span className="text-white text-base font-extrabold font-['Nunito'] flex-1 leading-snug">
+                        {getIndicatorLabel(key)}
+                      </span>
+                      <span className={`text-base font-extrabold font-['Nunito'] w-10 text-right shrink-0 ${change >= 0 ? 'text-[#5CACE2]' : 'text-red-400'}`}>
                         {change >= 0 ? `+${change}` : change}
                       </span>
                     </div>
-                    {idx < arr.length - 1 && <div className="w-full h-0.5 bg-neutral-200" />}
+                    {idx < arr.length - 1 && <div className="w-full h-0.5 bg-zinc-700" />}
                   </div>
                 );
               })}
@@ -363,70 +379,76 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
           </div>
 
           {/* Realized Advantages */}
-          <div className="flex flex-col gap-1">
-            <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-              {lang === 'id' ? 'Keuntungan yang Direalisasikan' : 'Realized Advantages'}
-            </span>
-            <div className="w-full bg-neutral-100 rounded-xl outline outline-2 outline-offset-[-2px] outline-neutral-200 overflow-hidden px-5 py-3">
-              <p className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6">
+          <div className="w-full space-y-2 shrink-0 text-left">
+            <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+              {lang === 'id' ? 'Keuntungan yang Direalisasikan' : lang === 'th' ? 'ผลประโยชน์ที่ได้รับจริง' : 'Realized Advantages'}
+            </h3>
+            <div className="w-full bg-gray-800 rounded-xl outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5">
+              <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                 {selectedOption.advantages}
               </p>
             </div>
           </div>
 
           {/* Realized Risks */}
-          <div className="flex flex-col gap-1">
-            <span className="text-neutral-600 text-xl font-extrabold font-['Nunito'] leading-9">
-              {lang === 'id' ? 'Risiko yang Direalisasikan' : 'Realized Risks'}
-            </span>
-            <div className="w-full bg-neutral-100 rounded-xl outline outline-2 outline-offset-[-2px] outline-neutral-200 overflow-hidden px-5 py-3">
-              <p className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6">
+          <div className="w-full space-y-2 shrink-0 text-left">
+            <h3 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+              {lang === 'id' ? 'Risiko yang Direalisasikan' : lang === 'th' ? 'ความเสี่ยงที่เกิดขึ้นจริง' : 'Realized Risks'}
+            </h3>
+            <div className="w-full bg-gray-800 rounded-xl outline outline-2 outline-offset-[-2px] outline-zinc-700 p-5">
+              <p className="text-white text-sm font-medium font-['Inter'] leading-relaxed">
                 {selectedOption.risks}
               </p>
             </div>
           </div>
 
           {/* Awaiting Facilitator Wait Statement */}
-          <div className="text-center py-5 bg-white border border-dashed border-neutral-200 rounded-2xl max-w-md mx-auto w-full flex items-center justify-center gap-2.5">
-            <span className="inline-block w-2.5 h-2.5 bg-lime-500 rounded-full animate-ping" />
-            <span className="text-xs font-extrabold text-neutral-400 font-['Nunito'] uppercase tracking-wider">
-              {lang === 'id' ? 'Menunggu fasilitator melanjutkan sesi...' : 'Awaiting facilitator to advance the session...'}
-            </span>
+          <div className="w-full text-center py-5 px-4 shrink-0 mt-auto space-y-3">
+            <div className="flex items-center justify-center gap-1.5 mb-2.5">
+              <span className="inline-block w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+              <span className="inline-block w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+              <span className="inline-block w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+            </div>
+            <div className="text-sm font-extrabold font-['Nunito'] text-slate-200 leading-snug max-w-xs mx-auto">
+              {lang === 'id' ? 'Menunggu fasilitator melanjutkan sesi...' : lang === 'th' ? 'กำลังรอผู้ดำเนินรายการดำเนินการเซสชันต่อ...' : 'Awaiting facilitator to advance the session...'}
+            </div>
           </div>
 
-          <div className="h-2 shrink-0" />
+          <div className="h-4 shrink-0" />
         </div>
       </div>
 
       {/* Stats Modal Overlay */}
       {showStatsModal && (
-        <div className="absolute inset-0 z-50 bg-slate-950/40 backdrop-blur-sm animate-fade-in flex justify-center items-center p-4">
-          <div className="w-[410px] max-h-[90%] bg-white rounded-3xl p-6 shadow-2xl overflow-y-auto border-2 border-neutral-200 flex flex-col justify-between">
+        <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm animate-fade-in flex justify-center items-start sm:items-center p-4 pt-6 sm:pt-4 overflow-y-auto">
+          <div className="w-[410px] max-h-[90%] bg-neutral-900 rounded-3xl p-6 shadow-2xl overflow-y-auto border-2 border-neutral-700 flex flex-col justify-between text-white">
             <div>
-              <div className="flex items-center justify-between border-b border-slate-100 pb-3 mb-4">
-                <span className="text-lg font-black text-slate-800 uppercase tracking-wider">
-                  City Indicators
+              <div className="flex items-center justify-between border-b border-neutral-800 pb-3 mb-4">
+                <span className="text-lg font-extrabold font-['Nunito'] text-white uppercase tracking-wider">
+                  {lang === 'id' ? 'Indikator Kota' : lang === 'th' ? 'ตัวชี้วัดของเมือง' : 'City Indicators'}
                 </span>
                 <button
                   type="button"
                   onClick={() => setShowStatsModal(false)}
-                  className="text-sm font-bold text-neutral-400 hover:text-neutral-600 cursor-pointer"
+                  className="text-sm font-bold text-zinc-400 hover:text-white cursor-pointer"
                 >
-                  Close
+                  {lang === 'id' ? 'Tutup' : lang === 'th' ? 'ปิด' : 'Close'}
                 </button>
               </div>
               {indicators ? (
-                <Dashboard indicators={indicators} />
+                <Dashboard indicators={indicators} flat />
               ) : (
-                <div className="text-center py-6 text-neutral-500 font-semibold">No data available</div>
+                <div className="text-center py-6 text-zinc-400 font-semibold font-['Nunito']">
+                  {lang === 'id' ? 'Tidak ada data tersedia' : lang === 'th' ? 'ไม่มีข้อมูล' : 'No data available'}
+                </div>
               )}
             </div>
             <button
               type="button"
               onClick={() => setShowStatsModal(false)}
-              className="w-full mt-6 bg-lime-600 hover:bg-lime-700 text-white py-3 rounded-2xl text-sm font-bold transition-all shadow-[0px_2px_0px_0px_rgba(0,0,0,0.20)] border-2 border-black/20 cursor-pointer"
+              className="w-full mt-6 bg-[#5CACE2] hover:opacity-90 text-white py-3 rounded-2xl text-sm font-extrabold font-['Nunito'] uppercase tracking-wide transition-all shadow-md cursor-pointer"
             >
-              Close
+              {lang === 'id' ? 'Tutup' : lang === 'th' ? 'ปิด' : 'Close'}
             </button>
           </div>
         </div>

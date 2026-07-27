@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Check, ChevronLeft, Copy } from 'lucide-react';
+import { Check, ArrowLeft, Copy } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 
 export interface LobbyPlayer {
@@ -19,7 +19,15 @@ interface LobbyViewProps {
   isCancelled?: boolean;
 }
 
-const avatarColors = ['bg-red-500', 'bg-amber-500', 'bg-sky-500', 'bg-lime-600', 'bg-fuchsia-500'];
+const avatarBgColors = [
+  'bg-red-500',
+  'bg-amber-500',
+  'bg-sky-500',
+  'bg-emerald-500',
+  'bg-indigo-500',
+  'bg-purple-500',
+  'bg-rose-500'
+];
 
 export const LobbyView: React.FC<LobbyViewProps> = ({
   roomCode,
@@ -46,77 +54,80 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   const visiblePlayers = players.slice(0, visibleCount);
 
   return (
-    <div className="min-h-screen w-full flex justify-center items-start font-['Nunito']">
-      <div className="relative w-full sm:max-w-[480px] min-h-screen bg-white flex flex-col justify-between px-8 py-8 sm:py-12">
+    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
+      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
+      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center px-6 py-6 sm:py-8">
         
-        {/* Header Section */}
-        <div className="flex items-center gap-3 w-full shrink-0">
+        {/* Top Header */}
+        <div className="w-full max-w-[384px] flex items-center justify-start gap-4 pt-2 mx-auto">
           <button
             type="button"
             onClick={onCancelSession}
-            aria-label={t('common.back')}
-            className="p-1.5 rounded-xl bg-slate-50 hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition-all border border-slate-100 cursor-pointer focus:outline-none flex items-center justify-center shadow-sm"
+            className="p-1 text-white hover:opacity-80 transition-all flex items-center justify-center cursor-pointer active:scale-95 focus:outline-none shrink-0"
+            title={t('common.back')}
           >
-            <ChevronLeft className="size-5 stroke-[2.5]" />
+            <ArrowLeft className="w-6 h-6 text-white" />
           </button>
-          <span className="text-slate-700 text-lg font-black leading-7 select-none">
-            Session Lobby (Waiting Room)
-          </span>
+          <h1 className="text-white text-base sm:text-lg font-extrabold font-['Nunito'] leading-7 truncate">
+            {t('lobby.badge')} ({t('lobby.title')})
+          </h1>
         </div>
 
-        {/* Central Content (Share Room Code & Joined list) */}
-        <div className="flex-grow overflow-y-auto no-scrollbar py-6 space-y-6 flex flex-col items-center">
+        {/* Middle Scrollable Section: Share Code, Count, Delegates */}
+        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center mx-auto py-4 space-y-4 overflow-y-auto no-scrollbar">
           
-          {/* Share Code Button (Refactored to be fluid and responsive) */}
+          {/* Share Room Code Banner */}
           <button
             type="button"
             onClick={handleCopy}
-            className="relative flex items-center justify-between w-full h-28 bg-lime-600 hover:bg-lime-700 rounded-xl px-6 text-white shadow-[0px_4px_0px_0px_#46A302] hover:translate-y-0.5 hover:shadow-[0px_2px_0px_0px_#46A302] active:translate-y-1 active:shadow-none transition-all cursor-pointer text-left shrink-0"
+            className="w-full h-28 bg-[#5CACE2] rounded-xl shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] p-4 flex items-center justify-between transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 shrink-0 text-left"
           >
-            <div className="flex flex-col justify-center">
-              <span className="text-xs font-extrabold uppercase tracking-wider text-lime-100 opacity-90 mb-1">
+            <div className="flex flex-col justify-center space-y-1">
+              <span className="text-white text-xs font-extrabold font-['Nunito'] uppercase tracking-wide opacity-90">
                 {t('lobby.share_code')}
               </span>
-              <span className="text-3xl sm:text-4xl font-black tracking-wide leading-none">
+              <span className="text-white text-2xl sm:text-3xl font-black font-['Nunito'] leading-none tracking-wider">
                 {roomCode}
               </span>
             </div>
-            
-            <div className="flex items-center gap-4">
-              <div className="w-[1px] h-16 bg-lime-700/60" />
-              <div className="flex items-center justify-center w-12 h-12 text-white shrink-0">
-                {copied ? <Check className="size-8 stroke-[4]" /> : <Copy className="size-8 stroke-[3.5]" />}
+
+            <div className="flex items-center gap-3.5 h-full">
+              <div className="w-0.5 -my-4 h-[112px] bg-[#2470A2]" />
+              <div className="flex items-center justify-center w-10 h-10 text-white shrink-0">
+                {copied ? (
+                  <Check className="w-8 h-8 stroke-[3]" />
+                ) : (
+                  <Copy className="w-8 h-8 stroke-[2.5]" />
+                )}
               </div>
             </div>
           </button>
 
-          {/* Joined Delegates Status */}
-          <div className="w-full text-left text-xl font-extrabold text-neutral-600 pt-2 shrink-0">
+          {/* Joined Delegates Header */}
+          <div className="w-full text-left text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-5 pt-2 shrink-0">
             {playerCount}/{maxPlayers} {t('lobby.joined_delegates')}
           </div>
 
-          {/* Delegates List Wrapper */}
-          <div className="w-full flex-grow space-y-[15px]">
+          {/* Delegates Cards List */}
+          <div className={`w-full space-y-3.5 ${visiblePlayers.length === 0 ? 'flex-grow flex flex-col justify-center' : 'shrink-0'}`}>
             {visiblePlayers.length === 0 ? (
-              <div className="flex h-20 items-center justify-center rounded-xl border-2 border-neutral-200 bg-white px-5 text-center text-sm font-extrabold text-neutral-400">
+              <div className="py-16 my-auto text-center text-sm font-bold text-slate-300 font-['Nunito']">
                 {t('lobby.no_delegates')}
               </div>
             ) : (
               visiblePlayers.map((player, index) => (
                 <div
                   key={player.id}
-                  className="flex h-20 items-center rounded-xl border-2 border-neutral-200 bg-white px-[20px] shrink-0"
+                  className="w-full h-20 bg-white rounded-md border-2 border-neutral-200 px-4 flex items-center gap-4 shrink-0"
                 >
-                  <div className={`flex size-12 shrink-0 items-center justify-center rounded-full ${avatarColors[index % avatarColors.length]}`}>
-                    <span className="text-lg font-extrabold text-white">
-                      {player.full_name.charAt(0).toUpperCase()}
-                    </span>
+                  <div className={`size-14 rounded-full flex items-center justify-center text-white text-2xl font-extrabold font-['Nunito'] shrink-0 ${avatarBgColors[index % avatarBgColors.length]}`}>
+                    {player.full_name.charAt(0).toUpperCase()}
                   </div>
-                  <div className="ml-[16px] min-w-0 text-left">
-                    <div className="truncate text-lg font-extrabold text-neutral-600 leading-tight">
+                  <div className="flex flex-col items-start justify-center min-w-0 text-left">
+                    <div className="text-neutral-600 text-lg sm:text-xl font-extrabold font-['Nunito'] leading-5 truncate w-full">
                       {player.full_name}
                     </div>
-                    <div className="mt-0.5 truncate font-['Inter'] text-xs font-medium text-neutral-500">
+                    <div className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6 mt-0.5 truncate w-full">
                       {player.country}
                     </div>
                   </div>
@@ -125,52 +136,61 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
             )}
           </div>
 
-          {/* Load More Button */}
+          {/* Load More Link */}
           {players.length > visibleCount && (
             <button
               type="button"
               onClick={() => setVisibleCount(count => Math.min(count + 3, players.length))}
-              className="w-full text-center text-sm font-extrabold text-sky-400 hover:text-sky-500 transition-colors py-2 shrink-0"
+              className="text-white text-base font-extrabold font-['Nunito'] leading-7 hover:opacity-80 transition-all cursor-pointer pt-1 pb-2 shrink-0"
             >
-              Load More
+              {t('lobby.load_more')}
             </button>
           )}
 
         </div>
 
-        {/* Footer Buttons Section */}
-        <div className="w-full shrink-0 space-y-3 pt-2">
+        {/* Bottom Section: Action Buttons */}
+        <div className="w-full max-w-[384px] flex flex-col items-center mx-auto space-y-3.5 pb-2 shrink-0">
+          
+          {/* Start Assembly Button (For Facilitator) or Waiting Status (For Players) */}
           {isFacilitator ? (
             <button
               type="button"
               onClick={onStartGame}
               disabled={!isCountValid}
-              className={`w-full h-12 flex items-center justify-center rounded-xl bg-white p-2.5 text-sm font-extrabold uppercase tracking-wide shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] outline outline-2 outline-offset-[-2px] outline-neutral-200 transition-all hover:translate-y-px hover:bg-neutral-50 active:translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-50 ${
-                isCountValid ? 'text-sky-500' : 'text-pink-400'
+              data-button="Primary"
+              className={`w-full max-w-[384px] h-12 p-2.5 rounded-md inline-flex justify-center items-center gap-2.5 transition-all focus:outline-none ${
+                isCountValid 
+                  ? 'bg-[#5CACE2] shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] hover:opacity-90 cursor-pointer active:translate-y-0.5' 
+                  : 'bg-[#1C2C39] shadow-[0px_4px_0px_0px_rgba(12,20,28,1.00)] cursor-not-allowed'
               }`}
             >
-              {t('lobby.btn_start')}
+              <div className={`text-sm font-extrabold font-['Nunito'] uppercase tracking-wide ${isCountValid ? 'text-white' : 'text-zinc-500'}`}>
+                {t('lobby.btn_start')}
+              </div>
             </button>
           ) : (
-            <div className="w-full h-12 flex items-center justify-center rounded-xl border-2 border-neutral-200 bg-white px-4 text-center text-xs font-extrabold uppercase tracking-wide text-neutral-400">
-              {isCancelled ? (
-                <span className="text-red-500 font-extrabold">{t('lobby.session_cancelled')}</span>
-              ) : (
-                t('lobby.waiting_facil')
-              )}
+            <div className="w-full max-w-[384px] py-3 text-center text-slate-300 text-sm font-extrabold font-['Nunito'] tracking-wide">
+              {isCancelled ? t('lobby.session_cancelled') : t('lobby.waiting_facil')}
             </div>
           )}
 
+          {/* Secondary Action: Cancel Session */}
           <button
             type="button"
             onClick={onCancelSession}
-            className="w-full h-12 flex items-center justify-center rounded-xl bg-white p-2.5 text-sm font-extrabold uppercase tracking-wide text-pink-400 shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] outline outline-2 outline-offset-[-2px] outline-neutral-200 transition-all hover:translate-y-px hover:bg-neutral-50 active:translate-y-0.5"
+            data-button="Outline-Secondary"
+            className="w-full max-w-[384px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5 focus:outline-none"
           >
-            {isCancelled ? t('common.back') : 'Cancel session'}
+            <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {isCancelled ? t('common.back') : t('lobby.cancel_session')}
+            </div>
           </button>
+
         </div>
 
       </div>
     </div>
   );
 };
+

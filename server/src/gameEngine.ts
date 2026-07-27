@@ -100,7 +100,7 @@ export function calcFPS(s: GameStateValues): number {
   else modifier = 0.95;
 
   const result = ps * modifier;
-  return Math.min(100, Math.max(0, result));
+  return Math.min(100, result);
 }
 
 export interface ArchetypeCandidate {
@@ -155,7 +155,11 @@ export function resolveArchetypes(s: GameStateValues): string[] {
 
   // Deduplicate
   const uniqueNames = sortedNames.filter((v, i, a) => a.indexOf(v) === i);
-  
+
+  if (uniqueNames.length === 0) {
+    return ["Developing City"];
+  }
+
   return uniqueNames.slice(0, 3);
 }
 

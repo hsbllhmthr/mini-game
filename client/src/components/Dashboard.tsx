@@ -31,56 +31,87 @@ export const Dashboard: React.FC<DashboardProps> = ({
   flat = false
 }) => {
   const getIndicatorColor = (value: number) => {
+    if (value < 0) return 'bg-rose-500';
     if (value >= 70) return 'bg-emerald-500';
     if (value >= 40) return 'bg-amber-500';
     return 'bg-rose-500';
   };
 
   const getIndicatorBgColor = (value: number) => {
+    if (value < 0) return 'bg-rose-500/10 text-rose-600 dark:text-rose-400';
     if (value >= 70) return 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400';
     if (value >= 40) return 'bg-amber-500/10 text-amber-600 dark:text-amber-400';
     return 'bg-rose-500/10 text-rose-600 dark:text-rose-400';
   };
 
+  const lang = localStorage.getItem('tpa_lang') || 'en';
+
+  const indicatorLabels: Record<string, Record<string, string>> = {
+    id: {
+      economic_growth: 'Pertumbuhan Ekonomi',
+      government_budget: 'Anggaran Pemerintah',
+      people_welfare: 'Kesejahteraan Masyarakat',
+      public_trust: 'Kepercayaan Publik',
+      environmental_quality: 'Kualitas Lingkungan',
+      transparency: 'Transparansi',
+    },
+    en: {
+      economic_growth: 'Economic Growth',
+      government_budget: 'Government Budget',
+      people_welfare: 'People Welfare',
+      public_trust: 'Public Trust',
+      environmental_quality: 'Environmental Quality',
+      transparency: 'Transparency',
+    },
+    th: {
+      economic_growth: 'การเติบโตทางเศรษฐกิจ',
+      government_budget: 'งบประมาณรัฐบาล',
+      people_welfare: 'สวัสดิการประชาชน',
+      public_trust: 'ความไว้วางใจของสาธารณชน',
+      environmental_quality: 'คุณภาพสิ่งแวดล้อม',
+      transparency: 'ความโปร่งใส',
+    }
+  };
+
   const list = [
     {
       key: 'economic_growth' as const,
-      label: 'Economic Growth',
+      label: indicatorLabels[lang]?.economic_growth || 'Economic Growth',
       icon: TrendingUp,
       value: indicators.economic_growth,
       prev: previousIndicators?.economic_growth
     },
     {
       key: 'government_budget' as const,
-      label: 'Government Budget',
+      label: indicatorLabels[lang]?.government_budget || 'Government Budget',
       icon: DollarSign,
       value: indicators.government_budget,
       prev: previousIndicators?.government_budget
     },
     {
       key: 'people_welfare' as const,
-      label: 'People Welfare',
+      label: indicatorLabels[lang]?.people_welfare || 'People Welfare',
       icon: Users,
       value: indicators.people_welfare,
       prev: previousIndicators?.people_welfare
     },
     {
       key: 'public_trust' as const,
-      label: 'Public Trust',
+      label: indicatorLabels[lang]?.public_trust || 'Public Trust',
       icon: ShieldCheck,
       value: indicators.public_trust,
       prev: previousIndicators?.public_trust
     },
     {
       key: 'environmental_quality' as const,
-      label: 'Environmental Quality',
+      label: indicatorLabels[lang]?.environmental_quality || 'Environmental Quality',
       icon: Leaf,
       value: indicators.environmental_quality,
       prev: previousIndicators?.environmental_quality
     },
     {
       key: 'transparency' as const,
-      label: 'Transparency',
+      label: indicatorLabels[lang]?.transparency || 'Transparency',
       icon: Eye,
       value: indicators.transparency,
       prev: previousIndicators?.transparency
@@ -112,7 +143,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div className="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full overflow-hidden mt-1.5">
                 <div 
                   className={`h-full rounded-full transition-all duration-1000 ${getIndicatorColor(item.value)}`} 
-                  style={{ width: `${item.value}%` }}
+                  style={{ width: `${Math.max(0, Math.min(100, item.value))}%` }}
                 />
               </div>
             </div>
@@ -140,7 +171,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
                   {item.label}
                 </span>
                 <div className="flex items-center gap-2">
-                  <span className="text-zinc-400 text-sm font-semibold font-['Nunito']">
+                  <span className={`text-sm font-extrabold font-['Nunito'] ${item.value < 0 ? 'text-rose-400' : 'text-zinc-400'}`}>
                     {item.value}
                   </span>
                   {diff !== 0 && (
@@ -152,8 +183,8 @@ export const Dashboard: React.FC<DashboardProps> = ({
               </div>
               <div className="w-full h-4 bg-neutral-200 rounded-lg overflow-hidden relative">
                 <div 
-                  className="h-full rounded-lg transition-all duration-1000 bg-yellow-400"
-                  style={{ width: `${item.value}%` }}
+                  className={`h-full rounded-lg transition-all duration-1000 ${item.value < 0 ? 'bg-rose-500' : 'bg-yellow-400'}`}
+                  style={{ width: `${Math.max(0, Math.min(100, item.value))}%` }}
                 />
                 {item.value > 0 && (
                   <div className="absolute left-2 top-[4px] h-[5px] w-6 bg-white/20 rounded-lg" />

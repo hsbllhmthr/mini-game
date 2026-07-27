@@ -22,8 +22,7 @@ import type { Indicators } from './components/Dashboard.js';
 
 // Icons
 import { Compass, Activity, LogOut } from 'lucide-react';
-import { SCENARIOS } from './gameConstants.js';
-import type { PlayerRole, Scenario } from './gameConstants.js';
+import { SCENARIOS, ROLE_DESCRIPTIONS, ROLE_OBJECTIVES, SECRET_INFO, type PlayerRole, type Scenario } from './gameConstants.js';
 
 type ScreenState = 
   | 'landing' 
@@ -109,24 +108,9 @@ function App() {
   // Toggle mobile dashboard view overlay
   const [showMobileDashboard, setShowMobileDashboard] = useState(false);
 
-  // Auto Reconnection check on mount
+  // Ensure clean landing page on app load (no auto-reconnect on mount)
   useEffect(() => {
-    const cachedFacilToken = localStorage.getItem('tpa_facilitator_token');
-    const cachedFacilRoom = localStorage.getItem('tpa_facilitator_room_code');
-    const cachedPlayerRoom = localStorage.getItem('tpa_player_room_code');
-    const cachedPlayerName = localStorage.getItem('tpa_player_name');
-    
-    if (cachedFacilToken && cachedFacilRoom) {
-      console.log(`[Auto-Reconnection] Resuming facilitator session for room ${cachedFacilRoom}`);
-      // Set state early to avoid flicker or redirect
-      setRoomCode(cachedFacilRoom);
-      setFacilitatorToken(cachedFacilToken);
-      setIsFacilitator(true);
-      handleFacilitatorSuccess(cachedFacilRoom, cachedFacilToken);
-    } else if (cachedPlayerRoom && cachedPlayerName) {
-      console.log(`[Auto-Reconnection] Resuming player session for room ${cachedPlayerRoom}`);
-      handlePlayerJoin(cachedPlayerRoom, cachedPlayerName, localStorage.getItem('tpa_player_country') || '', true);
-    }
+    // Keep app at initial 'landing' screen
   }, []);
 
   // Connect socket and register listeners
@@ -264,12 +248,59 @@ function App() {
 
     socket.on('player:role_assigned', (assignedRoleInfo) => {
       setRole(assignedRoleInfo.role);
-      setRoleInfo(assignedRoleInfo);
+      const currentLang = localStorage.getItem('tpa_lang') || 'en';
+      const roleKey = assignedRoleInfo.role as PlayerRole;
+      if (roleKey && ROLE_DESCRIPTIONS[currentLang] && ROLE_OBJECTIVES[currentLang] && SECRET_INFO[currentLang]) {
+        setRoleInfo({
+          role: roleKey,
+          description: ROLE_DESCRIPTIONS[currentLang][roleKey] || assignedRoleInfo.description,
+          objective: ROLE_OBJECTIVES[currentLang][roleKey] || assignedRoleInfo.objective,
+          secret_info: SECRET_INFO[currentLang][roleKey] || assignedRoleInfo.secret_info,
+        });
+      } else {
+        setRoleInfo(assignedRoleInfo);
+      }
     });
 
     socket.on('game:scenario_opened', ({ scenario_index, scenario: scenarioData }) => {
       setScenarioIndex(scenario_index);
-      setScenario(scenarioData);
+      const currentLang = localStorage.getItem('tpa_lang') || 'en';
+      const rawScenario = SCENARIOS[scenario_index];
+      if (rawScenario) {
+        setScenario({
+          id: rawScenario.id,
+          title: (rawScenario.title as any)[currentLang] || rawScenario.title.en,
+          description: (rawScenario.description as any)[currentLang] || rawScenario.description.en,
+          challengeSummary: (rawScenario.challengeSummary as any)[currentLang] || rawScenario.challengeSummary.en,
+          stakeholderPositions: (rawScenario.stakeholderPositions as any)[currentLang] || rawScenario.stakeholderPositions.en,
+          options: {
+            A: { 
+              ...rawScenario.options.A, 
+              label: (rawScenario.options.A.label as any)[currentLang] || rawScenario.options.A.label.en,
+              description: (rawScenario.options.A.description as any)[currentLang] || rawScenario.options.A.description.en,
+              advantages: (rawScenario.options.A.advantages as any)[currentLang] || rawScenario.options.A.advantages.en,
+              risks: (rawScenario.options.A.risks as any)[currentLang] || rawScenario.options.A.risks.en,
+            },
+            B: { 
+              ...rawScenario.options.B, 
+              label: (rawScenario.options.B.label as any)[currentLang] || rawScenario.options.B.label.en,
+              description: (rawScenario.options.B.description as any)[currentLang] || rawScenario.options.B.description.en,
+              advantages: (rawScenario.options.B.advantages as any)[currentLang] || rawScenario.options.B.advantages.en,
+              risks: (rawScenario.options.B.risks as any)[currentLang] || rawScenario.options.B.risks.en,
+            },
+            C: { 
+              ...rawScenario.options.C, 
+              label: (rawScenario.options.C.label as any)[currentLang] || rawScenario.options.C.label.en,
+              description: (rawScenario.options.C.description as any)[currentLang] || rawScenario.options.C.description.en,
+              advantages: (rawScenario.options.C.advantages as any)[currentLang] || rawScenario.options.C.advantages.en,
+              risks: (rawScenario.options.C.risks as any)[currentLang] || rawScenario.options.C.risks.en,
+            },
+          },
+          reflection: (rawScenario.reflection as any)[currentLang] || rawScenario.reflection.en,
+        });
+      } else {
+        setScenario(scenarioData);
+      }
       setScreen('scenario_display');
       setVoteSummary(null);
       setChoice('');

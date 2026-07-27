@@ -33,6 +33,9 @@
 20. [Deliverables](#20-deliverables)
 21. [Development Milestones](#21-development-milestones)
 22. [Risks & Open Questions](#22-risks--open-questions)
+23. [Development Gaps & Audit Notes (July 2026 Audit)](#23-development-gaps--audit-notes-july-2026-audit)
+24. [Post-M2 Stakeholder Feedback (July 2026)](#24-post-m2-stakeholder-feedback-july-2026)
+25. [Audit Kode — Temuan & Rencana Perbaikan](#25-audit-kode--temuan--rencana-perbaikan-per-item-feedback-24)
 
 ---
 
@@ -1494,5 +1497,183 @@ During the codebase audit on July 6, 2026, the following discrepancies and gaps 
 
 ---
 
+## 24. Post-M2 Stakeholder Feedback (July 2026)
+
+Feedback berikut diterima dari klien/stakeholder setelah selesainya Milestone 2 (Core Game Loop). Seluruh poin di bawah ini wajib ditindaklanjuti sebelum Milestone 3.
+
+**Tanggal Feedback:** Juli 2026
+**Sumber:** Stakeholder Review — Post-M2
+
+---
+
+### 24.1 Konsistensi Penamaan / Terminologi (UI/UX)
+
+- **Feedback:** Gunakan istilah yang konsisten sesuai proposal, baik dalam Bahasa Indonesia maupun Bahasa Inggris. Jangan menggunakan istilah seperti *"City Governance"* apabila nama resmi yang digunakan dalam proposal adalah **"The People's Assembly Game"**.
+- **Action Required:** Audit seluruh teks di UI (label tombol, judul halaman, header, notifikasi) dan pastikan nama produk yang tampil selalu menggunakan **"The People's Assembly"** atau singkatan resminya. Hapus semua penggunaan nama alternatif yang tidak sesuai proposal.
+- **Priority:** High
+
+---
+
+### 24.2 Pilihan Bahasa (Language Selection)
+
+- **Feedback:** Pilihan bahasa sebaiknya hanya mencakup **Bahasa Indonesia, Bahasa Inggris, dan Bahasa Thailand** sesuai proposal. Jika menampilkan nama negara, pastikan menggunakan nama resmi/formal agar konsisten dan akurat.
+- **Action Required:**
+  - Batasi opsi bahasa hanya pada 3 bahasa resmi: `en` (English), `id` (Bahasa Indonesia), `th` (Thai/ภาษาไทย).
+  - Hapus bahasa lain yang mungkin muncul di language selector.
+  - Untuk dropdown Country, gunakan nama negara resmi/formal (contoh: "Timor-Leste" bukan "East Timor", "Türkiye" bukan "Turkey").
+- **Priority:** High
+
+---
+
+### 24.3 Visual Identity & Font Size (UI/UX)
+
+- **Feedback:** Ukuran font saat ini terlalu besar dan tampilan keseluruhan masih sangat menyerupai Duolingo. Mohon dibuat lebih berbeda agar memiliki **identitas visual sendiri**. Selain itu, gunakan **color palette yang telah diberikan** agar branding lebih konsisten.
+- **Action Required:**
+  - Review dan perkecil ukuran font di seluruh halaman player agar proporsional dan tidak mendominasi layar.
+  - Rancang ulang visual identity agar tidak menyerupai Duolingo — pertimbangkan layout yang lebih formal/governmental, tone warna yang lebih serius.
+  - Implementasikan color palette resmi yang sudah diberikan oleh klien ke seluruh komponen (tombol, background, header, indikator).
+  - Pastikan perubahan diterapkan konsisten di semua screen (Lobby, Role Reveal, Voting, Outcome Reveal, dll.).
+- **Priority:** High
+
+---
+
+### 24.4 Halaman Penjelasan per Case / Scenario dengan Visual (FR-06)
+
+- **Feedback:** Belum terdapat halaman yang menjelaskan setiap *case* beserta visualnya. Sebelumnya sudah diminta agar setiap scenario/case memiliki **halaman penjelasan dengan ilustrasi atau visual yang sesuai**.
+- **Action Required:**
+  - Tambahkan ilustrasi atau visual (gambar/ikon/infografis) yang relevan di setiap halaman Scenario Display (FR-06) untuk masing-masing skenario (Scenario 1: New Industrial Zone, Scenario 2: Universal Free Education, Scenario 3: Open Forest for Mining).
+  - Setiap halaman penjelasan case harus memuat minimal satu aset visual yang mendukung konteks skenario.
+  - Koordinasikan dengan tim konten/desain untuk penyediaan aset visual per skenario.
+- **Priority:** Medium–High
+
+---
+
+### 24.5 Archetype Result Page — Tidak Boleh Kosong (FR-12)
+
+- **Feedback:** Pada halaman *Archetype Result*, yang ditampilkan saat ini hanya placeholder. Pengguna harus **selalu mendapatkan minimal satu hasil archetype** — halaman hasil tidak boleh kosong atau hanya menampilkan contoh.
+- **Action Required:**
+  - Pastikan fungsi `resolveArchetypes()` (§15.5) selalu me-return minimal 1 archetype. Jika tidak ada archetype yang memenuhi threshold, tambahkan fallback archetype (contoh: `"Developing City"` sebagai default catch-all).
+  - Pastikan data archetype dari server benar-benar dikirim dan di-render di `FinalReflectionView` / halaman Archetype Result — bukan placeholder/dummy data.
+  - Lakukan end-to-end test untuk memverifikasi archetype selalu muncul di berbagai kombinasi pilihan scenario (termasuk edge case semua indikator rendah).
+- **Priority:** High
+
+---
+
+### 24.6 Ringkasan Action Items Post-M2
+
+| # | Item | Priority | Target Milestone |
+|:--|:-----|:--------:|:----------------:|
+| 1 | Konsistensi nama produk ("The People's Assembly") di seluruh UI | High | M3 |
+| 2 | Batasi language selector: EN / ID / TH saja; gunakan nama negara formal | High | M3 |
+| 3 | Redesign visual identity; perkecil font; terapkan color palette resmi klien | High | M3 |
+| 4 | Tambah halaman/visual per scenario di Scenario Display | Medium-High | M3–M4 |
+| 5 | Archetype Result selalu tampil minimal 1 hasil; hapus placeholder | High | M3 |
+
+---
+
+## 25. Audit Kode — Temuan & Rencana Perbaikan (Per Item Feedback §24)
+
+Audit kode menyeluruh dilakukan pada seluruh file di `client/src/` dan `server/src/` untuk memetakan lokasi eksak masalah dari setiap item feedback §24. Berikut hasil lengkapnya:
+
+---
+
+### 25.1 Audit Item 24.1 — Konsistensi Nama Produk
+
+**Lokasi masalah yang ditemukan:**
+
+| File | Baris | Isi Bermasalah | Perbaikan |
+|:-----|:-----:|:---------------|:----------|
+| [`LandingView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/LandingView.tsx) | 31 | `"Civic Education Simulation"` (label badge atas) | Ganti ke `"Governance Workshop Simulation"` sesuai i18n key `landing.badge` |
+| [`LandingView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/LandingView.tsx) | 40 | `alt="City governance simulation"` (alt text gambar) | Ganti ke `alt="The People's Assembly"` |
+| [`LandingView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/LandingView.tsx) | 46 | Subtitle hardcoded: `"A city governance simulation. Discuss, vote, and see the impact on your city."` | Ganti menggunakan i18n key `landing.subtitle` yang sudah benar |
+
+**Catatan:** File `i18n.ts` dan `ReflectionView.tsx` sudah menggunakan nama resmi `"The People's Assembly"` dengan benar. Hanya `LandingView.tsx` yang bermasalah.
+
+---
+
+### 25.2 Audit Item 24.2 — Language Selector hanya EN / ID / TH
+
+**Lokasi masalah yang ditemukan:**
+
+| File | Baris | Isu |
+|:-----|:-----:|:----|
+| [`i18n.ts`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/i18n.ts) | 3 | `type Language = 'en' \| 'id' \| 'th' \| 'ph' \| 'vi' \| 'my'` — terdapat 3 kode bahasa tidak resmi |
+| [`i18n.ts`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/i18n.ts) | 131–145 | Blok terjemahan untuk `ph` (Filipino), `vi` (Vietnam), `my` (Myanmar) masih ada |
+| [`LanguageSelectView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/LanguageSelectView.tsx) | 19–26 | Array `languages` masih memuat entri `ph` (Filiphine), `vi` (Vietnam), `my` (Myanmar) |
+
+**Perbaikan yang diperlukan:**
+- Hapus `'ph' | 'vi' | 'my'` dari type `Language` di `i18n.ts`
+- Hapus blok terjemahan `ph`, `vi`, `my` dari objek `translations`
+- Hapus 3 entri dari array `languages` di `LanguageSelectView.tsx`, pertahankan hanya `id`, `en`, `th`
+
+---
+
+### 25.3 Audit Item 24.3 — Font Terlalu Besar & Visual Identity
+
+**Lokasi masalah yang ditemukan:**
+
+| File | Baris | Isu |
+|:-----|:-----:|:----|
+| [`DiscussionView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/DiscussionView.tsx) | 90 | Timer countdown menggunakan `text-7xl sm:text-8xl` — terlalu dominan |
+| [`VotingView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/VotingView.tsx) | 93 | Vote counter menggunakan `text-7xl sm:text-8xl` |
+| Seluruh komponen | — | Font keluarga `font-['Nunito']` digunakan di semua halaman — terlalu menyerupai Duolingo |
+| Seluruh komponen | — | Pola tombol `shadow-[0px_4px_0px_0px_...]` + warna `lime-600` = identik gaya Duolingo |
+
+**Perbaikan yang diperlukan:**
+- Kurangi ukuran timer: `text-7xl sm:text-8xl` → `text-5xl sm:text-6xl`
+- Ganti font primer dari `Nunito` ke `Inter` (lebih formal/governmental)
+- Ganti color primer dari `lime-600` ke color palette resmi klien _(menunggu konfirmasi hex code dari klien)_
+- Redesign pola tombol: kurangi shadow 3D menjadi flat/subtle
+
+> **Open Question:** Color palette resmi yang disebutkan klien belum dilampirkan ke tim dev. Diperlukan sebelum mengimplementasikan perubahan warna.
+
+---
+
+### 25.4 Audit Item 24.4 — Visual/Ilustrasi per Scenario
+
+**Lokasi masalah yang ditemukan:**
+
+| File | Baris | Isu |
+|:-----|:-----:|:----|
+| [`ScenarioView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/ScenarioView.tsx) | — | Tidak ada elemen `<img>` atau ilustrasi di halaman Scenario Display |
+
+**Perbaikan yang diperlukan:**
+- Generate 3 aset ilustrasi (satu per skenario): New Industrial Zone, Universal Free Education, Open Forest for Mining
+- Tambahkan logika di `ScenarioView.tsx` untuk menampilkan ilustrasi sesuai `scenarioIndex` (0, 1, 2)
+- Simpan aset di `client/src/assets/` dengan nama: `scenario_1_industrial.png`, `scenario_2_education.png`, `scenario_3_forest.png`
+
+---
+
+### 25.5 Audit Item 24.5 — Archetype Result Tidak Boleh Kosong
+
+**Lokasi masalah yang ditemukan:**
+
+| File | Baris | Isu |
+|:-----|:-----:|:----|
+| [`server/src/gameEngine.ts`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/server/src/gameEngine.ts) | 114–159 | Fungsi `resolveArchetypes()` dapat mengembalikan array kosong `[]` jika tidak ada threshold yang terpenuhi — tidak ada fallback |
+| [`ReflectionView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/ReflectionView.tsx) | 342 | Sudah ada fallback teks `'No Archetype Resolved'` tetapi seharusnya fallback ke archetype nyata, bukan pesan error |
+| [`ReflectionView.tsx`](file:///g:/CODE/NEW%202026/code-dev2/code-dev/client/src/components/ReflectionView.tsx) | 382 | Guard `{archetypes.length > 0 && (...)}` menyebabkan seluruh blok Detailed City Profile hilang jika array kosong |
+
+**Perbaikan yang diperlukan:**
+- Di `gameEngine.ts`: tambahkan fallback di akhir `resolveArchetypes()` — jika `candidates` kosong, push `{ priority: 99, name: "Developing City" }`
+- Tambahkan entri `"Developing City"` ke `ARCHETYPE_PROFILES` dan `ARCHETYPE_EXTENDED` di `ReflectionView.tsx`
+- Hapus guard `archetypes.length > 0` — ganti dengan selalu render, menggunakan fallback archetype
+
+---
+
+### 25.6 Ringkasan Status & Urutan Perbaikan
+
+| # | Item Feedback | Kompleksitas | Dependensi | Status |
+|:--|:-------------|:------------:|:----------:|:------:|
+| 1 | Hapus bahasa ph/vi/my dari `i18n.ts` + `LanguageSelectView.tsx` | Rendah | Tidak ada | ⬜ Belum |
+| 2 | Fix nama produk di `LandingView.tsx` | Rendah | Tidak ada | ⬜ Belum |
+| 3 | Fix archetype fallback di `gameEngine.ts` + `ReflectionView.tsx` | Rendah | Tidak ada | ⬜ Belum |
+| 4 | Kurangi font size di `DiscussionView.tsx` + `VotingView.tsx` | Rendah | Tidak ada | ⬜ Belum |
+| 5 | Generate & embed ilustrasi per scenario di `ScenarioView.tsx` | Sedang | Perlu generate aset | ⬜ Belum |
+| 6 | Redesign visual identity & color palette | Tinggi | **Menunggu color palette klien** | ⏳ Blocked |
+
+---
+
 _End of Document — The People's Assembly PRD v1.1 (Complete Merged)_
-_Next Review: After M2 (W1 July)_
+_Last Updated: July 2026 — Audit Kode §25 ditambahkan_
+_Next Review: After M3 (W2 July)_

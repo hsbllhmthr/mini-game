@@ -1,6 +1,7 @@
 import React from 'react';
 import { Languages } from 'lucide-react';
-import govImage from '../assets/gov.png';
+import govImage from '../assets/image1.png';
+import { useI18n } from '../i18n.js';
 
 interface LandingViewProps {
   onCreateRoom: () => void;
@@ -9,68 +10,72 @@ interface LandingViewProps {
   onSelectLanguageClick: () => void;
 }
 
-export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRoom, lang, onSelectLanguageClick }) => {
+export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRoom, onSelectLanguageClick }) => {
+  const { t } = useI18n();
+
   return (
-    <div className="min-h-screen w-full flex justify-center items-start font-['Nunito']">
-      <div className="relative w-full sm:max-w-[480px] min-h-screen bg-white flex flex-col justify-between px-6 py-8 sm:py-12">
+    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
+      {/* Background Image - Seamless full height, centered without card wrapper */}
+      <div className="absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center">
+        <img 
+          className="w-full h-full max-w-[480px] object-cover" 
+          src={govImage} 
+          alt="The People's Assembly" 
+        />
+      </div>
+
+      {/* Content Container - No card styling */}
+      <div className="relative z-10 w-full max-w-[480px] min-h-screen flex flex-col justify-between px-6 py-8 sm:py-12">
         
-        {/* Top Header Section */}
-        <div className="flex flex-col items-center w-full">
-          <div className="w-full flex justify-end mb-4">
-            <button
-              type="button"
-              onClick={onSelectLanguageClick}
-              className="inline-flex h-9 items-center justify-center gap-1.5 rounded-xl bg-white px-3.5 text-[11px] font-black uppercase tracking-[0.1em] text-slate-600 shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] border border-neutral-200 transition-all hover:bg-neutral-50 active:translate-y-0.5 cursor-pointer"
-            >
-              <Languages className="w-3.5 h-3.5 text-slate-500" />
-              <span>{lang}</span>
-            </button>
-          </div>
-          
-          <div className="text-center text-xs sm:text-sm font-extrabold uppercase tracking-wider text-zinc-400 mb-2">
-            Civic Education Simulation
-          </div>
+        {/* Top Header: Language Select Button */}
+        <div className="w-full flex justify-end">
+          <button
+            type="button"
+            onClick={onSelectLanguageClick}
+            className="w-12 h-12 rounded-2xl bg-cyan-700 shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 flex items-center justify-center cursor-pointer hover:bg-cyan-600 transition-all active:translate-y-0.5"
+            title="Select Language"
+          >
+            <Languages className="w-5 h-5 text-white" />
+          </button>
         </div>
 
-        {/* Central Content (Image & Title) */}
-        <div className="flex flex-col items-center my-auto py-6">
-          <div className="w-48 h-48 sm:w-64 sm:h-64 flex items-center justify-center overflow-hidden mb-6">
-            <img 
-              src={govImage} 
-              alt="City governance simulation" 
-              className="w-full h-full object-cover"
-            />
+        {/* Central Content: Badge & Title / Subtitle */}
+        <div className="flex flex-col items-center mt-auto mb-10 sm:mb-14 text-center space-y-2.5 px-2">
+          <div className="text-white text-xs sm:text-sm font-extrabold font-['Nunito'] leading-6 uppercase tracking-wider opacity-95">
+            {t('landing.badge')}
           </div>
-
-          <h1 className="text-xl sm:text-2xl font-extrabold leading-snug text-neutral-600 text-center max-w-sm">
-            A city governance simulation. Discuss, vote, and see the impact on your city.
+          <h1 className="text-white text-[clamp(18.5px,5.6vw,26px)] sm:text-[26px] font-extrabold font-['Nunito'] leading-tight whitespace-pre-line max-w-[440px]">
+            {t('landing.subtitle')}
           </h1>
         </div>
 
-        {/* Action Buttons Section */}
-        <div className="flex flex-col items-center w-full space-y-4">
+        {/* Bottom Section: Action Buttons */}
+        <div className="w-full flex flex-col items-center space-y-4">
           <button
             type="button"
             onClick={onCreateRoom}
-            className="w-full h-14 inline-flex items-center justify-center rounded-xl bg-lime-600 px-5 py-3 shadow-[0px_4px_0px_0px_#46A302] hover:bg-lime-700 active:translate-y-1 active:shadow-none transition-all cursor-pointer"
+            data-button="Primary"
+            className="w-full max-w-[384px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
           >
-            <span className="text-[15px] font-extrabold uppercase tracking-wide text-white">
-              Create room (facilitator)
-            </span>
+            <div className="justify-start text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {t('landing.create_btn')}
+            </div>
           </button>
 
           <button
             type="button"
             onClick={onJoinRoom}
-            className="w-full h-14 inline-flex items-center justify-center rounded-xl bg-white px-5 py-3 text-sky-500 shadow-[0px_2px_0px_0px_rgba(229,229,229,1.00)] border-2 border-neutral-200 hover:bg-neutral-50 active:translate-y-0.5 transition-all cursor-pointer"
+            data-button="Outline-Secondary"
+            className="w-full max-w-[384px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5"
           >
-            <span className="text-[15px] font-extrabold uppercase tracking-wide">
-              Join Room (Player)
-            </span>
+            <div className="justify-start text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {t('landing.join_btn')}
+            </div>
           </button>
 
-          <div className="text-center text-xs sm:text-sm font-medium text-zinc-400 pt-2">
-            No account or login needed
+          {/* Footer Text */}
+          <div className="text-white text-xs font-medium font-['Nunito'] leading-5 pt-1">
+            {t('landing.no_account')}
           </div>
         </div>
 

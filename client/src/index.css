@@ -1,17 +1,25 @@
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --color-lime-100: #e8fcdb;
-  --color-lime-200: #bbf893;
-  --color-lime-400: #7be139;
-  --color-lime-500: #58CC02;
-  --color-lime-600: #58CC02;
-  --color-lime-700: #46A302;
-  --color-lime-800: #347a01;
+  --color-navy: #1A5276;
+  --color-navy-dark: #0D2436;
+  --color-red-cta: #B03A2E;
+  --color-red-vivid: #E74C3C;
+  --color-teal: #2471A3;
+  --color-sky: #5DADE2;
+
+  --color-lime-100: #EBF5FB;
+  --color-lime-200: #AED6F1;
+  --color-lime-400: #5DADE2;
+  --color-lime-500: #2471A3;
+  --color-lime-600: #B03A2E;
+  --color-lime-700: #922B21;
+  --color-lime-800: #76D7C4;
 }
 
 body {
-  background-color: #F3F4F6;
-  font-family: 'Nunito', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background-color: #F4F6F7;
+  font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: #1B2631;
 }

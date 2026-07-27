@@ -675,14 +675,14 @@ export function registerSocketHandlers(io: Server) {
         });
 
         // Broadcast count
-        const connectedPlayers = session.players.filter(p => p.isConnected);
+        const totalPlayersCount = session.players.length;
         io.to(roomCode).emit('game:vote_cast', {
           votes_cast: votes.length,
-          total_players: connectedPlayers.length
+          total_players: totalPlayersCount
         });
 
-        // If all connected players voted, close voting automatically
-        if (votes.length >= connectedPlayers.length) {
+        // If all players voted, close voting automatically
+        if (totalPlayersCount > 0 && votes.length >= totalPlayersCount) {
           await triggerMayorDecisionPhase(io, session.id, roomCode, session.scenarioIndex);
         }
       } catch (error) {
@@ -963,12 +963,12 @@ async function handleMayorSubmission(
 
   // Compute updated indicators (clamped 0 - 100)
   const updatedIndicators = {
-    economicGrowth: Math.min(100, Math.max(0, gs.economicGrowth + changes.economicGrowth)),
-    governmentBudget: Math.min(100, Math.max(0, gs.governmentBudget + changes.governmentBudget)),
-    peopleWelfare: Math.min(100, Math.max(0, gs.peopleWelfare + changes.peopleWelfare)),
-    publicTrust: Math.min(100, Math.max(0, gs.publicTrust + changes.publicTrust)),
-    environmentalQuality: Math.min(100, Math.max(0, gs.environmentalQuality + changes.environmentalQuality)),
-    transparency: Math.min(100, Math.max(0, gs.transparency + changes.transparency))
+    economicGrowth: gs.economicGrowth + changes.economicGrowth,
+    governmentBudget: gs.governmentBudget + changes.governmentBudget,
+    peopleWelfare: gs.peopleWelfare + changes.peopleWelfare,
+    publicTrust: gs.publicTrust + changes.publicTrust,
+    environmentalQuality: gs.environmentalQuality + changes.environmentalQuality,
+    transparency: gs.transparency + changes.transparency
   };
 
   // Prepare game state updates
