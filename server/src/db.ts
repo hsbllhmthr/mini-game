@@ -7,7 +7,7 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const offlineMode = process.env.OFFLINE_MODE === 'true';
+const offlineMode = process.env.OFFLINE_MODE !== 'false';
 
 let prisma: PrismaClient;
 

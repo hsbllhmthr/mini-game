@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const templatePath = path.join(__dirname, 'schema.prisma.template');
 const schemaPath = path.join(__dirname, 'schema.prisma');
 
-const offlineMode = process.env.OFFLINE_MODE === 'true';
+const offlineMode = process.env.OFFLINE_MODE !== 'false';
 const provider = offlineMode ? 'sqlite' : 'postgresql';
 
 console.log(`[Prisma Setup] Setting up database schema...`);

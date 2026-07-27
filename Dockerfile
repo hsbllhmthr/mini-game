@@ -39,4 +39,4 @@ ENV PORT=3000
 ENV OFFLINE_MODE=true
 
 # Prepare db schema and launch server conditionally (only push DB schema automatically in offline mode)
-CMD ["sh", "-c", "node prisma/setup.js && { if [ \"$OFFLINE_MODE\" = \"true\" ]; then npx prisma db push; else echo '[Prisma Setup] Skipping automatic db push in online mode'; fi; } && node dist/index.js"]
+CMD ["sh", "-c", "node prisma/setup.js && npx prisma generate && { if [ \"$OFFLINE_MODE\" != \"false\" ]; then npx prisma db push; else echo '[Prisma Setup] Skipping automatic db push in online mode'; fi; } && node dist/index.js"]
