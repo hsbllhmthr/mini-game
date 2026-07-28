@@ -3,7 +3,7 @@ import { LogOut, Activity } from 'lucide-react';
 import type { Scenario } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
-import bgImage from '../assets/image4.png';
+import bgImage from '../assets/image4.webp';
 
 interface VoteSummary {
   A: number;

@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { LogOut, Activity } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
-import bgImage from '../assets/image4.png';
-import bgImage5 from '../assets/image5.png';
+import bgImage from '../assets/image4.webp';
+import bgImage5 from '../assets/image5.webp';
 
 interface VotingViewProps {
   isFacilitator: boolean;

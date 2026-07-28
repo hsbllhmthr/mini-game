@@ -1,6 +1,6 @@
 import React from 'react';
 import { Languages } from 'lucide-react';
-import govImage from '../assets/image1.png';
+import govImage from '../assets/image1.webp';
 import { useI18n } from '../i18n.js';
 
 interface LandingViewProps {

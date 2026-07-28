@@ -4,9 +4,9 @@ import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
-import scenario1Img from '../assets/scenario_1_industrial.png';
-import scenario2Img from '../assets/scenario_2_education.png';
-import scenario3Img from '../assets/scenario_3_forest.png';
+import scenario1Img from '../assets/scenario_1_industrial.webp';
+import scenario2Img from '../assets/scenario_2_education.webp';
+import scenario3Img from '../assets/scenario_3_forest.webp';
 
 interface ScenarioViewProps {
   isFacilitator: boolean;

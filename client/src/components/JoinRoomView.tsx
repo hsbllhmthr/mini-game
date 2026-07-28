@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getRoomDetails } from '../api.js';
 import { Loader2, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n.js';
-import bgImage from '../assets/image3.png';
+import bgImage from '../assets/image3.webp';
 
 interface JoinRoomViewProps {
   onSuccess: (roomCode: string, fullName: string, country: string, isReconnection: boolean) => void;
