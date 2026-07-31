@@ -23,3 +23,16 @@ body {
   font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   color: #1B2631;
 }
+
+@keyframes pageTransition {
+  from {
+    opacity: 0.85;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-page-transition {
+  animation: pageTransition 0.15s ease-out forwards;
+}

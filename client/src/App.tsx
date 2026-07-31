@@ -3,6 +3,7 @@ import { socket } from './socket.js';
 import { useI18n } from './i18n.js';
 
 // Sub-views
+import { OnboardingView } from './components/OnboardingView.js';
 import { LandingView } from './components/LandingView.js';
 import { LanguageSelectView } from './components/LanguageSelectView.js';
 import { CreateRoomView } from './components/CreateRoomView.js';
@@ -25,6 +26,7 @@ import { Compass, Activity, LogOut } from 'lucide-react';
 import { SCENARIOS, ROLE_DESCRIPTIONS, ROLE_OBJECTIVES, SECRET_INFO, type PlayerRole, type Scenario } from './gameConstants.js';
 
 type ScreenState = 
+  | 'onboarding'
   | 'landing' 
   | 'language_select'
   | 'create_room' 
@@ -42,7 +44,7 @@ function App() {
   const { t, lang, setLang, toggleLang } = useI18n();
 
   // Navigation / Connection States
-  const [screen, setScreen] = useState<ScreenState>('landing');
+  const [screen, setScreen] = useState<ScreenState>('onboarding');
   const [roomCode, setRoomCode] = useState('');
   const [facilitatorToken, setFacilitatorToken] = useState('');
   const [isFacilitator, setIsFacilitator] = useState(false);
@@ -108,10 +110,7 @@ function App() {
   // Toggle mobile dashboard view overlay
   const [showMobileDashboard, setShowMobileDashboard] = useState(false);
 
-  // Ensure clean landing page on app load (no auto-reconnect on mount)
-  useEffect(() => {
-    // Keep app at initial 'landing' screen
-  }, []);
+
 
   // Connect socket and register listeners
   const connectAndRegisterSocket = (code: string, name: string, isFacil: boolean, isReconnection: boolean = false) => {
@@ -501,6 +500,23 @@ function App() {
     }
   };
 
+  // Auto-restore session state on mount / page refresh
+  useEffect(() => {
+    const facilRoomCode = localStorage.getItem('tpa_facilitator_room_code');
+    const facilToken = localStorage.getItem('tpa_facilitator_token');
+    const playerRoomCode = localStorage.getItem('tpa_player_room_code');
+    const playerName = localStorage.getItem('tpa_player_name');
+    const playerCountry = localStorage.getItem('tpa_player_country') || '';
+
+    if (facilRoomCode && facilToken) {
+      console.log('[Auto-Reconnect] Restoring facilitator session:', facilRoomCode);
+      handleFacilitatorSuccess(facilRoomCode, facilToken);
+    } else if (playerRoomCode && playerName) {
+      console.log('[Auto-Reconnect] Restoring player session:', playerRoomCode, playerName);
+      handlePlayerJoin(playerRoomCode, playerName, playerCountry, true);
+    }
+  }, []);
+
   const handleExit = () => {
     if (confirm('Are you sure you want to exit? Your session data will be preserved for reconnection.')) {
       socket.disconnect();
@@ -513,6 +529,7 @@ function App() {
     localStorage.removeItem('tpa_player_name');
     localStorage.removeItem('tpa_player_country');
     localStorage.removeItem('tpa_facilitator_token');
+    localStorage.removeItem('tpa_facilitator_room_code');
     // Clear room keys
     const keys = Object.keys(localStorage);
     keys.forEach(k => {
@@ -559,19 +576,7 @@ function App() {
   const mayorAccept = (choiceVal: string) => socket.emit('mayor:accept', { room_code: roomCode, player_id: playerId || fullName, choice: choiceVal });
   const mayorVeto = (choiceVal: string, justString: string) => socket.emit('mayor:veto', { room_code: roomCode, player_id: playerId || fullName, choice: choiceVal, justification: justString });
 
-  const hasGameStarted = 
-    screen !== 'landing' && 
-    screen !== 'language_select' && 
-    screen !== 'create_room' && 
-    screen !== 'join_room' && 
-    screen !== 'lobby' &&
-    screen !== 'role_reveal' &&
-    screen !== 'scenario_display' &&
-    screen !== 'discussion' &&
-    screen !== 'voting' &&
-    screen !== 'mayor_decision' &&
-    screen !== 'outcome_reveal' &&
-    screen !== 'final_reflection';
+  const hasGameStarted = screen === 'scenario_display';
 
   return (
     <div className={`min-h-screen ${hasGameStarted ? 'bg-[#F3F4F6] dark:bg-slate-950' : 'bg-[#F3F4F6]'} flex flex-col font-sans transition-colors duration-300`}>
@@ -632,7 +637,7 @@ function App() {
           /* Grid container layout when game has started (includes persistent dashboard side-by-side) */
           <div className="grid md:grid-cols-12 gap-8 items-start">
             {/* Screen Content */}
-            <div className="md:col-span-8 lg:col-span-9">
+            <div key={screen} className="md:col-span-8 lg:col-span-9 animate-page-transition">
               {/* Role reveal is now rendered in centered non-game-started section */}
               {screen === 'scenario_display' && scenario && (
                 <ScenarioView
@@ -655,7 +660,7 @@ function App() {
           </div>
         ) : (
           /* Normal center layouts for Lobby, Join, Create, Landing */
-          <div className="w-full min-h-screen flex flex-col">
+          <div key={screen} className="w-full min-h-screen flex flex-col animate-page-transition">
             {screen === 'final_reflection' && (
               <ReflectionView
                 isFacilitator={isFacilitator}
@@ -725,6 +730,9 @@ function App() {
                 onToggleStats={() => setShowMobileDashboard(!showMobileDashboard)}
               />
             )}
+            {screen === 'onboarding' && (
+              <OnboardingView durationMs={5000} onComplete={() => setScreen('landing')} />
+            )}
             {screen === 'landing' && (
               <LandingView
                 onCreateRoom={() => setScreen('create_room')}
@@ -779,16 +787,6 @@ function App() {
                 }
                 onOpenScenario={openScenario}
                 scenarioIndex={scenarioIndex}
-                onCancelSession={cancelSession}
-              />
-            )}
-            {screen === 'scenario_display' && scenario && (
-              <ScenarioView
-                isFacilitator={isFacilitator}
-                scenarioIndex={scenarioIndex}
-                scenario={scenario}
-                indicators={indicators}
-                onStartDiscussion={startDiscussion}
                 onCancelSession={cancelSession}
               />
             )}

@@ -72,84 +72,83 @@ export function registerSocketHandlers(io: Server) {
 
         socket.data.lang = lang; // Store player's preferred language
 
-        if (session.status !== 'waiting') {
-          // If game started, check if this is a reconnection attempt (name exists and disconnected)
-          const existingPlayer = session.players.find(
-            p => p.fullName.toLowerCase() === full_name.toLowerCase()
-          );
+        // Check if this is a reconnection attempt (name exists in session)
+        const existingPlayer = session.players.find(
+          p => p.fullName.toLowerCase() === full_name.toLowerCase()
+        );
 
-          if (existingPlayer && !existingPlayer.isConnected) {
-            console.log(`[Socket] Treating join as reconnection for ${full_name} in room ${roomCode}`);
-            // Update connected state
-            await prisma.player.update({
-              where: { id: existingPlayer.id },
-              data: { isConnected: true }
-            });
+        if (existingPlayer) {
+          console.log(`[Socket] Treating join as reconnection for ${full_name} in room ${roomCode}`);
+          await prisma.player.update({
+            where: { id: existingPlayer.id },
+            data: { isConnected: true }
+          });
 
-            socket.data.playerId = existingPlayer.id;
-            socket.data.roomCode = roomCode;
-            socket.data.fullName = full_name;
-            if (existingPlayer.role) {
-              socket.data.role = existingPlayer.role;
-            }
-
-            socket.join(roomCode);
-
-            // Broadcast reconnection
-            io.to(roomCode).emit('room:player_reconnected', {
-              player_id: existingPlayer.id,
-              full_name: existingPlayer.fullName
-            });
-
-            // Emit state restore payload
-            const restorePayload: any = {
-              phase: session.phase,
-              scenario_index: session.scenarioIndex,
-              role: existingPlayer.role
-            };
-
-            if (existingPlayer.role) {
-              const pLang = socket.data.lang || 'en';
-              const secretDict = SECRET_INFO[pLang] || SECRET_INFO['en'];
-              restorePayload.role_info = {
-                role: existingPlayer.role,
-                description: getRoleDescription(existingPlayer.role, pLang),
-                objective: getRoleObjective(existingPlayer.role, pLang),
-                secret_info: secretDict[existingPlayer.role]
-              };
-            }
-
-            const gameState = await prisma.gameState.findUnique({ where: { sessionId: session.id } });
-            if (gameState) {
-              restorePayload.indicators = {
-                economic_growth: gameState.economicGrowth,
-                government_budget: gameState.governmentBudget,
-                people_welfare: gameState.peopleWelfare,
-                public_trust: gameState.publicTrust,
-                environmental_quality: gameState.environmentalQuality,
-                transparency: gameState.transparency
-              };
-            }
-
-            socket.emit('player:state_restored', restorePayload);
-            return;
+          socket.data.playerId = existingPlayer.id;
+          socket.data.roomCode = roomCode;
+          socket.data.fullName = full_name;
+          if (existingPlayer.role) {
+            socket.data.role = existingPlayer.role;
           }
 
+          socket.join(roomCode);
+
+          const updatedPlayers = await prisma.player.findMany({
+            where: { sessionId: session.id },
+            select: { id: true, fullName: true, country: true, isConnected: true, role: true }
+          });
+
+          const formattedPlayers = updatedPlayers.map(p => ({
+            id: p.id,
+            full_name: p.fullName,
+            country: p.country,
+            is_connected: p.isConnected,
+            role: p.role
+          }));
+
+          io.to(roomCode).emit('room:player_joined', { players: formattedPlayers });
+
+          const restorePayload: any = {
+            phase: session.phase,
+            scenario_index: session.scenarioIndex,
+            role: existingPlayer.role,
+            players: formattedPlayers
+          };
+
+          if (existingPlayer.role) {
+            const pLang = socket.data.lang || 'en';
+            const secretDict = SECRET_INFO[pLang] || SECRET_INFO['en'];
+            restorePayload.role_info = {
+              role: existingPlayer.role,
+              description: getRoleDescription(existingPlayer.role, pLang),
+              objective: getRoleObjective(existingPlayer.role, pLang),
+              secret_info: secretDict[existingPlayer.role]
+            };
+          }
+
+          const gameState = await prisma.gameState.findUnique({ where: { sessionId: session.id } });
+          if (gameState) {
+            restorePayload.indicators = {
+              economic_growth: gameState.economicGrowth,
+              government_budget: gameState.governmentBudget,
+              people_welfare: gameState.peopleWelfare,
+              public_trust: gameState.publicTrust,
+              environmental_quality: gameState.environmentalQuality,
+              transparency: gameState.transparency
+            };
+          }
+
+          socket.emit('player:state_restored', restorePayload);
+          return;
+        }
+
+        if (session.status !== 'waiting') {
           socket.emit('error', { code: 'GAME_ALREADY_STARTED', message: 'Session has already started' });
           return;
         }
 
         if (session.players.length >= 12) {
           socket.emit('error', { code: 'ROOM_FULL', message: 'Room is full (max 12 players)' });
-          return;
-        }
-
-        const nameExists = session.players.some(
-          p => p.fullName.toLowerCase() === full_name.toLowerCase()
-        );
-
-        if (nameExists) {
-          socket.emit('error', { code: 'NAME_TAKEN', message: 'This name is already taken in this room' });
           return;
         }
 
