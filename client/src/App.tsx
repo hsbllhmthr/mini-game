@@ -731,7 +731,7 @@ function App() {
               />
             )}
             {screen === 'onboarding' && (
-              <OnboardingView durationMs={5000} onComplete={() => setScreen('landing')} />
+              <OnboardingView durationMs={2500} onComplete={() => setScreen('landing')} />
             )}
             {screen === 'landing' && (
               <LandingView

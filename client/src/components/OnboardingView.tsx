@@ -10,7 +10,7 @@ interface OnboardingViewProps {
 
 export const OnboardingView: React.FC<OnboardingViewProps> = ({ 
   onComplete, 
-  durationMs = 5000 
+  durationMs = 2500 
 }) => {
   const [isFadingOut, setIsFadingOut] = useState(false);
 
