@@ -1,21 +1,20 @@
 # Multi-stage build for client and server
-FROM node:20-alpine AS client-builder
+FROM node:20-slim AS client-builder
 WORKDIR /app/client
 COPY client/package*.json ./
 RUN npm ci
 COPY client/ ./
 RUN npm run build
 
-FROM node:20-alpine AS server-builder
+FROM node:20-slim AS server-builder
 WORKDIR /app/server
-RUN apk add --no-cache python3 make g++
 COPY server/package*.json ./
 RUN npm ci
 COPY server/ ./
 RUN node prisma/setup.js && npx prisma generate
 RUN npm run build
 
-FROM node:20-alpine AS runner
+FROM node:20-slim AS runner
 WORKDIR /app
 
 # Copy built server code, schema, and node_modules
