@@ -23,7 +23,10 @@ if (offlineMode) {
   process.env.TMP = tmpDir;
   process.env.SQLITE_TMPDIR = tmpDir;
 
-  let dbPath = process.env.DATABASE_URL ? process.env.DATABASE_URL.replace(/^file:/, '') : './dev.db';
+  let dbPath = './dev.db';
+  if (process.env.DATABASE_URL && process.env.DATABASE_URL.startsWith('file:')) {
+    dbPath = process.env.DATABASE_URL.replace(/^file:/, '');
+  }
   console.log(`[Database] Initializing SQLite connection at: ${dbPath}`);
 
   const adapter = new PrismaBetterSqlite3({ url: dbPath });
