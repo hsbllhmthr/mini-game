@@ -8,6 +8,7 @@ RUN npm run build
 
 FROM node:20-slim AS server-builder
 WORKDIR /app/server
+RUN apt-get update && apt-get install -y python3 make g++ gcc && rm -rf /var/lib/apt/lists/*
 COPY server/package*.json ./
 RUN npm ci
 COPY server/ ./
