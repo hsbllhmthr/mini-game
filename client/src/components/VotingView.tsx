@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { LogOut, Activity } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
-import bgImage from '../assets/image4.webp';
-import bgImage5 from '../assets/image5.webp';
+import bgImage from '../assets/image4.png';
+import bgImage5 from '../assets/image5.png';
 
 interface VotingViewProps {
   isFacilitator: boolean;
@@ -15,6 +15,7 @@ interface VotingViewProps {
   scenarioIndex?: number;
   onCancelSession?: () => void;
   onToggleStats?: () => void;
+  initialVotedChoice?: string | null;
 }
 
 export const VotingView: React.FC<VotingViewProps> = ({
@@ -26,10 +27,11 @@ export const VotingView: React.FC<VotingViewProps> = ({
   onForceCloseVoting,
   scenarioIndex = 0,
   onCancelSession,
-  onToggleStats
+  onToggleStats,
+  initialVotedChoice = null
 }) => {
   const { t } = useI18n();
-  const [votedChoice, setVotedChoice] = useState<string | null>(null);
+  const [votedChoice, setVotedChoice] = useState<string | null>(initialVotedChoice || null);
 
   const handleVote = (choice: string) => {
     if (votedChoice) return;

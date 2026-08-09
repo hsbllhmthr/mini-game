@@ -22,7 +22,6 @@ import { Dashboard } from './components/Dashboard.js';
 import type { Indicators } from './components/Dashboard.js';
 
 // Icons
-import { Compass, Activity, LogOut } from 'lucide-react';
 import { SCENARIOS, ROLE_DESCRIPTIONS, ROLE_OBJECTIVES, SECRET_INFO, type PlayerRole, type Scenario } from './gameConstants.js';
 
 type ScreenState = 
@@ -41,7 +40,7 @@ type ScreenState =
   | 'final_reflection';
 
 function App() {
-  const { t, lang, setLang, toggleLang } = useI18n();
+  const { lang, setLang } = useI18n();
 
   // Navigation / Connection States
   const [screen, setScreen] = useState<ScreenState>('onboarding');
@@ -49,7 +48,7 @@ function App() {
   const [facilitatorToken, setFacilitatorToken] = useState('');
   const [isFacilitator, setIsFacilitator] = useState(false);
   const [fullName, setFullName] = useState('');
-  const [country, setCountry] = useState('');
+  const [_country, setCountry] = useState('');
   const [playerId, setPlayerId] = useState('');
   const [isCancelled, setIsCancelled] = useState(false);
 
@@ -140,6 +139,7 @@ function App() {
     socket.on('room:player_joined', ({ players: lobbyPlayers }) => {
       console.log('[Socket] Players update received (player_joined):', lobbyPlayers.length, 'players');
       setPlayers(lobbyPlayers);
+      setTotalPlayers(lobbyPlayers.length);
       const me = name ? lobbyPlayers.find((p: any) => p.full_name.toLowerCase() === name.toLowerCase()) : null;
       if (me) {
         setPlayerId(me.id);
@@ -171,6 +171,7 @@ function App() {
       if (payload.players) {
         console.log('[Socket] Restoring players count:', payload.players.length);
         setPlayers(payload.players);
+        setTotalPlayers(payload.players.length);
       }
       
       // If phase is not lobby, it's a reconnection/refresh
@@ -182,7 +183,8 @@ function App() {
         setScenarioIndex(payload.scenario_index);
         
         // Localize scenario data
-        const rawScenario = SCENARIOS[payload.scenario_index];
+        const targetIdx = payload.actual_scenario_index !== undefined ? payload.actual_scenario_index : payload.scenario_index;
+        const rawScenario = SCENARIOS[targetIdx];
         if (rawScenario) {
           const localizedScenario: Scenario = {
             id: rawScenario.id,
@@ -220,6 +222,16 @@ function App() {
 
         if (payload.indicators) {
           setIndicators(payload.indicators);
+        }
+
+        if (payload.votes_cast !== undefined) {
+          setVotesCast(payload.votes_cast);
+        }
+        if (payload.total_players !== undefined) {
+          setTotalPlayers(payload.total_players);
+        }
+        if (payload.vote_summary) {
+          setVoteSummary(payload.vote_summary);
         }
 
         if (payload.phase === 'outcome_reveal') {
@@ -261,10 +273,11 @@ function App() {
       }
     });
 
-    socket.on('game:scenario_opened', ({ scenario_index, scenario: scenarioData }) => {
+    socket.on('game:scenario_opened', ({ scenario_index, actual_scenario_index, scenario: scenarioData }) => {
       setScenarioIndex(scenario_index);
       const currentLang = localStorage.getItem('tpa_lang') || 'en';
-      const rawScenario = SCENARIOS[scenario_index];
+      const targetIdx = actual_scenario_index !== undefined ? actual_scenario_index : scenario_index;
+      const rawScenario = SCENARIOS[targetIdx];
       if (rawScenario) {
         setScenario({
           id: rawScenario.id,
@@ -320,6 +333,7 @@ function App() {
     socket.on('game:voting_opened', () => {
       setScreen('voting');
       setVotesCast(0);
+      setTotalPlayers(prev => (prev > 0 ? prev : players.length));
     });
 
     socket.on('game:vote_cast', ({ votes_cast, total_players: tot }) => {
@@ -375,7 +389,8 @@ function App() {
       setScenarioIndex(restorePayload.scenario_index);
       
       // Localize scenario data from raw SCENARIOS array
-      const rawScenario = SCENARIOS[restorePayload.scenario_index];
+      const targetIdx = restorePayload.actual_scenario_index !== undefined ? restorePayload.actual_scenario_index : restorePayload.scenario_index;
+      const rawScenario = SCENARIOS[targetIdx];
       if (rawScenario) {
         const localizedScenario: Scenario = {
           id: rawScenario.id,
@@ -426,6 +441,19 @@ function App() {
       
       if (restorePayload.indicators) {
         setIndicators(restorePayload.indicators);
+      }
+
+      if (restorePayload.votes_cast !== undefined) {
+        setVotesCast(restorePayload.votes_cast);
+      }
+      if (restorePayload.total_players !== undefined) {
+        setTotalPlayers(restorePayload.total_players);
+      }
+      if (restorePayload.vote_summary) {
+        setVoteSummary(restorePayload.vote_summary);
+      }
+      if (restorePayload.player_voted_choice) {
+        setChoice(restorePayload.player_voted_choice);
       }
 
       if (restorePayload.phase === 'outcome_reveal') {
@@ -576,226 +604,156 @@ function App() {
   const mayorAccept = (choiceVal: string) => socket.emit('mayor:accept', { room_code: roomCode, player_id: playerId || fullName, choice: choiceVal });
   const mayorVeto = (choiceVal: string, justString: string) => socket.emit('mayor:veto', { room_code: roomCode, player_id: playerId || fullName, choice: choiceVal, justification: justString });
 
-  const hasGameStarted = screen === 'scenario_display';
-
   return (
-    <div className={`min-h-screen ${hasGameStarted ? 'bg-[#F3F4F6] dark:bg-slate-950' : 'bg-[#F3F4F6]'} flex flex-col font-sans transition-colors duration-300`}>
-      {/* Header bar */}
-      {hasGameStarted && (
-        <header className="sticky top-0 z-40 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-100 dark:border-slate-800 px-6 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center text-white shadow-md shadow-indigo-200 dark:shadow-none">
-              <Compass className="w-5 h-5" />
-            </div>
-            <div>
-              <h1 className="text-base font-extrabold text-slate-800 dark:text-slate-100 leading-none">
-                {t('landing.title')}
-              </h1>
-              {roomCode && (
-                <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mt-1 block">
-                  {t('common.session')}: <strong className="text-indigo-600 dark:text-indigo-400">{roomCode}</strong>
-                  {!isFacilitator && fullName && ` | ${t('common.delegate')}: ${fullName} (${country})`}
-                </span>
-              )}
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3">
-            {/* Language Switcher */}
-            <button
-              onClick={toggleLang}
-              className="px-2.5 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-[10px] font-black text-slate-600 dark:text-slate-300 transition-all uppercase tracking-tighter cursor-pointer"
-            >
-              {lang === 'en' ? 'ID 🇮🇩' : 'EN 🇺🇸'}
-            </button>
-
-            {/* Dashboard overlay button for mobile */}
-            {hasGameStarted && (
-              <button
-                onClick={() => setShowMobileDashboard(!showMobileDashboard)}
-                className="md:hidden inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs font-bold text-slate-700 dark:text-slate-200"
-              >
-                <Activity className="w-4 h-4 text-indigo-500" />
-                Stats
-              </button>
-            )}
-
-            <button
-              onClick={handleExit}
-              className="p-2.5 rounded-xl border border-slate-150 hover:bg-slate-50 dark:border-slate-800 dark:hover:bg-slate-800/80 text-slate-500 hover:text-slate-800 dark:hover:text-slate-100 transition-all cursor-pointer"
-              title={t('common.exit')}
-            >
-              <LogOut className="w-4 h-4" />
-            </button>
-          </div>
-        </header>
-      )}
-
+    <div className="min-h-screen bg-[#F3F4F6] flex flex-col font-sans transition-colors duration-300">
       {/* Main layout routing */}
-      <main className={`flex-grow ${hasGameStarted ? 'max-w-7xl w-full mx-auto px-4 md:px-6 py-8' : 'w-full flex justify-center items-center'}`}>
-        {hasGameStarted ? (
-          /* Grid container layout when game has started (includes persistent dashboard side-by-side) */
-          <div className="grid md:grid-cols-12 gap-8 items-start">
-            {/* Screen Content */}
-            <div key={screen} className="md:col-span-8 lg:col-span-9 animate-page-transition">
-              {/* Role reveal is now rendered in centered non-game-started section */}
-              {screen === 'scenario_display' && scenario && (
-                <ScenarioView
-                  isFacilitator={isFacilitator}
-                  scenarioIndex={scenarioIndex}
-                  scenario={scenario}
-                  indicators={indicators}
-                  onStartDiscussion={startDiscussion}
-                />
-              )}
-            </div>
-
-            {/* Sidebar Dashboard (Desktop only) */}
-            <div className="hidden md:block md:col-span-4 lg:col-span-3 sticky top-24">
-              <Dashboard 
-                indicators={indicators} 
-                previousIndicators={previousIndicators}
-              />
-            </div>
-          </div>
-        ) : (
-          /* Normal center layouts for Lobby, Join, Create, Landing */
-          <div key={screen} className="w-full min-h-screen flex flex-col animate-page-transition">
-            {screen === 'final_reflection' && (
-              <ReflectionView
-                isFacilitator={isFacilitator}
-                roomCode={roomCode}
-                facilitatorToken={facilitatorToken}
-                indicators={indicators}
-                ps={ps}
-                gqs={gqs}
-                ss={ss}
-                fps={fps}
-                archetypes={archetypes}
-                beneficiaries={beneficiaries}
-                onRestartSession={handleRestart}
-                onExit={handleExit}
-              />
-            )}
-            {screen === 'outcome_reveal' && scenario && (
-              <OutcomeRevealView
-                isFacilitator={isFacilitator}
-                scenario={scenario}
-                scenarioIndex={scenarioIndex}
-                choice={choice}
-                vetoUsed={vetoUsed}
-                justification={justification}
-                indicatorChanges={indicatorChanges}
-                newIndicators={newIndicators}
-                onNextStep={scenarioIndex < 2 ? nextScenario : endGame}
-                onCancelSession={cancelSession}
-                indicators={indicators}
-              />
-            )}
-            {screen === 'mayor_decision' && scenario && (
-              <MayorDecisionView
-                isFacilitator={isFacilitator}
-                isMayor={role === 'mayor'}
-                scenario={scenario}
-                voteSummary={voteSummary}
-                onMayorAccept={mayorAccept}
-                onMayorVeto={mayorVeto}
-                scenarioIndex={scenarioIndex}
-                onCancelSession={cancelSession}
-                indicators={indicators}
-              />
-            )}
-            {screen === 'discussion' && (
-              <DiscussionView
-                isFacilitator={isFacilitator}
-                secondsRemaining={secondsRemaining}
-                totalDuration={totalDuration}
-                onEndDiscussionEarly={endDiscussionEarly}
-                scenarioTitle={scenario?.title || 'New Industrial Zone'}
-                scenarioIndex={scenarioIndex}
-                onCancelSession={cancelSession}
-                indicators={indicators}
-              />
-            )}
-            {screen === 'voting' && scenario && (
-              <VotingView
-                isFacilitator={isFacilitator}
-                scenario={scenario}
-                votesCast={votesCast}
-                totalPlayers={totalPlayers}
-                onVoteSubmitted={submitVote}
-                onForceCloseVoting={forceCloseVoting}
-                scenarioIndex={scenarioIndex}
-                onCancelSession={cancelSession}
-                onToggleStats={() => setShowMobileDashboard(!showMobileDashboard)}
-              />
-            )}
-            {screen === 'onboarding' && (
-              <OnboardingView durationMs={2500} onComplete={() => setScreen('landing')} />
-            )}
-            {screen === 'landing' && (
-              <LandingView
-                onCreateRoom={() => setScreen('create_room')}
-                onJoinRoom={() => setScreen('join_room')}
-                lang={lang}
-                onSelectLanguageClick={() => setScreen('language_select')}
-              />
-            )}
-            {screen === 'language_select' && (
-              <LanguageSelectView
-                onBack={() => setScreen('landing')}
-                onSelectLanguage={(selectedLang) => {
-                  setLang(selectedLang);
-                  localStorage.setItem('tpa_lang', selectedLang);
-                }}
-                currentLang={lang}
-              />
-            )}
-            {screen === 'create_room' && (
-              <CreateRoomView
-                onSuccess={handleFacilitatorSuccess}
-                onBack={() => setScreen('landing')}
-              />
-            )}
-            {screen === 'join_room' && (
-              <JoinRoomView
-                onSuccess={handlePlayerJoin}
-                onBack={() => setScreen('landing')}
-              />
-            )}
-            {screen === 'lobby' && (
-              <LobbyView
-                roomCode={roomCode}
-                players={players}
-                isFacilitator={isFacilitator}
-                onStartGame={startSession}
-                onCancelSession={cancelSession}
-                isCancelled={isCancelled}
-              />
-            )}
-            {screen === 'role_reveal' && (
-              <RoleRevealView
-                isFacilitator={isFacilitator}
-                roleInfo={roleInfo || undefined}
-                facilitatorPlayers={
-                  players.map(p => ({
-                    id: p.id,
-                    fullName: p.full_name,
-                    role: p.role || '',
-                    country: p.country
-                  }))
-                }
-                onOpenScenario={openScenario}
-                scenarioIndex={scenarioIndex}
-                onCancelSession={cancelSession}
-              />
-            )}
-          </div>
-        )}
+      <main className="flex-grow w-full flex justify-center items-center">
+        <div key={screen} className="w-full min-h-screen flex flex-col animate-page-transition">
+          {screen === 'scenario_display' && scenario && (
+            <ScenarioView
+              isFacilitator={isFacilitator}
+              scenarioIndex={scenarioIndex}
+              scenario={scenario}
+              indicators={indicators}
+              onStartDiscussion={startDiscussion}
+              onCancelSession={cancelSession}
+            />
+          )}
+          {screen === 'final_reflection' && (
+            <ReflectionView
+              isFacilitator={isFacilitator}
+              roomCode={roomCode}
+              facilitatorToken={facilitatorToken}
+              indicators={indicators}
+              ps={ps}
+              gqs={gqs}
+              ss={ss}
+              fps={fps}
+              archetypes={archetypes}
+              beneficiaries={beneficiaries}
+              onRestartSession={handleRestart}
+              onExit={handleExit}
+            />
+          )}
+          {screen === 'outcome_reveal' && scenario && (
+            <OutcomeRevealView
+              isFacilitator={isFacilitator}
+              scenario={scenario}
+              scenarioIndex={scenarioIndex}
+              choice={choice}
+              vetoUsed={vetoUsed}
+              justification={justification}
+              indicatorChanges={indicatorChanges}
+              newIndicators={newIndicators}
+              onNextStep={scenarioIndex < 2 ? nextScenario : endGame}
+              onCancelSession={cancelSession}
+              indicators={indicators}
+            />
+          )}
+          {screen === 'mayor_decision' && scenario && (
+            <MayorDecisionView
+              isFacilitator={isFacilitator}
+              isMayor={role === 'mayor'}
+              scenario={scenario}
+              voteSummary={voteSummary}
+              onMayorAccept={mayorAccept}
+              onMayorVeto={mayorVeto}
+              scenarioIndex={scenarioIndex}
+              onCancelSession={cancelSession}
+              indicators={indicators}
+            />
+          )}
+          {screen === 'discussion' && (
+            <DiscussionView
+              isFacilitator={isFacilitator}
+              secondsRemaining={secondsRemaining}
+              totalDuration={totalDuration}
+              onEndDiscussionEarly={endDiscussionEarly}
+              scenarioTitle={scenario?.title || 'New Industrial Zone'}
+              scenarioIndex={scenarioIndex}
+              onCancelSession={cancelSession}
+              indicators={indicators}
+            />
+          )}
+          {screen === 'voting' && scenario && (
+            <VotingView
+              isFacilitator={isFacilitator}
+              scenario={scenario}
+              votesCast={votesCast}
+              totalPlayers={totalPlayers}
+              onVoteSubmitted={submitVote}
+              onForceCloseVoting={forceCloseVoting}
+              scenarioIndex={scenarioIndex}
+              onCancelSession={cancelSession}
+              onToggleStats={() => setShowMobileDashboard(!showMobileDashboard)}
+              initialVotedChoice={choice}
+            />
+          )}
+          {screen === 'onboarding' && (
+            <OnboardingView durationMs={2500} onComplete={() => setScreen('landing')} />
+          )}
+          {screen === 'landing' && (
+            <LandingView
+              onCreateRoom={() => setScreen('create_room')}
+              onJoinRoom={() => setScreen('join_room')}
+              lang={lang}
+              onSelectLanguageClick={() => setScreen('language_select')}
+            />
+          )}
+          {screen === 'language_select' && (
+            <LanguageSelectView
+              onBack={() => setScreen('landing')}
+              onSelectLanguage={(selectedLang) => {
+                setLang(selectedLang);
+                localStorage.setItem('tpa_lang', selectedLang);
+              }}
+              currentLang={lang}
+            />
+          )}
+          {screen === 'create_room' && (
+            <CreateRoomView
+              onSuccess={handleFacilitatorSuccess}
+              onBack={() => setScreen('landing')}
+            />
+          )}
+          {screen === 'join_room' && (
+            <JoinRoomView
+              onSuccess={handlePlayerJoin}
+              onBack={() => setScreen('landing')}
+            />
+          )}
+          {screen === 'lobby' && (
+            <LobbyView
+              roomCode={roomCode}
+              players={players}
+              isFacilitator={isFacilitator}
+              onStartGame={startSession}
+              onCancelSession={cancelSession}
+              isCancelled={isCancelled}
+            />
+          )}
+          {screen === 'role_reveal' && (
+            <RoleRevealView
+              isFacilitator={isFacilitator}
+              roleInfo={roleInfo || undefined}
+              facilitatorPlayers={
+                players.map(p => ({
+                  id: p.id,
+                  fullName: p.full_name,
+                  role: p.role || '',
+                  country: p.country
+                }))
+              }
+              onOpenScenario={openScenario}
+              scenarioIndex={scenarioIndex}
+              onCancelSession={cancelSession}
+            />
+          )}
+        </div>
       </main>
 
-      {showMobileDashboard && (hasGameStarted || screen === 'voting' || screen === 'discussion') && (
-        <div className={`fixed inset-0 z-50 ${hasGameStarted ? 'md:hidden' : ''} bg-slate-950/40 backdrop-blur-sm animate-fade-in flex justify-end`}>
+      {showMobileDashboard && (screen === 'scenario_display' || screen === 'voting' || screen === 'discussion') && (
+        <div className="fixed inset-0 z-50 bg-slate-950/40 backdrop-blur-sm animate-fade-in flex justify-end">
           <div className="w-80 h-full bg-white dark:bg-slate-900 p-6 shadow-2xl relative animate-slide-in flex flex-col justify-between">
             <div className="space-y-6">
               <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">

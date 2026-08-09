@@ -33,6 +33,12 @@ function getRoleObjective(role: PlayerRole, lang: string = 'en'): string {
   return dict[role];
 }
 
+function getActualScenarioIndex(scenarioOrderStr: string | null | undefined, stepIndex: number): number {
+  if (!scenarioOrderStr) return stepIndex;
+  const parts = scenarioOrderStr.split(',').map(Number);
+  return (parts[stepIndex] !== undefined && !isNaN(parts[stepIndex])) ? parts[stepIndex] : stepIndex;
+}
+
 function getLocalizedScenario(index: number, lang: string = 'en') {
   const s = SCENARIOS[index];
   if (!s) return null;
@@ -128,6 +134,7 @@ export function registerSocketHandlers(io: Server) {
 
           const gameState = await prisma.gameState.findUnique({ where: { sessionId: session.id } });
           if (gameState) {
+            restorePayload.actual_scenario_index = getActualScenarioIndex(gameState.scenarioOrder, session.scenarioIndex);
             restorePayload.indicators = {
               economic_growth: gameState.economicGrowth,
               government_budget: gameState.governmentBudget,
@@ -263,6 +270,7 @@ export function registerSocketHandlers(io: Server) {
         const restorePayload: any = {
           phase: session.phase,
           scenario_index: session.scenarioIndex,
+          actual_scenario_index: getActualScenarioIndex(session.gameState?.scenarioOrder, session.scenarioIndex),
           role: updatedPlayer.role,
           players: sessionPlayers.map(p => ({
             id: p.id,
@@ -273,13 +281,41 @@ export function registerSocketHandlers(io: Server) {
           }))
         };
 
+        // Always include voting details and player count for current scenario
+        const currentVotes = await prisma.vote.findMany({
+          where: {
+            sessionId: session.id,
+            scenarioIndex: session.scenarioIndex
+          }
+        });
+        restorePayload.votes_cast = currentVotes.length;
+        restorePayload.total_players = sessionPlayers.length;
+
+        const playerVote = currentVotes.find(v => v.playerId === player.id);
+        if (playerVote) {
+          restorePayload.player_voted_choice = playerVote.choice;
+        }
+
+        if (session.phase === 'mayor_decision') {
+          const summary = resolveVotes(currentVotes.map(v => ({ choice: v.choice })));
+          restorePayload.vote_summary = {
+            A: summary.tally.A,
+            B: summary.tally.B,
+            C: summary.tally.C,
+            total: currentVotes.length,
+            is_tie: summary.is_tie,
+            tied_options: summary.tied_options
+          };
+        }
+
         // Add additional outcome details if in outcome phase
         if (session.phase === 'outcome_reveal' && session.gameState) {
           const idx = session.scenarioIndex;
           const choice = idx === 0 ? session.gameState.scenario0Choice : idx === 1 ? session.gameState.scenario1Choice : session.gameState.scenario2Choice;
           
           if (choice) {
-            const scenario = SCENARIOS[idx];
+            const actualIdx = getActualScenarioIndex(session.gameState.scenarioOrder, idx);
+            const scenario = SCENARIOS[actualIdx];
             const option = scenario.options[choice as 'A' | 'B' | 'C'];
             restorePayload.choice = choice;
             restorePayload.veto_used = idx === 0 ? session.gameState.scenario0Veto : idx === 1 ? session.gameState.scenario1Veto : session.gameState.scenario2Veto;
@@ -353,12 +389,23 @@ export function registerSocketHandlers(io: Server) {
           prisma.gameState.findUnique({ where: { sessionId: session.id } }),
           prisma.player.findMany({ where: { sessionId: session.id } })
         ]);
-        
+
+        // Always fetch votes count for current scenario
+        const currentVotes = await prisma.vote.findMany({
+          where: {
+            sessionId: session.id,
+            scenarioIndex: session.scenarioIndex
+          }
+        });
+
         const responsePayload: any = {
           room_code: session.roomCode,
           facilitator_token: session.facilitatorToken,
           phase: session.phase,
           scenario_index: session.scenarioIndex,
+          actual_scenario_index: getActualScenarioIndex(gameState?.scenarioOrder, session.scenarioIndex),
+          votes_cast: currentVotes.length,
+          total_players: sessionPlayers.length,
           players: sessionPlayers.map(p => ({
             id: p.id,
             full_name: p.fullName,
@@ -376,13 +423,26 @@ export function registerSocketHandlers(io: Server) {
           } : undefined
         };
 
+        if (session.phase === 'mayor_decision') {
+          const summary = resolveVotes(currentVotes.map(v => ({ choice: v.choice })));
+          responsePayload.vote_summary = {
+            A: summary.tally.A,
+            B: summary.tally.B,
+            C: summary.tally.C,
+            total: currentVotes.length,
+            is_tie: summary.is_tie,
+            tied_options: summary.tied_options
+          };
+        }
+
         // Add additional outcome details if in outcome phase
         if (session.phase === 'outcome_reveal' && gameState) {
           const idx = session.scenarioIndex;
           const choice = idx === 0 ? gameState.scenario0Choice : idx === 1 ? gameState.scenario1Choice : gameState.scenario2Choice;
           
           if (choice) {
-            const scenario = SCENARIOS[idx];
+            const actualIdx = getActualScenarioIndex(gameState.scenarioOrder, idx);
+            const scenario = SCENARIOS[actualIdx];
             const option = scenario.options[choice as 'A' | 'B' | 'C'];
             responsePayload.choice = choice;
             responsePayload.veto_used = idx === 0 ? gameState.scenario0Veto : idx === 1 ? gameState.scenario1Veto : gameState.scenario2Veto;
@@ -460,6 +520,14 @@ export function registerSocketHandlers(io: Server) {
           session.players.length
         );
 
+        // Shuffle scenario pool for this session
+        const scenarioPool = [0, 1, 2];
+        for (let i = scenarioPool.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [scenarioPool[i], scenarioPool[j]] = [scenarioPool[j], scenarioPool[i]];
+        }
+        const scenarioOrderStr = scenarioPool.join(',');
+
         // Update database in transaction
         await prisma.$transaction([
           ...assigned.map(p =>
@@ -479,6 +547,7 @@ export function registerSocketHandlers(io: Server) {
           prisma.gameState.create({
             data: {
               sessionId: session.id,
+              scenarioOrder: scenarioOrderStr,
               economicGrowth: 50,
               governmentBudget: 50,
               peopleWelfare: 50,
@@ -535,7 +604,8 @@ export function registerSocketHandlers(io: Server) {
       try {
         const roomCode = room_code.toUpperCase();
         const session = await prisma.session.findUnique({
-          where: { roomCode }
+          where: { roomCode },
+          include: { gameState: true }
         });
 
         if (!session) return;
@@ -546,13 +616,16 @@ export function registerSocketHandlers(io: Server) {
           data: { phase: 'scenario_display' }
         });
 
+        const actualIdx = getActualScenarioIndex(session.gameState?.scenarioOrder, session.scenarioIndex);
+
         // We need to send localized scenario to each participant based on their language
         const clientSockets = await io.in(roomCode).fetchSockets();
         for (const clientSock of clientSockets) {
           const pLang = clientSock.data.lang || 'en';
           clientSock.emit('game:scenario_opened', {
             scenario_index: session.scenarioIndex,
-            scenario: getLocalizedScenario(session.scenarioIndex, pLang)
+            actual_scenario_index: actualIdx,
+            scenario: getLocalizedScenario(actualIdx, pLang)
           });
         }
       } catch (error) {
@@ -645,19 +718,30 @@ export function registerSocketHandlers(io: Server) {
           return;
         }
 
-        // Upsert vote
+        // Find actual player record in database
+        const player = session.players.find(
+          p => p.id === socket.data.playerId || p.id === player_id || p.fullName.toLowerCase() === (player_id || '').toLowerCase()
+        );
+
+        if (!player) {
+          console.error(`[Vote Error] Player not found for player_id: ${player_id}, socket.data.playerId: ${socket.data.playerId}`);
+          socket.emit('error', { code: 'PLAYER_NOT_FOUND', message: 'Player not found in session' });
+          return;
+        }
+
+        // Upsert vote using valid player.id
         await prisma.vote.upsert({
           where: {
             sessionId_playerId_scenarioIndex: {
               sessionId: session.id,
-              playerId: player_id,
+              playerId: player.id,
               scenarioIndex: session.scenarioIndex
             }
           },
           update: { choice },
           create: {
             sessionId: session.id,
-            playerId: player_id,
+            playerId: player.id,
             scenarioIndex: session.scenarioIndex,
             choice
           }
@@ -675,6 +759,8 @@ export function registerSocketHandlers(io: Server) {
 
         // Broadcast count
         const totalPlayersCount = session.players.length;
+        console.log(`[Vote Cast] Room: ${roomCode}, Scenario: ${session.scenarioIndex}, Votes: ${votes.length}/${totalPlayersCount}`);
+
         io.to(roomCode).emit('game:vote_cast', {
           votes_cast: votes.length,
           total_players: totalPlayersCount
@@ -731,7 +817,8 @@ export function registerSocketHandlers(io: Server) {
       try {
         const roomCode = room_code.toUpperCase();
         const session = await prisma.session.findUnique({
-          where: { roomCode }
+          where: { roomCode },
+          include: { gameState: true }
         });
 
         if (!session) return;
@@ -739,6 +826,7 @@ export function registerSocketHandlers(io: Server) {
         if (session.scenarioIndex >= 2) return; // Only 3 scenarios (0, 1, 2)
 
         const nextIndex = session.scenarioIndex + 1;
+        const actualIdx = getActualScenarioIndex(session.gameState?.scenarioOrder, nextIndex);
 
         await prisma.session.update({
           where: { id: session.id },
@@ -753,7 +841,8 @@ export function registerSocketHandlers(io: Server) {
           const pLang = clientSock.data.lang || 'en';
           clientSock.emit('game:scenario_opened', {
             scenario_index: nextIndex,
-            scenario: getLocalizedScenario(nextIndex, pLang)
+            actual_scenario_index: actualIdx,
+            scenario: getLocalizedScenario(actualIdx, pLang)
           });
         }
       } catch (error) {
@@ -951,7 +1040,8 @@ async function handleMayorSubmission(
     throw new Error('Game state not initialized');
   }
 
-  const currentScenario = SCENARIOS[session.scenarioIndex];
+  const actualIdx = getActualScenarioIndex(session.gameState.scenarioOrder, session.scenarioIndex);
+  const currentScenario = SCENARIOS[actualIdx];
   const option = currentScenario.options[choice as 'A' | 'B' | 'C'];
   if (!option) {
     throw new Error('Invalid choice option');

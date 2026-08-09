@@ -4,9 +4,9 @@ import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
-import scenario1Img from '../assets/scenario_1_industrial.webp';
-import scenario2Img from '../assets/scenario_2_education.webp';
-import scenario3Img from '../assets/scenario_3_forest.webp';
+import scenario1Img from '../assets/scenario_1_industrial.png';
+import scenario2Img from '../assets/scenario_2_education.png';
+import scenario3Img from '../assets/scenario_3_forest.png';
 
 interface ScenarioViewProps {
   isFacilitator: boolean;
@@ -111,14 +111,14 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
 
           {/* Scenario Illustration Banner */}
           {(() => {
-            const imgs = [scenario1Img, scenario2Img, scenario3Img];
-            const img = imgs[scenarioIndex] ?? imgs[0];
-            const labels: Record<string, string[]> = {
-              en: ['New Industrial Zone', 'Universal Free Education', 'Open Forest for Mining'],
-              id: ['Kawasan Industri Baru', 'Pendidikan Gratis Universal', 'Hutan Terbuka untuk Pertambangan'],
-              th: ['เขตอุตสาหกรรมใหม่', 'การศึกษาฟรีสากล', 'เปิดป่าเพื่อการทำเหมือง'],
+            const imgMap: Record<number, any> = {
+              1: scenario1Img,
+              2: scenario2Img,
+              3: scenario3Img
             };
-            const caption = labels[lang]?.[scenarioIndex] ?? labels['en']?.[scenarioIndex] ?? '';
+            const realId = scenario?.id || 1;
+            const img = imgMap[realId] ?? scenario1Img;
+            const caption = scenario?.title || '';
             return (
               <div className="w-full shrink-0 rounded-xl overflow-hidden relative">
                 <img

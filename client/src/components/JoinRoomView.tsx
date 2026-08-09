@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { getRoomDetails } from '../api.js';
 import { Loader2, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n.js';
-import bgImage from '../assets/image3.webp';
+import bgImage from '../assets/image3.png';
 
 interface JoinRoomViewProps {
   onSuccess: (roomCode: string, fullName: string, country: string, isReconnection: boolean) => void;
@@ -10,9 +10,48 @@ interface JoinRoomViewProps {
 }
 
 const ASEAN_COUNTRIES: Record<string, string[]> = {
-  en: ['Indonesia', 'Thailand', 'United States'],
-  id: ['Indonesia', 'Thailand', 'Amerika Serikat'],
-  th: ['อินโดนีเซีย', 'ประเทศไทย', 'สหรัฐอเมริกา'],
+  en: [
+    'Brunei Darussalam',
+    'Cambodia',
+    'Indonesia',
+    'Lao PDR',
+    'Malaysia',
+    'Myanmar',
+    'Philippines',
+    'Singapore',
+    'Thailand',
+    'Timor Leste',
+    'Vietnam',
+    'Other'
+  ],
+  id: [
+    'Brunei Darussalam',
+    'Kamboja',
+    'Indonesia',
+    'Lao PDR',
+    'Malaysia',
+    'Myanmar',
+    'Filipina',
+    'Singapura',
+    'Thailand',
+    'Timor Leste',
+    'Vietnam',
+    'Lainnya'
+  ],
+  th: [
+    'บรูไนดารุสซาลาม',
+    'กัมพูชา',
+    'อินโดนีเซีย',
+    'ลาว (Lao PDR)',
+    'มาเลเซีย',
+    'เมียนมา',
+    'ฟิลิปปินส์',
+    'สิงคโปร์',
+    'ประเทศไทย',
+    'ติมอร์-เลสเต',
+    'เวียดนาม',
+    'อื่นๆ'
+  ],
 };
 
 export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack }) => {
@@ -25,6 +64,8 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const isCustomCountrySelected = country === 'Other' || country === 'Lainnya' || country === 'อื่นๆ';
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!roomCode || !fullName || (!country && !customCountry)) {
@@ -34,7 +75,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
 
     setLoading(true);
     setError(null);
-    const selectedCountry = country === 'Other' ? customCountry : country;
+    const selectedCountry = isCustomCountrySelected ? customCountry : country;
     const formattedCode = roomCode.toUpperCase().trim();
 
     try {
@@ -125,7 +166,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
               <label className="block text-white text-sm font-medium font-['Inter'] leading-6 select-none">
                 {t('join.country_label')}
               </label>
-              {country === 'Other' ? (
+              {isCustomCountrySelected ? (
                 <div className="w-full h-12 bg-neutral-800 rounded-md outline outline-2 outline-offset-[-2px] outline-neutral-700 flex items-center justify-between overflow-hidden">
                   <input
                     type="text"

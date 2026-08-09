@@ -3,7 +3,7 @@ import { LogOut, Activity } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
-import bgImage from '../assets/image5.webp';
+import bgImage from '../assets/image5.png';
 
 interface DiscussionViewProps {
   isFacilitator: boolean;

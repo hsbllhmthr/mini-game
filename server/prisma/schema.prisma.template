@@ -101,6 +101,8 @@ model GameState {
   scenario1Choice      String? @map("scenario_1_choice")
   scenario2Choice      String? @map("scenario_2_choice")
 
+  scenarioOrder        String? @default("0,1,2") @map("scenario_order")
+
   scenario0Veto        Boolean @default(false) @map("scenario_0_veto")
   scenario0VetoReason  String? @map("scenario_0_veto_reason")
   scenario1Veto        Boolean @default(false) @map("scenario_1_veto")

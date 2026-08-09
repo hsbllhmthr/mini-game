@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import bgImage from '../assets/image2.webp';
+import bgImage from '../assets/image2.png';
 import { useI18n, type Language } from '../i18n.js';
 
 interface LanguageSelectViewProps {

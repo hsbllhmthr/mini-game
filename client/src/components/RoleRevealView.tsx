@@ -188,7 +188,7 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
   if (!roleInfo) return null;
 
   const isMayor = roleInfo.role.toLowerCase() === 'mayor';
-  const scenarioTitle = SCENARIOS[scenarioIndex]?.title[lang] || 'New Industrial Zone';
+  const scenarioTitle = lang === 'id' ? 'Penyingkapan Peran' : lang === 'th' ? 'การเปิดเผยบทบาท' : 'Role Briefing';
 
   return (
     <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
