@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { useI18n } from '../i18n.js';
-import { SCENARIOS } from '../gameConstants.js';
 
 export interface RoleInfo {
   role: string;
