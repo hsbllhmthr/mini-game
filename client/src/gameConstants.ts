@@ -277,7 +277,7 @@ export const SCENARIOS: RawScenario[] = [
         },
       },
       C: {
-        label: { en: "Community and Environment First", id: "Utamakan Komunitas dan Lingkungan", th: "ชุมชนและสิ่งแวดล้อมต้องมาก่อน" },
+        label: { en: "Environment First Policy", id: "Kebijakan Lingkungan Utama", th: "นโยบายเน้นสิ่งแวดล้อมเป็นหลัก" },
         description: { en: "Reject the heavy industrial zone in favor of small-scale eco-tourism and green agriculture.", id: "Tolak kawasan industri berat demi ekowisata skala kecil dan pertanian hijau.", th: "ปฏิเสธเขตอุตสาหกรรมหนักเพื่อสนับสนุนการท่องเที่ยวเชิงนิเวศและการเกษตรสีเขียว" },
         advantages: { en: "Improves long-term environmental quality and protects local communities.", id: "Meningkatkan kualitas lingkungan jangka panjang dan melindungi komunitas lokal.", th: "ปรับปรุงคุณภาพสิ่งแวดล้อมระยะยาวและคุ้มครองชุมชนท้องถิ่น" },
         risks: { en: "Reduces economic growth and budget revenues; investors might pull out.", id: "Mengurangi pertumbuhan ekonomi dan pendapatan anggaran; investor mungkin menarik diri.", th: "ลดการเติบโตทางเศรษฐกิจและรายได้งบประมาณ นักลงทุนอาจถอนตัว" },
@@ -469,6 +469,204 @@ export const SCENARIOS: RawScenario[] = [
       en: "Resource extraction offers quick revenue but carries permanent ecological risk; leadership means weighing finite wealth against the heritage of future generations.",
       id: "Ekstraksi sumber daya menawarkan pendapatan cepat tetapi membawa risiko ekologis permanen.",
       th: "การสกัดทรัพยากรให้รายได้รวดเร็วแต่มีความเสี่ยงทางนิเวศถาวร ภาวะผู้นำคือการชั่งน้ำหนักสมบัติที่มีจำกัดกับมรดกคนรุ่นหลัง"
+    },
+  },
+  {
+    id: 4,
+    title: {
+      en: "Renewable Energy Transition",
+      id: "Transisi Energi Terbarukan",
+      th: "การเปลี่ยนผ่านสู่พลังงานหมุนเวียน"
+    },
+    description: {
+      en: "The city faces power grid instability and high emissions from coal plants. A proposal is introduced to transition the city's power grid to solar and wind energy...",
+      id: "Kota menghadapi ketidakstabilan jaringan listrik dan emisi tinggi dari pembangkit batu bara. Proposal diajukan untuk memindahkan jaringan listrik kota ke energi surya dan angin...",
+      th: "เมืองเผชิญกับความไม่มั่นคงของโครงข่ายไฟฟ้าและการปล่อยมลพิษสูงจากโรงไฟฟ้าถ่านหิน มีการเสนอข้อเสนอเพื่อเปลี่ยนโครงข่ายไฟฟ้าของเมืองไปสู่พลังงานแสงอาทิตย์และลม..."
+    },
+    challengeSummary: {
+      en: "A proposal to shift the city's power grid from coal to solar and wind energy promises zero carbon emissions, weighed against upfront public debt and temporary electricity tariff hikes.",
+      id: "Proposal untuk mengalihkan jaringan listrik kota dari batu bara ke energi surya dan angin menjanjikan nol emisi karbon, ditimbang dengan utang publik awal dan kenaikan tarif listrik sementara.",
+      th: "ข้อเสนอเพื่อเปลี่ยนโครงข่ายไฟฟ้าของเมืองจากถ่านหินไปสู่พลังงานแสงอาทิตย์และลมสัญญาว่าจะปล่อยคาร์บอนเป็นศูนย์ โดยชั่งน้ำหนักกับหนี้สาธารณะเริ่มต้นและการขึ้นค่าไฟฟ้าชั่วคราว"
+    },
+    stakeholderPositions: {
+      en: {
+        mayor: "Supports clean energy legacy but worries about public anger over tariff hikes.",
+        journalist: "Monitors energy contract transparency and utility company lobbying.",
+        community_rep: "Demands low-income energy subsidies and tariff protections.",
+        business_rep: "Fears high energy costs will reduce manufacturing competitiveness.",
+        social_welfare: "Warns that energy price hikes disproportionately harm poor households.",
+        environmental: "Strongly advocates for immediate 100% renewable grid transition.",
+        investor: "Sees huge opportunities in green tech infrastructure contracts.",
+        youth_rep: "Champions aggressive climate action for a sustainable future.",
+      },
+      id: {
+        mayor: "Mendukung warisan energi bersih tetapi khawatir akan kemarahan publik atas kenaikan tarif.",
+        journalist: "Mengawasi transparansi kontrak energi dan lobi perusahaan utilitas.",
+        community_rep: "Menuntut subsidi energi bagi warga berpenghasilan rendah dan perlindungan tarif.",
+        business_rep: "Khawatir biaya energi yang tinggi akan mengurangi daya saing manufaktur.",
+        social_welfare: "Memperingatkan bahwa kenaikan harga energi sangat merugikan rumah tangga miskin.",
+        environmental: "Sangat mendukung transisi 100% jaringan terbarukan segera.",
+        investor: "Melihat peluang besar dalam kontrak infrastruktur teknologi hijau.",
+        youth_rep: "Mendorong aksi iklim yang agresif demi masa depan berkelanjutan.",
+      },
+      th: {
+        mayor: "สนับสนุนมรดกพลังงานสะอาด แต่กังวลเรื่องความไม่พอใจของสาธารณชนจากการขึ้นค่าไฟ",
+        journalist: "เฝ้าระวังความโปร่งใสของสัญญาพลังงานและการวิ่งเต้นของบริษัทสาธารณูปโภค",
+        community_rep: "เรียกร้องเงินอุดหนุนพลังงานสำหรับผู้มีรายได้น้อยและการคุ้มครองอัตราค่าไฟ",
+        business_rep: "กลัวว่าต้นทุนพลังงานที่สูงจะลดความสามารถในการแข่งขันภาคการผลิต",
+        social_welfare: "เตือนว่าการขึ้นราคาพลังงานส่งผลกระทบต่อครัวเรือนยากจนอย่างไม่เป็นธรรม",
+        environmental: "สนับสนุนการเปลี่ยนผ่านสู่พลังงานหมุนเวียน 100% ทันทีอย่างเข้มแข็ง",
+        investor: "เห็นโอกาสมหาศาลในโครงสร้างพื้นฐานเทคโนโลยีสีเขียว",
+        youth_rep: "ผลักดันการดำเนินการด้านภูมิอากาศอย่างจริงจังเพื่ออนาคตที่ยั่งยืน",
+      }
+    },
+    options: {
+      A: {
+        label: { en: "Rapid Green Transition", id: "Transisi Cepat Energi Terbarukan", th: "การเปลี่ยนผ่านสีเขียวอย่างรวดเร็ว" },
+        description: { en: "Immediately phase out coal plants and fund municipal solar/wind grids with public subsidies.", id: "Segera menghentikan pembangkit batu bara dan mendanai jaringan surya/angin kota dengan subsidi publik.", th: "ยกเลิกโรงไฟฟ้าถ่านหินทันทีและจัดหาทุนโครงข่ายพลังงานแสงอาทิตย์/ลมด้วยเงินอุดหนุน" },
+        advantages: { en: "Dramatic reduction in air pollution and major boost to environmental reputation.", id: "Penurunan dramatis polusi udara dan peningkatan besar pada reputasi lingkungan.", th: "ลดมลพิษทางอากาศอย่างมหาศาลและเพิ่มชื่อเสียงด้านสิ่งแวดล้อม" },
+        risks: { en: "Heavy budget deficit from subsidies; short-term electricity tariff increase.", id: "Defisit anggaran yang berat dari subsidi; kenaikan tarif listrik jangka pendek.", th: "การขาดดุลงบประมาณอย่างรวดเร็วจากการอุดหนุน การขึ้นค่าไฟระยะสั้น" },
+        indicators: {
+          economicGrowth: -10,
+          governmentBudget: -25,
+          peopleWelfare: 10,
+          publicTrust: 15,
+          environmentalQuality: 30,
+          transparency: 5,
+        },
+      },
+      B: {
+        label: { en: "Phased Hybrid Transition", id: "Transisi Campuran Bertahap", th: "การเปลี่ยนผ่านแบบผสมผสานตามขั้นตอน" },
+        description: { en: "Implement a 10-year gradual transition, keeping natural gas backup while expanding solar energy.", id: "Terapkan transisi bertahap 10 tahun, mempertahankan cadangan gas alam sambil memperluas energi surya.", th: "ใช้เวลาเปลี่ยนผ่าน 10 ปี โดยรักษาแก๊สธรรมชาติไว้สำรองพร้อมขยายพลังงานแสงอาทิตย์" },
+        advantages: { en: "Stable power supply, moderate costs, and steady environmental improvement.", id: "Pasokan listrik stabil, biaya moderat, dan peningkatan lingkungan yang konstan.", th: "การจ่ายไฟฟ้าที่มั่นคง ต้นทุนปานกลาง และการปรับปรุงสิ่งแวดล้อมอย่างสม่ำเสมอ" },
+        risks: { en: "Slower decarbonization; requires ongoing regulatory monitoring.", id: "Dekarbonisasi lebih lambat; memerlukan pemantauan regulasi yang berkelanjutan.", th: "การลดคาร์บอนช้าลง ต้องมีการกำกับดูแลอย่างต่อเนื่อง" },
+        indicators: {
+          economicGrowth: 10,
+          governmentBudget: -10,
+          peopleWelfare: 5,
+          publicTrust: 10,
+          environmentalQuality: 15,
+          transparency: 10,
+        },
+      },
+      C: {
+        label: { en: "Private Energy Concessions", id: "Konsesi Energi Swasta", th: "สัมปทานพลังงานภาคเอกชน" },
+        description: { en: "Auction renewable energy rights to private corporations without public debt investment.", id: "Lelang hak energi terbarukan kepada korporasi swasta tanpa investasi utang publik.", th: "ประมูลสิทธิพลังงานหมุนเวียนให้บริษัทเอกชนโดยไม่ต้องกู้เงินแผ่นดิน" },
+        advantages: { en: "Protects city budget and attracts foreign infrastructure investors.", id: "Melindungi anggaran kota dan menarik investor infrastruktur asing.", th: "รักษางบประมาณแผ่นดินและดึงดูดนักลงทุนโครงสร้างพื้นฐานต่างชาติ" },
+        risks: { en: "High corporate tariffs for citizens; potential backroom concession deals.", id: "Tarif korporasi yang tinggi untuk warga; potensi kesepakatan konsesi belakang layar.", th: "ค่าไฟฟ้าสูงสำหรับประชาชน ความเสี่ยงจากการต่อรองผลประโยชน์ทับซ้อน" },
+        indicators: {
+          economicGrowth: 20,
+          governmentBudget: 15,
+          peopleWelfare: -10,
+          publicTrust: -10,
+          environmentalQuality: 10,
+          transparency: -15,
+        },
+      },
+    },
+    reflection: {
+      en: "Clean energy infrastructure requires balancing ecological duty against fiscal equity so energy security remains affordable for all citizens.",
+      id: "Infrastruktur energi bersih membutuhkan keseimbangan antara tugas ekologis dan keadilan fiskal agar keamanan energi tetap terjangkau bagi seluruh warga.",
+      th: "โครงสร้างพื้นฐานพลังงานสะอาดต้องสร้างความสมดุลระหว่างหน้าที่ทางนิเวศวิทยาและความเป็นธรรมทางการคลัง เพื่อให้ความมั่นคงทางพลังงานยังคงจับต้องได้สำหรับทุกคน"
+    },
+  },
+  {
+    id: 5,
+    title: {
+      en: "Smart City & Digital Surveillance",
+      id: "Kota Cerdas & Pengawasan Digital",
+      th: "เมืองอัจฉริยะและการสอดส่องทางดิจิทัล"
+    },
+    description: {
+      en: "A tech consortium offers to install an AI-driven facial recognition camera network and smart traffic management system for free, in exchange for commercial data monetization rights...",
+      id: "Konsorsium teknologi menawarkan untuk memasang jaringan kamera pengawas AI dan sistem manajemen lalu lintas cerdas secara gratis, sebagai imbalan atas hak monetisasi data komersial...",
+      th: "กลุ่มเทคโนโลยีเสนอติดตั้งเครือข่ายกล้องตรวจจับใบหน้า AI และระบบจัดการจราจรอัจฉริยะให้ฟรี แลกกับสิทธิในการสร้างรายได้จากข้อมูลเชิงพาณิชย์..."
+    },
+    challengeSummary: {
+      en: "A proposal to deploy citywide AI facial recognition cameras promises zero crime and smart traffic flow, weighed against civil liberties, privacy infringement, and corporate data control.",
+      id: "Proposal untuk menerapkan kamera pengawas AI di seluruh kota menjanjikan penurunan kejahatan dan arus lalu lintas cerdas, ditimbang dengan kebebasan sipil, pelanggaran privasi, dan kontrol data korporasi.",
+      th: "ข้อเสนอเพื่อติดตั้งกล้อง AI ตรวจจับใบพัดทั่วเมืองสัญญาว่าจะลดอาชญากรรมและเพิ่มความคล่องตัวในการจราจร โดยชั่งน้ำหนักกับสิทธิเสรีภาพ การละเมิดความเป็นส่วนตัว และการผูกขาดข้อมูลของเอกชน"
+    },
+    stakeholderPositions: {
+      en: {
+        mayor: "Attracted by instant crime reduction and modern smart city prestige.",
+        journalist: "Deeply suspicious of corporate data tracking and government surveillance.",
+        community_rep: "Appreciates safer neighborhoods but fears harassment of minority communities.",
+        business_rep: "Strongly favors smart logistics and automated traffic management.",
+        social_welfare: "Warns of algorithmic bias and wrongful police targeting of poor citizens.",
+        environmental: "Neutral, but sees potential for AI-driven waste management monitoring.",
+        investor: "Excited by the high-tech investment and commercial data monetization potential.",
+        youth_rep: "Fiercely defends digital privacy rights and opposes mass surveillance.",
+      },
+      id: {
+        mayor: "Tertarik dengan penurunan kejahatan instan dan gengsi kota cerdas modern.",
+        journalist: "Sangat curiga terhadap pelacakan data korporasi dan pengawasan pemerintah.",
+        community_rep: "Menghargai lingkungan yang lebih aman tetapi takut akan pelecehan terhadap komunitas minoritas.",
+        business_rep: "Sangat mendukung logistik cerdas dan manajemen lalu lintas terotomatisasi.",
+        social_welfare: "Memperingatkan tentang bias algoritma dan penargetan polisi yang salah terhadap warga miskin.",
+        environmental: "Netral, namun melihat potensi untuk pemantauan manajemen sampah berbasis AI.",
+        investor: "Antusias dengan investasi teknologi tinggi dan potensi monetisasi data komersial.",
+        youth_rep: "Sangat membela hak privasi digital dan menentang pengawasan massal.",
+      },
+      th: {
+        mayor: "ดึงดูดใจด้วยการลดอาชญากรรมทันทีและชื่อเสียงของเมืองอัจฉริยะที่ทันสมัย",
+        journalist: "สงสัยอย่างยิ่งเกี่ยวกับการติดตามข้อมูลของเอกชนและการสอดส่องของรัฐบาล",
+        community_rep: "ชื่นชอบชุมชนที่ปลอดภัยยิ่งขึ้น แต่กลัวการคุกคามชุมชนกลุ่มน้อย",
+        business_rep: "สนับสนุนการขนส่งอัจฉริยะและการจัดการจราจรอัตโนมัติอย่างยิ่ง",
+        social_welfare: "เตือนถึงอคติของอัลกอริทึมและการเพ่งเล็งที่ผิดพลาดของตำรวจต่อคนยากจน",
+        environmental: "เป็นกลาง แต่เห็นศักยภาพในการตรวจสอบการจัดการขยะด้วย AI",
+        investor: "ตื่นเต้นกับการลงทุนเทคโนโลยีสูงและศักยภาพในการสร้างรายได้จากข้อมูล",
+        youth_rep: "ปกป้องสิทธิความเป็นส่วนตัวทางดิจิทัลอย่างเข้มแข็งและคัดค้านการสอดส่องมหาชน",
+      }
+    },
+    options: {
+      A: {
+        label: { en: "Full Smart City Adoption", id: "Pengadopsian Penuh Smart City", th: "การใช้นวัตกรรมเมืองอัจฉริยะเต็มรูปแบบ" },
+        description: { en: "Deploy citywide AI surveillance and traffic automation in partnership with private tech firms.", id: "Terapkan pengawasan AI dan otomatisasi lalu lintas di seluruh kota berkerjasama dengan firma teknologi swasta.", th: "ติดตั้งการสอดส่องด้วย AI และการจราจรอัตโนมัติทั่วเมืองร่วมกับบริษัทเทคโนโลยี" },
+        advantages: { en: "Rapid drop in urban crime, optimized traffic, zero municipal capital cost.", id: "Penurunan cepat kejahatan perkotaan, lalu lintas teroptimasi, tanpa biaya modal daerah.", th: "ลดอาชญากรรมในเมืองอย่างรวดเร็ว การจราจรมีประสิทธิภาพ ไม่มีต้นทุนงบประมาณ" },
+        risks: { en: "Severe public trust drop due to privacy loss; secret corporate data commercialization.", id: "Penurunan besar kepercayaan publik karena kehilangan privasi; komersialisasi data korporasi rahasia.", th: "ความไว้วางใจของประชาชนลดลงอย่างรวดเร็วเนื่องจากการสูญเสียความเป็นส่วนตัว" },
+        indicators: {
+          economicGrowth: 15,
+          governmentBudget: 15,
+          peopleWelfare: 5,
+          publicTrust: -15,
+          environmentalQuality: 0,
+          transparency: -20,
+        },
+      },
+      B: {
+        label: { en: "Regulated Smart Governance", id: "Tata Kelola Cerdas Ber-Regulasi", th: "การบริหารจัดการอัจฉริยะภายใต้กฎหมาย" },
+        description: { en: "Limit AI cameras strictly to public transit hubs with an independent citizen privacy oversight board.", id: "Batasi kamera AI hanya di pusat transit publik dengan dewan pengawas privasi warga independen.", th: "จำกัดกล้อง AI เฉพาะในศูนย์ขนส่งสาธารณะพร้อมคณะกรรมการกำกับดูแลความเป็นส่วนตัว" },
+        advantages: { en: "Improves public safety while protecting civil liberties and transparency.", id: "Meningkatkan keselamatan publik sambil melindungi kebebasan sipil dan transparansi.", th: "ปรับปรุงความปลอดภัยสาธารณะพร้อมปกป้องเสรีภาพและสร้างความโปร่งใส" },
+        risks: { en: "Moderate municipal budget cost for privacy auditing and board oversight.", id: "Biaya anggaran daerah moderat untuk audit privasi dan pengawasan dewan.", th: "งบประมาณปานกลางสำหรับการตรวจสอบความเป็นส่วนตัวและการกำกับดูแล" },
+        indicators: {
+          economicGrowth: 10,
+          governmentBudget: -5,
+          peopleWelfare: 10,
+          publicTrust: 15,
+          environmentalQuality: 0,
+          transparency: 15,
+        },
+      },
+      C: {
+        label: { en: "Reject Mass Surveillance", id: "Tolak Pengawasan Massal", th: "ปฏิเสธการสอดส่องมหาชน" },
+        description: { en: "Decline the tech contract to protect digital privacy and invest in community-based policing.", id: "Tolak kontrak teknologi untuk melindungi privasi digital dan berinvestasi dalam kepolisian berbasis komunitas.", th: "ปฏิเสธสัญญาเทคโนโลยีเพื่อปกป้องความเป็นส่วนตัวทางดิจิทัลและลงทุนในตำรวจชุมชน" },
+        advantages: { en: "Protects fundamental civil rights, high transparency, and public trust.", id: "Melindungi hak-hak sipil mendasar, transparansi tinggi, dan kepercayaan publik.", th: "ปกป้องสิทธิขั้นพื้นฐาน ความโปร่งใสสูง และความไว้วางใจของประชาชน" },
+        risks: { en: "Slower traffic optimization and missed high-tech corporate investment.", id: "Otomatisasi lalu lintas lebih lambat dan kehilangan investasi korporasi teknologi tinggi.", th: "การเพิ่มประสิทธิภาพการจราจรช้าลง และสูญเสียโอกาสการลงทุนเทคโนโลยี" },
+        indicators: {
+          economicGrowth: -10,
+          governmentBudget: -10,
+          peopleWelfare: 5,
+          publicTrust: 20,
+          environmentalQuality: 0,
+          transparency: 10,
+        },
+      },
+    },
+    reflection: {
+      en: "Technology enhances city efficiency, but true governance requires safeguarding fundamental civil liberties against intrusive surveillance.",
+      id: "Teknologi meningkatkan efisiensi kota, tetapi tata kelola sejati memerlukan perlindungan kebebasan sipil mendasar dari pengawasan yang invasif.",
+      th: "เทคโนโลยีช่วยเพิ่มประสิทธิภาพของเมือง แต่การบริหารจัดการที่แท้จริงต้องปกป้องเสรีภาพขั้นพื้นฐานจากการสอดส่องที่คุกคาม"
     },
   },
 ];

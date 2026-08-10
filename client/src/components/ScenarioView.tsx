@@ -7,6 +7,8 @@ import type { Indicators } from './Dashboard.js';
 import scenario1Img from '../assets/scenario_1_industrial.png';
 import scenario2Img from '../assets/scenario_2_education.png';
 import scenario3Img from '../assets/scenario_3_forest.png';
+import scenario4Img from '../assets/scenario_4_energy.png';
+import scenario5Img from '../assets/scenario_5_smartcity.png';
 
 interface ScenarioViewProps {
   isFacilitator: boolean;
@@ -114,7 +116,9 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
             const imgMap: Record<number, any> = {
               1: scenario1Img,
               2: scenario2Img,
-              3: scenario3Img
+              3: scenario3Img,
+              4: scenario4Img,
+              5: scenario5Img
             };
             const realId = scenario?.id || 1;
             const img = imgMap[realId] ?? scenario1Img;
@@ -165,7 +169,7 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
                       <span className="text-white text-2xl font-extrabold font-['Nunito']">{key}</span>
                     </div>
                     <div className="min-w-0">
-                      <div className="text-white text-base font-extrabold font-['Nunito'] leading-tight truncate">{opt.label}</div>
+                      <div className="text-white text-base font-extrabold font-['Nunito'] leading-tight break-words">{opt.label}</div>
                       <div className="text-white text-xs font-semibold font-['Nunito'] leading-relaxed mt-1">{opt.description}</div>
                     </div>
                   </div>

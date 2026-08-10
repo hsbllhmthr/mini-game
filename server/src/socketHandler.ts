@@ -520,13 +520,13 @@ export function registerSocketHandlers(io: Server) {
           session.players.length
         );
 
-        // Shuffle scenario pool for this session
-        const scenarioPool = [0, 1, 2];
+        // Shuffle scenario pool of 5 scenarios for this session and pick 3
+        const scenarioPool = [0, 1, 2, 3, 4];
         for (let i = scenarioPool.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [scenarioPool[i], scenarioPool[j]] = [scenarioPool[j], scenarioPool[i]];
         }
-        const scenarioOrderStr = scenarioPool.join(',');
+        const scenarioOrderStr = scenarioPool.slice(0, 3).join(',');
 
         // Update database in transaction
         await prisma.$transaction([
