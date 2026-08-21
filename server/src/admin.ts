@@ -9,7 +9,8 @@ export const adminRouter = Router();
 
 // Middleware to verify admin token
 function verifyAdminToken(req: Request, res: Response, next: () => void) {
-  const token = req.headers['x-admin-token'] as string;
+  const rawToken = req.headers['x-admin-token'];
+  const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
   if (!token || token !== ADMIN_TOKEN) {
     res.status(401).json({ error: 'Unauthorized admin access' });
     return;
@@ -60,17 +61,20 @@ adminRouter.get('/stats', verifyAdminToken, async (req: Request, res: Response) 
 // GET /api/v1/admin/sessions
 adminRouter.get('/sessions', verifyAdminToken, async (req: Request, res: Response) => {
   try {
-    const { status, query } = req.query;
+    const statusParam = req.query.status;
+    const queryParam = req.query.query;
+    const status = Array.isArray(statusParam) ? statusParam[0] : statusParam;
+    const query = Array.isArray(queryParam) ? queryParam[0] : queryParam;
 
     const whereClause: any = {};
     if (status && status !== 'all') {
-      whereClause.status = status as string;
+      whereClause.status = String(status);
     }
     if (query) {
-      whereClause.roomCode = { contains: (query as string).toUpperCase() };
+      whereClause.roomCode = { contains: String(query).toUpperCase() };
     }
 
-    const sessions = await prisma.session.findMany({
+    const sessions: any[] = await prisma.session.findMany({
       where: whereClause,
       include: {
         _count: { select: { players: true, votes: true } },
@@ -97,7 +101,7 @@ adminRouter.get('/sessions', verifyAdminToken, async (req: Request, res: Respons
       status: s.status,
       phase: s.phase,
       scenario_index: s.scenarioIndex,
-      player_count: s._count.players,
+      player_count: s._count?.players ?? 0,
       created_at: s.createdAt,
       started_at: s.startedAt,
       ended_at: s.endedAt,
@@ -122,9 +126,9 @@ adminRouter.get('/sessions', verifyAdminToken, async (req: Request, res: Respons
 // GET /api/v1/admin/sessions/:id
 adminRouter.get('/sessions/:id', verifyAdminToken, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
-    const session = await prisma.session.findUnique({
+    const session: any = await prisma.session.findUnique({
       where: { id },
       include: {
         players: {
@@ -144,13 +148,13 @@ adminRouter.get('/sessions/:id', verifyAdminToken, async (req: Request, res: Res
       return;
     }
 
-    const beneficiariesList = session.gameState?.beneficiaries
-      ? session.gameState.beneficiaries.split(',').map(b => b.trim())
+    const beneficiariesList: string[] = session.gameState?.beneficiaries
+      ? session.gameState.beneficiaries.split(',').map((b: string) => b.trim())
       : [];
 
-    const playersFormatted = session.players.map(p => {
+    const playersFormatted = (session.players || []).map((p: any) => {
       const votesByScenario: Record<number, string> = {};
-      p.votes.forEach(v => {
+      (p.votes || []).forEach((v: any) => {
         votesByScenario[v.scenarioIndex] = v.choice;
       });
 
@@ -192,7 +196,7 @@ adminRouter.get('/sessions/:id', verifyAdminToken, async (req: Request, res: Res
 // DELETE /api/v1/admin/sessions/:id
 adminRouter.delete('/sessions/:id', verifyAdminToken, async (req: Request, res: Response) => {
   try {
-    const { id } = req.params;
+    const id = String(req.params.id);
 
     await prisma.session.delete({
       where: { id }
@@ -223,7 +227,7 @@ adminRouter.post('/reset', verifyAdminToken, async (req: Request, res: Response)
 // GET /api/v1/admin/sessions/:code/export
 adminRouter.get('/sessions/:code/export', verifyAdminToken, async (req: Request, res: Response) => {
   try {
-    const { code } = req.params;
+    const code = String(req.params.code);
 
     const buffer = await generateExport(code);
     const dateStr = new Date().toISOString().split('T')[0];
