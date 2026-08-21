@@ -311,15 +311,16 @@ export function registerSocketHandlers(io: Server) {
         // Add additional outcome details if in outcome phase
         if (session.phase === 'outcome_reveal' && session.gameState) {
           const idx = session.scenarioIndex;
-          const choice = idx === 0 ? session.gameState.scenario0Choice : idx === 1 ? session.gameState.scenario1Choice : session.gameState.scenario2Choice;
+          const gs = session.gameState as any;
+          const choice = gs[`scenario${idx}Choice`];
           
           if (choice) {
             const actualIdx = getActualScenarioIndex(session.gameState.scenarioOrder, idx);
             const scenario = SCENARIOS[actualIdx];
             const option = scenario.options[choice as 'A' | 'B' | 'C'];
             restorePayload.choice = choice;
-            restorePayload.veto_used = idx === 0 ? session.gameState.scenario0Veto : idx === 1 ? session.gameState.scenario1Veto : session.gameState.scenario2Veto;
-            restorePayload.justification = idx === 0 ? session.gameState.scenario0VetoReason : idx === 1 ? session.gameState.scenario1VetoReason : session.gameState.scenario2VetoReason;
+            restorePayload.veto_used = !!gs[`scenario${idx}Veto`];
+            restorePayload.justification = gs[`scenario${idx}VetoReason`];
             restorePayload.indicator_changes = {
               economic_growth: option.indicators.economicGrowth,
               government_budget: option.indicators.governmentBudget,
@@ -438,15 +439,16 @@ export function registerSocketHandlers(io: Server) {
         // Add additional outcome details if in outcome phase
         if (session.phase === 'outcome_reveal' && gameState) {
           const idx = session.scenarioIndex;
-          const choice = idx === 0 ? gameState.scenario0Choice : idx === 1 ? gameState.scenario1Choice : gameState.scenario2Choice;
+          const gs = gameState as any;
+          const choice = gs[`scenario${idx}Choice`];
           
           if (choice) {
             const actualIdx = getActualScenarioIndex(gameState.scenarioOrder, idx);
             const scenario = SCENARIOS[actualIdx];
             const option = scenario.options[choice as 'A' | 'B' | 'C'];
             responsePayload.choice = choice;
-            responsePayload.veto_used = idx === 0 ? gameState.scenario0Veto : idx === 1 ? gameState.scenario1Veto : gameState.scenario2Veto;
-            responsePayload.justification = idx === 0 ? gameState.scenario0VetoReason : idx === 1 ? gameState.scenario1VetoReason : gameState.scenario2VetoReason;
+            responsePayload.veto_used = !!gs[`scenario${idx}Veto`];
+            responsePayload.justification = gs[`scenario${idx}VetoReason`];
             responsePayload.indicator_changes = {
               economic_growth: option.indicators.economicGrowth,
               government_budget: option.indicators.governmentBudget,
@@ -520,13 +522,13 @@ export function registerSocketHandlers(io: Server) {
           session.players.length
         );
 
-        // Shuffle scenario pool of 5 scenarios for this session and pick 3
+        // Shuffle scenario pool of 5 scenarios for this session and pick all 5
         const scenarioPool = [0, 1, 2, 3, 4];
         for (let i = scenarioPool.length - 1; i > 0; i--) {
           const j = Math.floor(Math.random() * (i + 1));
           [scenarioPool[i], scenarioPool[j]] = [scenarioPool[j], scenarioPool[i]];
         }
-        const scenarioOrderStr = scenarioPool.slice(0, 3).join(',');
+        const scenarioOrderStr = scenarioPool.slice(0, 5).join(',');
 
         // Update database in transaction
         await prisma.$transaction([
@@ -823,7 +825,7 @@ export function registerSocketHandlers(io: Server) {
 
         if (!session) return;
         if (session.facilitatorToken !== facilitator_token) return;
-        if (session.scenarioIndex >= 2) return; // Only 3 scenarios (0, 1, 2)
+        if (session.scenarioIndex >= 4) return; // 5 scenarios (0, 1, 2, 3, 4)
 
         const nextIndex = session.scenarioIndex + 1;
         const actualIdx = getActualScenarioIndex(session.gameState?.scenarioOrder, nextIndex);
@@ -1077,6 +1079,14 @@ async function handleMayorSubmission(
     updateData.scenario2Choice = choice;
     updateData.scenario2Veto = vetoUsed;
     updateData.scenario2VetoReason = justification;
+  } else if (session.scenarioIndex === 3) {
+    updateData.scenario3Choice = choice;
+    updateData.scenario3Veto = vetoUsed;
+    updateData.scenario3VetoReason = justification;
+  } else if (session.scenarioIndex === 4) {
+    updateData.scenario4Choice = choice;
+    updateData.scenario4Veto = vetoUsed;
+    updateData.scenario4VetoReason = justification;
   }
 
   // Save to DB

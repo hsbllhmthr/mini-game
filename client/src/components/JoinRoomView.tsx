@@ -3,6 +3,7 @@ import { getRoomDetails } from '../api.js';
 import { Loader2, ChevronDown } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import bgImage from '../assets/image3.png';
+import desktopBg from '../assets/desktop2.png';
 
 interface JoinRoomViewProps {
   onSuccess: (roomCode: string, fullName: string, country: string, isReconnection: boolean) => void;
@@ -100,11 +101,23 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Background Image Layer */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center pointer-events-none">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex justify-center items-center overflow-hidden">
+      {/* Outer Full Desktop Background (desktop2.png) - Visible on desktop screens */}
+      {desktopBg && (
+        <div className="hidden sm:block absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <img 
+            className="w-full h-full object-cover object-center" 
+            src={desktopBg} 
+            alt="Desktop Background" 
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      )}
+
+      {/* Background Image Layer - Mobile View (image3.png) */}
+      <div className="sm:hidden absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center pointer-events-none z-0">
         <img 
-          className="w-full h-full max-w-[480px] object-cover" 
+          className="w-full h-full max-w-[480px] object-cover object-top" 
           src={bgImage} 
           alt="The People's Assembly" 
         />
@@ -113,11 +126,11 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
       {/* Main Content Container - Seamless full height without card wrapper */}
       <form 
         onSubmit={handleSubmit}
-        className="relative z-10 w-full max-w-[480px] min-h-screen flex flex-col justify-between items-center px-6 py-6 sm:py-8"
+        className="relative z-10 w-full max-w-[480px] sm:max-w-[520px] min-h-screen flex flex-col justify-between items-center px-6 py-6 sm:py-8"
       >
 
         {/* Middle Content: Instruction & Inputs */}
-        <div className="w-full max-w-[384px] flex flex-col items-center mx-auto mt-auto mb-8 sm:mb-12 space-y-4">
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex flex-col items-center mx-auto mt-auto mb-8 sm:mb-12 space-y-4">
 
           {/* Error Message Alert */}
           {error && (
@@ -209,14 +222,14 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
         </div>
 
         {/* Bottom Section: Action Buttons */}
-        <div className="w-full max-w-[384px] flex flex-col items-center mx-auto space-y-3.5 pb-2">
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex flex-col items-center mx-auto space-y-3.5 pb-2">
           
           {/* Primary Submit Button */}
           <button
             type="submit"
             disabled={loading}
             data-button="Primary"
-            className="w-full max-w-[384px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none"
           >
             {loading ? (
               <Loader2 className="w-5 h-5 animate-spin text-white" />
@@ -232,7 +245,7 @@ export const JoinRoomView: React.FC<JoinRoomViewProps> = ({ onSuccess, onBack })
             type="button"
             onClick={onBack}
             data-button="Outline-Secondary"
-            className="w-full max-w-[384px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5 focus:outline-none"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5 focus:outline-none"
           >
             <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
               {t('join.back_home')}

@@ -7,6 +7,7 @@ import { prisma } from './db.js';
 import { generateRoomCode, generateFacilitatorToken } from './utils.js';
 import { registerSocketHandlers } from './socketHandler.js';
 import { generateExport } from './export.js';
+import { adminRouter } from './admin.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -23,6 +24,9 @@ const io = new Server(httpServer, {
 
 app.use(cors());
 app.use(express.json());
+
+// Mount Admin REST Router
+app.use('/api/v1/admin', adminRouter);
 
 // REST API Endpoints
 app.get('/api/v1/health', (req, res) => {

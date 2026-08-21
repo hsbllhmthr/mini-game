@@ -20,6 +20,7 @@ import { OutcomeRevealView } from './components/OutcomeRevealView.js';
 import { ReflectionView } from './components/ReflectionView.js';
 import { Dashboard } from './components/Dashboard.js';
 import type { Indicators } from './components/Dashboard.js';
+import { AdminDashboardView } from './components/AdminDashboardView.js';
 
 // Icons
 import { SCENARIOS, ROLE_DESCRIPTIONS, ROLE_OBJECTIVES, SECRET_INFO, type PlayerRole, type Scenario } from './gameConstants.js';
@@ -37,13 +38,19 @@ type ScreenState =
   | 'voting' 
   | 'mayor_decision' 
   | 'outcome_reveal' 
-  | 'final_reflection';
+  | 'final_reflection'
+  | 'admin';
 
 function App() {
   const { lang, setLang } = useI18n();
 
   // Navigation / Connection States
-  const [screen, setScreen] = useState<ScreenState>('onboarding');
+  const [screen, setScreen] = useState<ScreenState>(() => {
+    if (window.location.pathname === '/admin' || window.location.search.includes('admin')) {
+      return 'admin';
+    }
+    return 'onboarding';
+  });
   const [roomCode, setRoomCode] = useState('');
   const [facilitatorToken, setFacilitatorToken] = useState('');
   const [isFacilitator, setIsFacilitator] = useState(false);
@@ -265,8 +272,8 @@ function App() {
         setRoleInfo({
           role: roleKey,
           description: ROLE_DESCRIPTIONS[currentLang][roleKey] || assignedRoleInfo.description,
-          objective: ROLE_OBJECTIVES[currentLang][roleKey] || assignedRoleInfo.objective,
-          secret_info: SECRET_INFO[currentLang][roleKey] || assignedRoleInfo.secret_info,
+          objectives: ROLE_OBJECTIVES[currentLang]?.[roleKey] || assignedRoleInfo.objectives || assignedRoleInfo.objective,
+          secretInfo: SECRET_INFO[currentLang]?.[roleKey] || assignedRoleInfo.secretInfo || assignedRoleInfo.secret_info,
         });
       } else {
         setRoleInfo(assignedRoleInfo);
@@ -617,6 +624,8 @@ function App() {
               indicators={indicators}
               onStartDiscussion={startDiscussion}
               onCancelSession={cancelSession}
+              roomCode={roomCode}
+              playerRole={role || undefined}
             />
           )}
           {screen === 'final_reflection' && (
@@ -645,9 +654,11 @@ function App() {
               justification={justification}
               indicatorChanges={indicatorChanges}
               newIndicators={newIndicators}
-              onNextStep={scenarioIndex < 2 ? nextScenario : endGame}
+              onNextStep={scenarioIndex < 4 ? nextScenario : endGame}
               onCancelSession={cancelSession}
               indicators={indicators}
+              roomCode={roomCode}
+              playerRole={role || undefined}
             />
           )}
           {screen === 'mayor_decision' && scenario && (
@@ -661,6 +672,8 @@ function App() {
               scenarioIndex={scenarioIndex}
               onCancelSession={cancelSession}
               indicators={indicators}
+              roomCode={roomCode}
+              playerRole={role || undefined}
             />
           )}
           {screen === 'discussion' && (
@@ -671,8 +684,11 @@ function App() {
               onEndDiscussionEarly={endDiscussionEarly}
               scenarioTitle={scenario?.title || 'New Industrial Zone'}
               scenarioIndex={scenarioIndex}
+              scenario={scenario}
               onCancelSession={cancelSession}
               indicators={indicators}
+              roomCode={roomCode}
+              playerRole={role || undefined}
             />
           )}
           {screen === 'voting' && scenario && (
@@ -687,6 +703,8 @@ function App() {
               onCancelSession={cancelSession}
               onToggleStats={() => setShowMobileDashboard(!showMobileDashboard)}
               initialVotedChoice={choice}
+              roomCode={roomCode}
+              playerRole={role || undefined}
             />
           )}
           {screen === 'onboarding' && (
@@ -699,6 +717,9 @@ function App() {
               lang={lang}
               onSelectLanguageClick={() => setScreen('language_select')}
             />
+          )}
+          {screen === 'admin' && (
+            <AdminDashboardView onBackToApp={() => setScreen('landing')} />
           )}
           {screen === 'language_select' && (
             <LanguageSelectView
@@ -747,6 +768,7 @@ function App() {
               onOpenScenario={openScenario}
               scenarioIndex={scenarioIndex}
               onCancelSession={cancelSession}
+              roomCode={roomCode}
             />
           )}
         </div>

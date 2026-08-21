@@ -42,7 +42,7 @@ export const OnboardingView: React.FC<OnboardingViewProps> = ({
   return (
     <div 
       onClick={handleSkip}
-      className={`fixed inset-0 z-50 w-screen h-screen bg-[#F3F4F6] flex justify-center items-center overflow-hidden select-none cursor-pointer touch-none transition-opacity duration-300 ${
+      className={`fixed inset-0 z-50 w-screen h-screen bg-white flex justify-center items-center overflow-hidden select-none cursor-pointer touch-none transition-opacity duration-300 ${
         isFadingOut ? 'opacity-0' : 'opacity-100'
       }`}
     >

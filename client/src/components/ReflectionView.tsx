@@ -417,18 +417,23 @@ export const ReflectionView: React.FC<ReflectionViewProps> = ({
   const displayArchetypes = (archetypes && archetypes.length > 0) ? archetypes : ["Developing City"];
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-        
-        {/* Top Full-Width Header Banner */}
-        <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {lang === 'id' ? 'Majelis Rakyat' : lang === 'th' ? 'สภาประชาชน' : "The People's Assembly"}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? 'Simulasi Selesai' : lang === 'th' ? 'การจำลองเสร็จสิ้น' : 'Simulation Complete'}
+            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? 'Simulasi Selesai' : lang === 'th' ? 'การจำลองเสร็จสิ้น' : 'Simulation Complete'}</span>
+              {isFacilitator && roomCode && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span>{roomCode}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -453,9 +458,10 @@ export const ReflectionView: React.FC<ReflectionViewProps> = ({
             )}
           </div>
         </div>
+      </div>
 
-        {/* Scrollable Content Area */}
-        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
+      {/* Scrollable Content Area */}
+      <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
           
           {/* Screen Title */}
           <div className="w-full text-center shrink-0">
@@ -697,7 +703,6 @@ export const ReflectionView: React.FC<ReflectionViewProps> = ({
 
           <div className="h-4 shrink-0" />
         </div>
-      </div>
 
       {/* Stats Modal Overlay */}
       {showStatsModal && (

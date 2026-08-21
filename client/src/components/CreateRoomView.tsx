@@ -31,7 +31,7 @@ export const CreateRoomView: React.FC<CreateRoomViewProps> = ({ onSuccess, onBac
   };
 
   return (
-    <div className="min-h-screen w-full bg-white flex justify-center items-start">
+    <div className="min-h-screen w-full bg-[#0D2B40] flex justify-center items-start">
       <div className="relative w-full sm:max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between px-8 py-8 sm:py-12">
         
         {/* Header containing the back icon button and title */}

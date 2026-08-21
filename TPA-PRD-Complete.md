@@ -1559,15 +1559,27 @@ Feedback berikut diterima dari klien/stakeholder setelah selesainya Milestone 2 
 
 ---
 
-### 24.6 Ringkasan Action Items Post-M2
+### 24.6 Tampilan Skenario & Opsi Kebijakan di Bawah Timer Diskusi (FR-07 — Feedback 21 Ags 2026)
 
-| # | Item | Priority | Target Milestone |
-|:--|:-----|:--------:|:----------------:|
-| 1 | Konsistensi nama produk ("The People's Assembly") di seluruh UI | High | M3 |
-| 2 | Batasi language selector: EN / ID / TH saja; gunakan nama negara formal | High | M3 |
-| 3 | Redesign visual identity; perkecil font; terapkan color palette resmi klien | High | M3 |
-| 4 | Tambah halaman/visual per scenario di Scenario Display | Medium-High | M3–M4 |
-| 5 | Archetype Result selalu tampil minimal 1 hasil; hapus placeholder | High | M3 |
+- **Feedback (21 Agustus 2026):** Pertahankan layout awal (header, judul, ilustrasi jam, dan timestamp `TIME REMAINING`), kemudian tempatkan rincian skenario dan opsi kebijakan di bagian bawah agar dapat di-scroll tanpa menutupi atau menimpa ilustrasi jam/timestamp.
+- **Action Required:**
+  - Pertahankan visual awal `DiscussionView.tsx` 100% utuh di bagian atas (layout jam, header, judul *Assembly Deliberation*, dan tombol *End Early*).
+  - Tambahkan kartu *Konteks & Tantangan Skenario*, kartu *Opsi Kebijakan A, B, C* (lengkap dengan Keuntungan & Risiko), serta akordion *Stakeholder Positions* tepat di bawah tombol timer/timestamp dalam kontainer yang dapat di-*scroll* (`overflow-y-auto`).
+  - Tambahkan indikator visual *Scroll Prompt* ("Geser ke bawah untuk rincian skenario & opsi") di bawah timer.
+- **Priority:** High (Selesai Dikerjakan)
+
+---
+
+### 24.7 Ringkasan Action Items Post-M2 & Feedback 21 Agustus 2026
+
+| # | Item | Priority | Target Milestone | Status |
+|:--|:-----|:--------:|:----------------:|:------:|
+| 1 | Konsistensi nama produk ("The People's Assembly") di seluruh UI | High | M3 | ✅ Selesai |
+| 2 | Batasi language selector: EN / ID / TH saja; gunakan nama negara formal | High | M3 | ✅ Selesai |
+| 3 | Redesign visual identity; perkecil font; terapkan color palette resmi klien | High | M3 | ✅ Selesai |
+| 4 | Tambah halaman/visual per scenario di Scenario Display | Medium-High | M3–M4 | ✅ Selesai |
+| 5 | Archetype Result selalu tampil minimal 1 hasil; hapus placeholder | High | M3 | ✅ Selesai |
+| 6 | Skenario & Opsi Kebijakan di bawah timer diskusi (21 Ags 2026) | High | M3 | ✅ Selesai |
 
 ---
 
@@ -1665,15 +1677,15 @@ Audit kode menyeluruh dilakukan pada seluruh file di `client/src/` dan `server/s
 
 | # | Item Feedback | Kompleksitas | Dependensi | Status |
 |:--|:-------------|:------------:|:----------:|:------:|
-| 1 | Hapus bahasa ph/vi/my dari `i18n.ts` + `LanguageSelectView.tsx` | Rendah | Tidak ada | ⬜ Belum |
-| 2 | Fix nama produk di `LandingView.tsx` | Rendah | Tidak ada | ⬜ Belum |
-| 3 | Fix archetype fallback di `gameEngine.ts` + `ReflectionView.tsx` | Rendah | Tidak ada | ⬜ Belum |
-| 4 | Kurangi font size di `DiscussionView.tsx` + `VotingView.tsx` | Rendah | Tidak ada | ⬜ Belum |
-| 5 | Generate & embed ilustrasi per scenario di `ScenarioView.tsx` | Sedang | Perlu generate aset | ⬜ Belum |
-| 6 | Redesign visual identity & color palette | Tinggi | **Menunggu color palette klien** | ⏳ Blocked |
+| 1 | Hapus bahasa ph/vi/my dari `i18n.ts` + `LanguageSelectView.tsx` | Rendah | Tidak ada | ✅ Selesai |
+| 2 | Fix nama produk di `LandingView.tsx` | Rendah | Tidak ada | ✅ Selesai |
+| 3 | Fix archetype fallback di `gameEngine.ts` + `ReflectionView.tsx` | Rendah | Tidak ada | ✅ Selesai |
+| 4 | Kurangi font size di `DiscussionView.tsx` + `VotingView.tsx` | Rendah | Tidak ada | ✅ Selesai |
+| 5 | Generate & embed ilustrasi per scenario di `ScenarioView.tsx` | Sedang | Aset terpasang | ✅ Selesai |
+| 6 | Redesign visual identity & color palette | Tinggi | Terapkan palette | ✅ Selesai |
 
 ---
 
 _End of Document — The People's Assembly PRD v1.1 (Complete Merged)_
-_Last Updated: July 2026 — Audit Kode §25 ditambahkan_
-_Next Review: After M3 (W2 July)_
+_Last Updated: August 2026 — Seluruh Feedback Stakeholder §24 & §25 Selesai Dikerjakan_
+_Next Review: Ready for Deployment / M3 Verification_

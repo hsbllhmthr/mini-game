@@ -177,6 +177,44 @@ export const SECRET_INFO: Record<string, Record<PlayerRole, string>> = {
   }
 };
 
+export const ROLE_TITLES: Record<string, Record<string, string>> = {
+  id: {
+    mayor: 'Walikota',
+    journalist: 'Jurnalis',
+    community_rep: 'Perwakilan Warga',
+    business_rep: 'Perwakilan Bisnis',
+    social_welfare: 'Kesejahteraan Sosial',
+    environmental: 'Pemerhati Lingkungan',
+    investor: 'Investor Utama',
+    youth_rep: 'Perwakilan Pemuda',
+  },
+  en: {
+    mayor: 'Mayor',
+    journalist: 'Journalist',
+    community_rep: 'Community Rep',
+    business_rep: 'Business Rep',
+    social_welfare: 'Social Welfare',
+    environmental: 'Environmentalist',
+    investor: 'Lead Investor',
+    youth_rep: 'Youth Rep',
+  },
+  th: {
+    mayor: 'นายกเทศมนตรี',
+    journalist: 'ผู้สื่อข่าว',
+    community_rep: 'ตัวแทนชุมชน',
+    business_rep: 'ตัวแทนภาคธุรกิจ',
+    social_welfare: 'สวัสดิการสังคม',
+    environmental: 'นักอนุรักษ์สิ่งแวดล้อม',
+    investor: 'นักลงทุนหลัก',
+    youth_rep: 'ตัวแทนเยาวชน',
+  }
+};
+
+export function formatRoleTitle(role?: string | null, lang: string = 'en'): string {
+  if (!role) return '';
+  return ROLE_TITLES[lang]?.[role] || ROLE_TITLES['en']?.[role] || role.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
 export interface GameStateValues {
   economicGrowth: number;
   governmentBudget: number;

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { LogOut, Activity } from 'lucide-react';
 import type { Scenario } from '../gameConstants.js';
+import { formatRoleTitle } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
 import bgImage from '../assets/image4.png';
@@ -24,6 +25,8 @@ interface MayorDecisionViewProps {
   scenarioIndex?: number;
   onCancelSession?: () => void;
   indicators?: Indicators;
+  roomCode?: string;
+  playerRole?: string;
 }
 
 export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
@@ -35,7 +38,9 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
   onMayorVeto,
   scenarioIndex = 0,
   onCancelSession,
-  indicators
+  indicators,
+  roomCode,
+  playerRole
 }) => {
   const [showVetoForm, setShowVetoForm] = useState(false);
   const [vetoChoice, setVetoChoice] = useState<string | null>(null);
@@ -45,21 +50,32 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
   if (!voteSummary) {
     const lang = localStorage.getItem('tpa_lang') || 'en';
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-          {bgImage && (
-            <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage} alt="" />
-          )}
-          
-          {/* Top Full-Width Header Banner (Transparent background) */}
-          <div className="w-full h-24 bg-transparent px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        {bgImage && (
+          <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage} alt="" />
+        )}
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-transparent flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
               <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
               </h1>
-              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : `Scenario ${scenarioIndex + 1} of 3`}
+              <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                {isFacilitator && roomCode && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span>{roomCode}</span>
+                  </>
+                )}
+                {!isFacilitator && playerRole && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole, lang)}</span>
+                  </>
+                )}
               </span>
             </div>
 
@@ -83,6 +99,7 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
 
           {/* Loading Content at Bottom */}
           <div className="w-full flex-grow flex flex-col items-center justify-end pb-16 sm:pb-20 text-center z-20 mt-auto">
@@ -95,7 +112,6 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </span>
             </div>
           </div>
-        </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (
@@ -156,18 +172,23 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
   if (isFacilitator) {
     const lang = localStorage.getItem('tpa_lang') || 'en';
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-          
-          {/* Top Full-Width Header Banner */}
-          <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
               <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
               </h1>
-              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : `Scenario ${scenarioIndex + 1} of 3`}
+              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                {roomCode && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span>{roomCode}</span>
+                  </>
+                )}
               </span>
             </div>
 
@@ -191,9 +212,10 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Scrollable Content Area */}
-          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
+        {/* Scrollable Content Area */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
             
             {/* Facilitator Title section */}
             <div className="w-full flex flex-col items-center space-y-1 text-center shrink-0">
@@ -247,7 +269,6 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </span>
             </div>
           </div>
-        </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (
@@ -304,18 +325,19 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
     };
 
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-
-          {/* Top Full-Width Header Banner */}
-          <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
               <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
               </h1>
-              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+              <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                <span className="opacity-60">•</span>
+                <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole || 'mayor', lang)}</span>
               </span>
             </div>
             
@@ -339,9 +361,10 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Scrollable Content */}
-          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
+        {/* Scrollable Content */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
 
             {/* Title & Description */}
             <div className="flex flex-col items-center space-y-1 text-center shrink-0 w-full">
@@ -508,7 +531,6 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
             )}
 
           </div>
-        </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (
@@ -552,21 +574,26 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
   // 3. OTHER PLAYERS VIEW (WAITING)
   const lang = localStorage.getItem('tpa_lang') || 'en';
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-        {bgImage && (
-          <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage} alt="" />
-        )}
-        
-        {/* Top Full-Width Header Banner (Transparent background) */}
-        <div className="w-full h-24 bg-transparent px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      {bgImage && (
+        <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage} alt="" />
+      )}
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className="w-full bg-transparent flex justify-center shrink-0 z-20">
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenario.title}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+              {playerRole && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole, lang)}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -590,6 +617,7 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
             </button>
           </div>
         </div>
+      </div>
 
         {/* Loading Content at Bottom */}
         <div className="w-full flex-grow flex flex-col items-center justify-end pb-16 sm:pb-20 text-center z-20 mt-auto">
@@ -602,9 +630,8 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
             </span>
           </div>
         </div>
-      </div>
 
-      {/* Stats Modal Overlay */}
+        {/* Stats Modal Overlay */}
       {showStatsModal && (
         <div className="fixed inset-0 z-50 bg-slate-950/70 backdrop-blur-sm animate-fade-in flex justify-center items-start sm:items-center p-4 pt-6 sm:pt-4 overflow-y-auto">
           <div className="w-[410px] max-h-[90%] bg-neutral-900 rounded-3xl p-6 shadow-2xl overflow-y-auto border-2 border-neutral-700 flex flex-col justify-between text-white">
@@ -621,6 +648,12 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
                   {lang === 'id' ? 'Tutup' : lang === 'th' ? 'ปิด' : 'Close'}
                 </button>
               </div>
+              {!isFacilitator && playerRole && (
+                <div className="mb-3 px-3.5 py-2 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-between text-xs font-bold font-['Nunito'] text-amber-300">
+                  <span>{lang === 'id' ? 'Peran Anda:' : lang === 'th' ? 'บทบาทของคุณ:' : 'Your Role:'}</span>
+                  <span className="uppercase tracking-wider font-extrabold text-amber-300">{formatRoleTitle(playerRole, lang)}</span>
+                </div>
+              )}
               {indicators ? (
                 <Dashboard indicators={indicators} flat />
               ) : (

@@ -100,8 +100,10 @@ model GameState {
   scenario0Choice      String? @map("scenario_0_choice")
   scenario1Choice      String? @map("scenario_1_choice")
   scenario2Choice      String? @map("scenario_2_choice")
+  scenario3Choice      String? @map("scenario_3_choice")
+  scenario4Choice      String? @map("scenario_4_choice")
 
-  scenarioOrder        String? @default("0,1,2") @map("scenario_order")
+  scenarioOrder        String? @default("0,1,2,3,4") @map("scenario_order")
 
   scenario0Veto        Boolean @default(false) @map("scenario_0_veto")
   scenario0VetoReason  String? @map("scenario_0_veto_reason")
@@ -109,6 +111,10 @@ model GameState {
   scenario1VetoReason  String? @map("scenario_1_veto_reason")
   scenario2Veto        Boolean @default(false) @map("scenario_2_veto")
   scenario2VetoReason  String? @map("scenario_2_veto_reason")
+  scenario3Veto        Boolean @default(false) @map("scenario_3_veto")
+  scenario3VetoReason  String? @map("scenario_3_veto_reason")
+  scenario4Veto        Boolean @default(false) @map("scenario_4_veto")
+  scenario4VetoReason  String? @map("scenario_4_veto_reason")
 
   ps                   Float?
   gqs                  Float?

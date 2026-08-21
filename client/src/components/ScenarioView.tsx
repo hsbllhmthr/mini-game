@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ChevronDown, ChevronUp, LogOut, Activity } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
+import { formatRoleTitle } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 import type { Indicators } from './Dashboard.js';
 import scenario1Img from '../assets/scenario_1_industrial.png';
@@ -17,6 +18,8 @@ interface ScenarioViewProps {
   indicators?: Indicators;
   onStartDiscussion?: (durationSeconds: number) => void;
   onCancelSession?: () => void;
+  roomCode?: string;
+  playerRole?: string;
 }
 
 export const ScenarioView: React.FC<ScenarioViewProps> = ({
@@ -25,7 +28,9 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
   scenario,
   indicators,
   onStartDiscussion,
-  onCancelSession
+  onCancelSession,
+  roomCode,
+  playerRole
 }) => {
   const { t } = useI18n();
   const lang = localStorage.getItem('tpa_lang') || 'en';
@@ -72,18 +77,29 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
   const optionKeys = ['A', 'B', 'C'] as const;
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Main App Container - Outer web bg is white, main container is dark cyan-950/0D2B40 without card wrapper */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-8 overflow-hidden">
-        
-        {/* Top Full-Width Header Banner */}
-        <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenario.title}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+              {isFacilitator && roomCode && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span>{roomCode}</span>
+                </>
+              )}
+              {!isFacilitator && playerRole && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole, lang)}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -107,9 +123,10 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Scrollable Content Container */}
-        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar">
+      {/* Scrollable Content Container */}
+      <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
 
           {/* Scenario Illustration Banner */}
           {(() => {
@@ -219,7 +236,7 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
 
           {/* Bottom Section (Facilitator Controls vs Player Waiting) */}
           {isFacilitator ? (
-            <div className="w-full space-y-5 shrink-0 pt-2 text-left">
+            <div className="w-full space-y-5 shrink-0 pt-2 pb-10 sm:pb-14 text-left">
               <div className="space-y-2">
                 <div className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
                   {lang === 'id' ? 'Pengaturan Sesi Diskusi' : lang === 'th' ? 'การตั้งค่าช่วงเวลาอภิปราย' : 'Discussion Session Setting'}
@@ -255,7 +272,7 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
               </button>
             </div>
           ) : (
-            <div className="w-full text-center py-5 px-4 shrink-0 mt-2 space-y-3">
+            <div className="w-full text-center py-5 pb-10 sm:pb-14 px-4 shrink-0 mt-2 space-y-3">
               <div className="flex items-center justify-center gap-1.5 mb-2.5">
                 <span className="inline-block w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
                 <span className="inline-block w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
@@ -299,6 +316,12 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
                     {lang === 'id' ? 'Tutup' : lang === 'th' ? 'ปิด' : 'Close'}
                   </button>
                 </div>
+                {!isFacilitator && playerRole && (
+                  <div className="mb-3 px-3.5 py-2 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-between text-xs font-bold font-['Nunito'] text-amber-300">
+                    <span>{lang === 'id' ? 'Peran Anda:' : lang === 'th' ? 'บทบาทของคุณ:' : 'Your Role:'}</span>
+                    <span className="uppercase tracking-wider font-extrabold text-amber-300">{formatRoleTitle(playerRole, lang)}</span>
+                  </div>
+                )}
                 {indicators ? (
                   <Dashboard indicators={indicators} flat />
                 ) : (
@@ -318,7 +341,6 @@ export const ScenarioView: React.FC<ScenarioViewProps> = ({
           </div>
         )}
 
-      </div>
     </div>
   );
 };

@@ -54,8 +54,8 @@ export const LobbyView: React.FC<LobbyViewProps> = ({
   const visiblePlayers = players.slice(0, visibleCount);
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex justify-center items-center overflow-hidden">
+      {/* Outer Web Background: #0D2B40. Main Content Container: Dark #0D2B40 without card wrapper */}
       <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center px-6 py-6 sm:py-8">
         
         {/* Top Header */}

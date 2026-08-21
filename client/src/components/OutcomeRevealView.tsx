@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { LogOut, Activity } from 'lucide-react';
 import type { Scenario } from '../gameConstants.js';
+import { formatRoleTitle } from '../gameConstants.js';
 import { Dashboard } from './Dashboard.js';
 
 interface IndicatorChanges {
@@ -24,6 +25,8 @@ interface OutcomeRevealViewProps {
   onNextStep?: () => void;
   onCancelSession?: () => void;
   indicators?: IndicatorChanges;
+  roomCode?: string;
+  playerRole?: string;
 }
 
 export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
@@ -37,7 +40,9 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
   newIndicators,
   onNextStep,
   onCancelSession,
-  indicators
+  indicators,
+  roomCode,
+  playerRole
 }) => {
   const [showStatsModal, setShowStatsModal] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -78,23 +83,28 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
   };
 
   const lang = localStorage.getItem('tpa_lang') || 'en';
-  const isLastScenario = scenarioIndex === 2;
+  const isLastScenario = scenarioIndex >= 4;
 
   // 1. FACILITATOR VIEW
   if (isFacilitator) {
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-
-          {/* Top Full-Width Header Banner */}
-          <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
               <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
               </h1>
-              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-                {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                {isFacilitator && roomCode && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span>{roomCode}</span>
+                  </>
+                )}
               </span>
             </div>
 
@@ -117,9 +127,10 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
               </button>
             </div>
           </div>
+        </div>
 
-          {/* Scrollable Content Area */}
-          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
+        {/* Scrollable Content Area */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
 
             {/* Screen Title */}
             <div className="w-full text-center shrink-0">
@@ -230,7 +241,6 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
 
             <div className="h-4 shrink-0" />
           </div>
-        </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (
@@ -271,18 +281,23 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
 
   // 2. PLAYER VIEW
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-
-        {/* Top Full-Width Header Banner */}
-        <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenario.title}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+              {playerRole && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole, lang)}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -305,9 +320,10 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
             </button>
           </div>
         </div>
+      </div>
 
-        {/* Scrollable Content Area */}
-        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
+      {/* Scrollable Content Area */}
+      <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
 
           {/* Screen Title */}
           <div className="w-full text-center shrink-0">
@@ -416,7 +432,6 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
 
           <div className="h-4 shrink-0" />
         </div>
-      </div>
 
       {/* Stats Modal Overlay */}
       {showStatsModal && (
@@ -435,6 +450,12 @@ export const OutcomeRevealView: React.FC<OutcomeRevealViewProps> = ({
                   {lang === 'id' ? 'Tutup' : lang === 'th' ? 'ปิด' : 'Close'}
                 </button>
               </div>
+              {!isFacilitator && playerRole && (
+                <div className="mb-3 px-3.5 py-2 bg-amber-500/20 border border-amber-500/40 rounded-xl flex items-center justify-between text-xs font-bold font-['Nunito'] text-amber-300">
+                  <span>{lang === 'id' ? 'Peran Anda:' : lang === 'th' ? 'บทบาทของคุณ:' : 'Your Role:'}</span>
+                  <span className="uppercase tracking-wider font-extrabold text-amber-300">{formatRoleTitle(playerRole, lang)}</span>
+                </div>
+              )}
               {indicators ? (
                 <Dashboard indicators={indicators} flat />
               ) : (

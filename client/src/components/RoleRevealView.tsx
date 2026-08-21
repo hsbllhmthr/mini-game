@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { LogOut, ChevronDown, ChevronUp } from 'lucide-react';
 import { useI18n } from '../i18n.js';
+import { formatRoleTitle } from '../gameConstants.js';
 
 export interface RoleInfo {
   role: string;
+  name?: string;
   description: string;
-  objective: string;
-  secret_info: string;
+  objectives: string;
+  secretInfo: string;
 }
 
 interface PlayerRoleSummary {
@@ -23,6 +25,7 @@ interface RoleRevealViewProps {
   onOpenScenario?: () => void;
   scenarioIndex: number;
   onCancelSession?: () => void;
+  roomCode?: string;
 }
 
 export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
@@ -31,7 +34,8 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
   facilitatorPlayers = [],
   onOpenScenario,
   scenarioIndex,
-  onCancelSession
+  onCancelSession,
+  roomCode
 }) => {
   const { t } = useI18n();
   const lang = localStorage.getItem('tpa_lang') || 'en';
@@ -82,15 +86,25 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
     const visiblePlayers = facilitatorPlayers.slice(0, visibleCount);
 
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Main App Container - Outer web bg is white, main container is dark cyan-950/0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8">
-          
-          {/* Top Full-Width Header Banner */}
-          <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden">
-            <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
-              {lang === 'id' ? 'Daftar Pembagian Peran' : 'Role Assignment Roster'}
-            </h1>
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
+            <div className="flex flex-col text-left justify-center min-w-0 pr-4">
+              <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
+                {lang === 'id' ? 'Daftar Pembagian Peran' : 'Role Assignment Roster'}
+              </h1>
+              <span className="text-white text-xs font-semibold font-['Nunito'] leading-5 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                {roomCode && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span>{roomCode}</span>
+                  </>
+                )}
+              </span>
+            </div>
 
             <button
               type="button"
@@ -101,84 +115,84 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
               <LogOut className="w-5 h-5 text-white" />
             </button>
           </div>
+        </div>
 
-          {/* Middle Content Section */}
-          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center mx-auto px-4 py-4 space-y-4 overflow-y-auto no-scrollbar">
-            
-            {/* Subtitle / Description Text */}
-            <div className="w-full text-center text-white text-sm font-medium font-['Nunito'] leading-5 px-1">
-              {lang === 'id' 
-                ? <>Tinjau peran pemain. Musyawarah dilakukan di ruangan.<br className="hidden sm:inline" /> Ketika semua pemain siap, buka Skenario {scenarioIndex + 1}.</>
-                : <>Review player roles. Deliberation happens in the room.<br className="hidden sm:inline" /> When all players are ready, open Scenario {scenarioIndex + 1}.</>
-              }
-            </div>
+        {/* Middle Content Section */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center mx-auto px-4 py-6 space-y-4 overflow-y-auto no-scrollbar z-10">
+          
+          {/* Subtitle / Description Text */}
+          <div className="w-full text-center text-white text-sm font-medium font-['Nunito'] leading-5 px-1">
+            {lang === 'id' 
+              ? <>Tinjau peran pemain. Musyawarah dilakukan di ruangan.<br className="hidden sm:inline" /> Ketika semua pemain siap, buka Skenario {scenarioIndex + 1}.</>
+              : <>Review player roles. Deliberation happens in the room.<br className="hidden sm:inline" /> When all players are ready, open Scenario {scenarioIndex + 1}.</>
+            }
+          </div>
 
-            {/* Players Roster Cards List */}
-            <div className="w-full space-y-3.5 shrink-0 pt-2">
-              {visiblePlayers.map((player) => (
-                <div 
-                  key={player.id} 
-                  className="w-full h-20 bg-white rounded-md border-2 border-neutral-200 px-4 flex items-center justify-between shrink-0"
-                >
-                  <div className="flex flex-col items-start justify-center min-w-0 text-left">
-                    <div className="text-neutral-600 text-lg sm:text-xl font-extrabold font-['Nunito'] leading-5 truncate w-full">
-                      {player.fullName}
-                    </div>
-                    <div className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6 mt-0.5 truncate w-full">
-                      {player.country}
-                    </div>
+          {/* Players Roster Cards List */}
+          <div className="w-full space-y-3.5 shrink-0 pt-2">
+            {visiblePlayers.map((player) => (
+              <div 
+                key={player.id} 
+                className="w-full h-20 bg-white rounded-md border-2 border-neutral-200 px-4 flex items-center justify-between shrink-0"
+              >
+                <div className="flex flex-col items-start justify-center min-w-0 text-left">
+                  <div className="text-neutral-600 text-lg sm:text-xl font-extrabold font-['Nunito'] leading-5 truncate w-full">
+                    {player.fullName}
                   </div>
-
-                  <div className={`px-3 py-1.5 rounded-md text-white text-xs sm:text-sm font-semibold font-['Inter'] leading-tight shrink-0 ${getRoleBadgeColor(player.role)}`}>
-                    {formatRoleName(player.role)}
+                  <div className="text-neutral-500 text-sm font-medium font-['Inter'] leading-6 mt-0.5 truncate w-full">
+                    {player.country}
                   </div>
                 </div>
-              ))}
-            </div>
 
-            {/* Load More Button */}
-            {facilitatorPlayers.length > visibleCount && (
-              <button
-                type="button"
-                onClick={() => setVisibleCount(c => Math.min(c + 4, facilitatorPlayers.length))}
-                className="text-white text-lg font-extrabold font-['Nunito'] leading-7 hover:opacity-80 transition-all cursor-pointer pt-1 pb-2 shrink-0"
-              >
-                {lang === 'id' ? 'Muat Lebih Banyak' : 'Load More'}
-              </button>
-            )}
-
+                <div className={`px-3 py-1.5 rounded-md text-white text-xs sm:text-sm font-semibold font-['Inter'] leading-tight shrink-0 ${getRoleBadgeColor(player.role)}`}>
+                  {formatRoleName(player.role)}
+                </div>
+              </div>
+            ))}
           </div>
 
-          {/* Bottom Section: Action Buttons */}
-          <div className="w-full max-w-[384px] flex flex-col items-center mx-auto px-4 space-y-3.5 pb-2 shrink-0">
-            
-            {/* Primary Action: Open Scenario */}
+          {/* Load More Button */}
+          {facilitatorPlayers.length > visibleCount && (
             <button
               type="button"
-              onClick={onOpenScenario}
-              data-button="Primary"
-              className="w-full max-w-[384px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 focus:outline-none"
+              onClick={() => setVisibleCount(c => Math.min(c + 4, facilitatorPlayers.length))}
+              className="text-white text-lg font-extrabold font-['Nunito'] leading-7 hover:opacity-80 transition-all cursor-pointer pt-1 pb-2 shrink-0"
             >
-              <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
-                {lang === 'id' ? `buka skenario ${scenarioIndex + 1}` : `open scenario ${scenarioIndex + 1}`}
-              </div>
+              {lang === 'id' ? 'Muat Lebih Banyak' : 'Load More'}
             </button>
-
-            {/* Secondary Action: Cancel Session */}
-            <button
-              type="button"
-              onClick={onCancelSession}
-              data-button="Outline-Secondary"
-              className="w-full max-w-[384px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5 focus:outline-none"
-            >
-              <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
-                {lang === 'id' ? 'Batal Sesi' : 'Cancel session'}
-              </div>
-            </button>
-
-          </div>
+          )}
 
         </div>
+
+        {/* Bottom Section: Action Buttons */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex flex-col items-center mx-auto px-4 space-y-3.5 pb-6 shrink-0 z-10">
+          
+          {/* Primary Action: Open Scenario */}
+          <button
+            type="button"
+            onClick={onOpenScenario}
+            data-button="Primary"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 focus:outline-none"
+          >
+            <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {lang === 'id' ? `buka skenario ${scenarioIndex + 1}` : `open scenario ${scenarioIndex + 1}`}
+            </div>
+          </button>
+
+          {/* Secondary Action: Cancel Session */}
+          <button
+            type="button"
+            onClick={onCancelSession}
+            data-button="Outline-Secondary"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5 focus:outline-none"
+          >
+            <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {lang === 'id' ? 'Batal Sesi' : 'Cancel session'}
+            </div>
+          </button>
+
+        </div>
+
       </div>
     );
   }
@@ -190,18 +204,23 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
   const scenarioTitle = lang === 'id' ? 'Penyingkapan Peran' : lang === 'th' ? 'การเปิดเผยบทบาท' : 'Role Briefing';
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-0 overflow-hidden">
-        
-        {/* Top Full-Width Header Banner */}
-        <div className="w-full h-24 bg-cyan-700 px-6 flex items-center justify-between shrink-0 relative overflow-hidden">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className="w-full bg-cyan-700 flex justify-center shrink-0 z-20">
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenarioTitle}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : lang === 'th' ? `สถานการณ์ ${scenarioIndex + 1} จาก 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+              {roleInfo?.role && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span className="text-amber-300 font-extrabold">{formatRoleTitle(roleInfo.role, lang)}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -214,69 +233,71 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
             <LogOut className="w-5 h-5 text-white" />
           </button>
         </div>
+      </div>
 
-        {/* Middle Scrollable Content Container */}
-        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center mx-auto px-4 py-8 space-y-10 overflow-y-auto no-scrollbar">
-          
-          {/* Role Identity Card Banner */}
-          <div className="w-full max-w-[384px] min-h-28 bg-[#5CACE2] rounded-xl border-2 border-cyan-800 p-5 flex flex-col justify-center text-left shrink-0 space-y-2">
-            <div className="text-white text-xl font-extrabold font-['Nunito'] leading-5">
-              {formatRoleName(roleInfo.role)}
-            </div>
-            <div className="text-white text-sm font-medium font-['Inter'] leading-6">
-              {roleInfo.description}
-            </div>
+      {/* Middle Scrollable Content Container */}
+      <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center mx-auto px-4 py-8 space-y-10 overflow-y-auto no-scrollbar z-10">
+        
+        {/* Role Identity Card Banner */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] min-h-28 bg-[#5CACE2] rounded-xl border-2 border-cyan-800 p-5 flex flex-col justify-center text-left shrink-0 space-y-2">
+          <div className="text-white text-xl font-extrabold font-['Nunito'] leading-5">
+            {formatRoleName(roleInfo.role)}
           </div>
-
-          {/* Primary Objective Section */}
-          <div className="w-full text-left shrink-0 space-y-3">
-            <div className="text-white text-xl font-extrabold font-['Nunito'] leading-tight">
-              {lang === 'id' ? 'Tujuan Utama' : lang === 'th' ? 'วัตถุประสงค์หลัก' : 'Primary Objective'}
-            </div>
-            <div className="text-white text-base font-semibold font-['Nunito'] leading-relaxed">
-              {roleInfo.objective}
-            </div>
+          <div className="text-white text-sm font-medium font-['Inter'] leading-6">
+            {roleInfo.description}
           </div>
-
-          {/* Secret Information Section */}
-          <div className="w-full text-left shrink-0 space-y-3">
-            <div className="text-white text-xl font-extrabold font-['Nunito'] leading-tight">
-              {lang === 'id' ? 'Informasi Rahasia' : lang === 'th' ? 'ข้อมูลลับ' : 'Secret Information'}
-            </div>
-            
-            <div 
-              onClick={() => setRevealSecret(!revealSecret)}
-              className={`w-full max-w-[384px] rounded-xl bg-neutral-800 border-2 border-neutral-600 overflow-hidden cursor-pointer transition-all duration-300 ${
-                revealSecret 
-                  ? 'p-4' 
-                  : 'h-12 flex items-center justify-between px-6 hover:bg-neutral-750'
-              }`}
-            >
-              {revealSecret ? (
-                <div className="text-white text-sm font-medium font-['Inter'] leading-relaxed flex justify-between items-start gap-4">
-                  <span>{roleInfo.secret_info}</span>
-                  <ChevronUp className="w-5 h-5 text-zinc-400 shrink-0" />
-                </div>
-              ) : (
-                <>
-                  <span className="text-zinc-500 text-sm font-medium font-['Inter'] leading-6">
-                    {lang === 'id' ? 'Ketuk Untuk Membuka' : lang === 'th' ? 'แตะเพื่อเปิดเผย' : 'Tap To Reveal'}
-                  </span>
-                  <ChevronDown className="w-5 h-5 text-zinc-500" />
-                </>
-              )}
-            </div>
-            
-            <div className="text-white text-base font-semibold font-['Nunito'] leading-6 opacity-90 pt-1">
-              {lang === 'id' ? '*jangan diperlihatkan kepada delegasi lain' : lang === 'th' ? '*ซ่อนไว้ไม่ให้ผู้แทนคนอื่นเห็น' : '*keep hidden from other delegates'}
-            </div>
-          </div>
-
         </div>
 
-        {/* Bottom Mayor Privilege Banner */}
-        {isMayor && (
-          <div className="w-full max-w-[480px] bg-red-500 py-4 px-6 text-center text-white text-sm font-medium font-['Inter'] leading-6 shrink-0 mt-2">
+        {/* Primary Objective Section */}
+        <div className="w-full text-left shrink-0 space-y-3">
+          <div className="text-white text-xl font-extrabold font-['Nunito'] leading-tight">
+            {lang === 'id' ? 'Tujuan Utama' : lang === 'th' ? 'วัตถุประสงค์หลัก' : 'Primary Objective'}
+          </div>
+          <div className="text-white text-base font-semibold font-['Nunito'] leading-relaxed">
+            {roleInfo.objectives}
+          </div>
+        </div>
+
+        {/* Secret Information Section */}
+        <div className="w-full text-left shrink-0 space-y-3">
+          <div className="text-white text-xl font-extrabold font-['Nunito'] leading-tight">
+            {lang === 'id' ? 'Informasi Rahasia' : lang === 'th' ? 'ข้อมูลลับ' : 'Secret Information'}
+          </div>
+          
+          <div 
+            onClick={() => setRevealSecret(!revealSecret)}
+            className={`w-full rounded-xl bg-neutral-800 border-2 border-neutral-600 overflow-hidden cursor-pointer transition-all duration-300 ${
+              revealSecret 
+                ? 'p-4' 
+                : 'h-12 flex items-center justify-between px-6 hover:bg-neutral-750'
+            }`}
+          >
+            {revealSecret ? (
+              <div className="text-white text-sm font-medium font-['Inter'] leading-relaxed flex justify-between items-start gap-4">
+                <span>{roleInfo.secretInfo}</span>
+                <ChevronUp className="w-5 h-5 text-zinc-400 shrink-0" />
+              </div>
+            ) : (
+              <>
+                <span className="text-zinc-500 text-sm font-medium font-['Inter'] leading-6">
+                  {lang === 'id' ? 'Ketuk Untuk Membuka' : lang === 'th' ? 'แตะเพื่อเปิดเผย' : 'Tap To Reveal'}
+                </span>
+                <ChevronDown className="w-5 h-5 text-zinc-500" />
+              </>
+            )}
+          </div>
+          
+          <div className="text-white text-base font-semibold font-['Nunito'] leading-6 opacity-90 pt-1">
+            {lang === 'id' ? '*jangan diperlihatkan kepada delegasi lain' : lang === 'th' ? '*ซ่อนไว้ไม่ให้ผู้แทนคนอื่นเห็น' : '*keep hidden from other delegates'}
+          </div>
+        </div>
+
+      </div>
+
+      {/* 100% Full-Width Bottom Mayor Privilege Banner */}
+      {isMayor && (
+        <div className="w-full bg-[#E74B3C] flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] py-4 px-6 text-center text-white text-sm font-medium font-['Inter'] leading-6">
             {lang === 'id' ? (
               <>Hak Istimewa Walikota: Anda memegang kekuasaan keputusan akhir dan hak veto setelah pemungutan suara majelis.</>
             ) : lang === 'th' ? (
@@ -285,9 +306,9 @@ export const RoleRevealView: React.FC<RoleRevealViewProps> = ({
               <>Mayor privilege: You hold ultimate decision power and veto rights after assembly votes.</>
             )}
           </div>
-        )}
+        </div>
+      )}
 
-      </div>
     </div>
   );
 };

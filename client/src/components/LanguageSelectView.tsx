@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
 import bgImage from '../assets/image2.png';
+import desktop3Bg from '../assets/desktop3.png';
 import { useI18n, type Language } from '../i18n.js';
 
 interface LanguageSelectViewProps {
@@ -29,9 +30,21 @@ export const LanguageSelectView: React.FC<LanguageSelectViewProps> = ({
   };
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Background Image - Seamless full height, centered without card wrapper */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center">
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex justify-center items-center overflow-hidden">
+      
+      {/* Full-Width Desktop Wallpaper (Hidden on mobile) */}
+      <div className="hidden sm:block absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+        <img 
+          className="w-full h-full object-cover object-center" 
+          src={desktop3Bg} 
+          alt="The People's Assembly Desktop Wallpaper" 
+        />
+        {/* Subtle Dark Overlay for optimal readability */}
+        <div className="absolute inset-0 bg-black/30" />
+      </div>
+
+      {/* Mobile Illustration Background (Hidden on desktop) */}
+      <div className="sm:hidden absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center pointer-events-none z-0">
         <img 
           className="w-full h-full max-w-[480px] object-cover" 
           src={bgImage} 
@@ -39,8 +52,8 @@ export const LanguageSelectView: React.FC<LanguageSelectViewProps> = ({
         />
       </div>
 
-      {/* Content Container - Balanced position for MacBook Air (sm: breakpoint) */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen flex flex-col justify-between px-6 pt-6 sm:pt-5 pb-8 sm:pb-6">
+      {/* Content Container - Balanced position for Desktop & iPad */}
+      <div className="relative z-10 w-full max-w-[480px] sm:max-w-[520px] min-h-screen flex flex-col justify-between px-6 pt-6 sm:pt-5 pb-8 sm:pb-6">
         
         {/* Top Bar: Back Button & Header */}
         <div className="w-full flex items-center gap-4">
@@ -60,13 +73,13 @@ export const LanguageSelectView: React.FC<LanguageSelectViewProps> = ({
         {/* Middle / Bottom Content Container */}
         <div className="w-full flex flex-col items-center mt-auto mb-2 sm:mb-5 space-y-4">
           
-          {/* Instruction Text - Fluid Typography (Fluid resizing based on viewport width) */}
+          {/* Instruction Text */}
           <div className="w-full text-center text-white text-[clamp(12px,3.6vw,17px)] font-extrabold font-['Nunito'] leading-tight whitespace-nowrap px-1 mb-4 sm:mb-6">
             {t('landing.choose_language')}
           </div>
 
           {/* Language Options List */}
-          <div className="w-full max-w-[384px] space-y-3">
+          <div className="w-full max-w-[384px] sm:max-w-[420px] space-y-3">
             {languages.map((langItem) => {
               const isSelected = selected === langItem.code;
               return (
@@ -105,9 +118,9 @@ export const LanguageSelectView: React.FC<LanguageSelectViewProps> = ({
             type="button"
             onClick={handleContinue}
             data-button="Primary"
-            className="w-full max-w-[384px] h-12 p-2.5 mt-0 sm:mt-6 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 sm:h-13 p-2.5 mt-0 sm:mt-6 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
           >
-            <div className="justify-start text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+            <div className="justify-start text-white text-sm sm:text-base font-extrabold font-['Nunito'] uppercase tracking-wide">
               {t('common.continue')}
             </div>
           </button>

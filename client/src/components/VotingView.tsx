@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { LogOut, Activity } from 'lucide-react';
 import { useI18n } from '../i18n.js';
 import type { Scenario } from '../gameConstants.js';
-import bgImage from '../assets/image4.png';
+import { formatRoleTitle } from '../gameConstants.js';
+import bgImage4 from '../assets/image4.png';
 import bgImage5 from '../assets/image5.png';
+import bgImage6 from '../assets/image6.png';
+import desktop4Bg from '../assets/desktop4.png';
+import desktop5Bg from '../assets/desktop5.png';
 
 interface VotingViewProps {
   isFacilitator: boolean;
@@ -16,6 +20,8 @@ interface VotingViewProps {
   onCancelSession?: () => void;
   onToggleStats?: () => void;
   initialVotedChoice?: string | null;
+  roomCode?: string;
+  playerRole?: string;
 }
 
 export const VotingView: React.FC<VotingViewProps> = ({
@@ -28,7 +34,9 @@ export const VotingView: React.FC<VotingViewProps> = ({
   scenarioIndex = 0,
   onCancelSession,
   onToggleStats,
-  initialVotedChoice = null
+  initialVotedChoice = null,
+  roomCode,
+  playerRole
 }) => {
   const { t } = useI18n();
   const [votedChoice, setVotedChoice] = useState<string | null>(initialVotedChoice || null);
@@ -44,21 +52,40 @@ export const VotingView: React.FC<VotingViewProps> = ({
 
   if (isFacilitator) {
     return (
-      <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-        {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-        <div className="relative z-10 w-full max-w-[480px] min-h-screen bg-[#0D2B40] flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden">
-          {bgImage5 && (
-            <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage5} alt="" />
-          )}
-          
-          {/* Top Full-Width Header Banner (Transparent background) */}
-          <div className="w-full h-24 bg-transparent px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20">
+      <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+        {/* 1. Mobile Background Image (image6.png) - Original Mobile Layout */}
+        {bgImage6 && (
+          <img className="sm:hidden absolute inset-x-0 top-0 w-full h-full min-h-full object-top object-cover pointer-events-none z-0" src={bgImage6} alt="" />
+        )}
+
+        {/* 2. Tablet Background Image (image5.png) - Optimized Tablet Layout */}
+        {bgImage5 && (
+          <img className="hidden sm:block lg:hidden absolute inset-x-0 -top-40 md:-top-44 w-full h-[calc(100%+180px)] object-top object-cover pointer-events-none z-0" src={bgImage5} alt="" />
+        )}
+
+        {/* 3. Desktop Background Wallpaper (desktop4.png) - Optimized Desktop Layout */}
+        {desktop4Bg && (
+          <div className="hidden lg:block absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+            <img className="w-full h-full object-cover object-top" src={desktop4Bg} alt="Voting Desktop Background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-[#0D2B40]/90" />
+          </div>
+        )}
+        
+        {/* 100% Full-Width Top Header Banner */}
+        <div className="w-full bg-transparent flex justify-center shrink-0 z-20">
+          <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
             <div className="flex flex-col text-left justify-center min-w-0 pr-4">
               <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
                 {scenario.title}
               </h1>
-              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-                Scenario {scenarioIndex + 1} of 3
+              <span className="text-white text-sm font-semibold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+                <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+                {isFacilitator && roomCode && (
+                  <>
+                    <span className="opacity-60">•</span>
+                    <span>{roomCode}</span>
+                  </>
+                )}
               </span>
             </div>
 
@@ -86,76 +113,94 @@ export const VotingView: React.FC<VotingViewProps> = ({
               )}
             </div>
           </div>
+        </div>
 
-          {/* Central & Bottom Content Area */}
-          <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-between mx-auto px-4 py-4 text-center overflow-y-auto no-scrollbar z-20 space-y-6">
-            
-            {/* Top Title & Info Section */}
-            <div className="w-full flex flex-col items-center shrink-0 space-y-1 -mt-3 sm:-mt-4">
-              <h2 className="text-white text-xl font-extrabold font-['Nunito'] leading-9 shrink-0">
-                Voting in Progress
-              </h2>
-              <p className="text-white text-sm font-semibold font-['Nunito'] leading-relaxed max-w-xs mx-auto">
-                Players are casting their votes confidentially on their devices. Wait for all votes or close the poll manually.
-              </p>
-            </div>
+        {/* Central & Bottom Content Area */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-between mx-auto px-4 pt-4 pb-8 sm:pb-16 text-center overflow-y-auto no-scrollbar z-20 space-y-6">
+          
+          {/* Top Title & Info Section */}
+          <div className="w-full flex flex-col items-center shrink-0 space-y-2 -mt-1 sm:pt-5">
+            <h2 className="text-white text-2xl sm:text-3xl font-extrabold font-['Nunito'] leading-tight shrink-0">
+              Voting in Progress
+            </h2>
+            <p className="text-white text-base sm:text-lg font-semibold font-['Nunito'] leading-relaxed max-w-sm mx-auto opacity-95">
+              Players are casting their votes confidentially on their devices. Wait for all votes or close the poll manually.
+            </p>
+          </div>
 
-            {/* Bottom Voting Stats & Control Button Group */}
-            <div className="w-full flex flex-col items-center shrink-0 space-y-6 mt-auto">
-              {/* Votes Counter Display */}
-              <div className="flex flex-col items-center justify-center shrink-0 space-y-0.5">
-                <div className="text-white text-5xl sm:text-6xl font-extrabold font-['Nunito'] leading-none tracking-wider flex items-center justify-center">
-                  <span>{votesCast}</span>
-                  <span className="mx-1.5 opacity-90">/</span>
-                  <span>{totalPlayers}</span>
-                </div>
-                <div className="text-white text-lg font-extrabold font-['Nunito'] leading-9 tracking-wide">
-                  VOTES REGISTERED
-                </div>
+          {/* Bottom Voting Stats & Control Button Group */}
+          <div className="w-full flex flex-col items-center shrink-0 space-y-6 mt-auto pb-4 sm:pb-6">
+            {/* Votes Counter Display */}
+            <div className="flex flex-col items-center justify-center shrink-0 space-y-0.5 pt-[220px] sm:pt-[220px]">
+              <div className="text-white text-5xl sm:text-6xl font-extrabold font-['Nunito'] leading-none tracking-wider flex items-center justify-center">
+                <span>{votesCast}</span>
+                <span className="mx-1.5 opacity-90">/</span>
+                <span>{totalPlayers}</span>
               </div>
-
-              {/* Facilitator Control Button */}
-              {onForceCloseVoting ? (
-                <div className="w-full shrink-0">
-                  <button
-                    type="button"
-                    onClick={onForceCloseVoting}
-                    data-button="Primary"
-                    className="w-full max-w-[384px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 focus:outline-none"
-                  >
-                    <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
-                      force close voting
-                    </div>
-                  </button>
-                </div>
-              ) : (
-                <div className="h-4 shrink-0" />
-              )}
+              <div className="text-white text-lg font-extrabold font-['Nunito'] leading-9 tracking-wide">
+                VOTES REGISTERED
+              </div>
             </div>
 
+            {/* Facilitator Control Button */}
+            {onForceCloseVoting ? (
+              <div className="w-full shrink-0">
+                <button
+                  type="button"
+                  onClick={onForceCloseVoting}
+                  data-button="Primary"
+                  className="w-full max-w-[384px] sm:max-w-[420px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5 focus:outline-none"
+                >
+                  <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+                    force close voting
+                  </div>
+                </button>
+              </div>
+            ) : (
+              <div className="h-4 shrink-0" />
+            )}
           </div>
 
         </div>
+
       </div>
     );
   }
 
   return (
-    <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Outer Web Background: White. Main Content Container: Dark #0D2B40 without card wrapper */}
-      <div className={`relative z-10 w-full max-w-[480px] min-h-screen ${votedChoice ? 'bg-[#0B3563]' : 'bg-[#0D2B40]'} flex flex-col justify-between items-center pb-6 sm:pb-8 overflow-hidden`}>
-        {votedChoice && bgImage && (
-          <img className="absolute inset-0 w-full h-full object-cover pointer-events-none z-0" src={bgImage} alt="" />
-        )}
-        
-        {/* Top Header */}
-        <div className={`w-full h-24 px-6 flex items-center justify-between shrink-0 relative overflow-hidden z-20 ${votedChoice ? 'bg-transparent' : 'bg-cyan-700'}`}>
+    <div className="relative min-h-screen w-full bg-[#0D2B40] flex flex-col justify-between items-center overflow-hidden">
+      {votedChoice && (
+        <>
+          {/* Mobile & Tablet Background (image4.png) */}
+          {bgImage4 && (
+            <img className="lg:hidden absolute inset-x-0 top-0 w-full h-full min-h-full object-top object-cover pointer-events-none z-0" src={bgImage4} alt="" />
+          )}
+
+          {/* Desktop Background (desktop5.png) */}
+          {desktop5Bg && (
+            <div className="hidden lg:block absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+              <img className="w-full h-full object-cover object-top" src={desktop5Bg} alt="Vote Registered Desktop Background" />
+              <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-[#0D2B40]/90" />
+            </div>
+          )}
+        </>
+      )}
+      
+      {/* 100% Full-Width Top Header Banner */}
+      <div className={`w-full flex justify-center shrink-0 z-20 ${votedChoice ? 'bg-transparent' : 'bg-cyan-700'}`}>
+        <div className="w-full max-w-[480px] sm:max-w-[520px] h-24 px-6 flex items-center justify-between">
           <div className="flex flex-col text-left justify-center min-w-0 pr-4">
             <h1 className="text-white text-xl sm:text-2xl font-extrabold font-['Nunito'] leading-tight truncate">
               {scenario.title}
             </h1>
-            <span className="text-white text-sm font-semibold font-['Nunito'] leading-6">
-              {lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 3` : `Scenario ${scenarioIndex + 1} of 3`}
+            <span className="text-white text-base sm:text-lg font-bold font-['Nunito'] leading-6 flex items-center gap-1.5 flex-wrap">
+              <span>{lang === 'id' ? `Skenario ${scenarioIndex + 1} dari 5` : `Scenario ${scenarioIndex + 1} of 5`}</span>
+              {playerRole && (
+                <>
+                  <span className="opacity-60">•</span>
+                  <span className="text-amber-300 font-extrabold">{formatRoleTitle(playerRole, lang)}</span>
+                </>
+              )}
             </span>
           </div>
 
@@ -183,11 +228,12 @@ export const VotingView: React.FC<VotingViewProps> = ({
             )}
           </div>
         </div>
+      </div>
 
-        {/* Scrollable Content Container */}
-        <div className="w-full max-w-[384px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-20">
-          
-          {votedChoice ? (
+      {/* Middle Scrollable Content Container */}
+      <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
+        
+        {votedChoice ? (
             /* Vote Registered State after voting */
             <div className="w-full flex-grow flex flex-col items-center justify-end space-y-5 pt-64 sm:pt-[320px] pb-8 shrink-0 text-center mt-auto">
               <div className="space-y-3 w-full text-center mt-24 sm:mt-28">
@@ -262,7 +308,6 @@ export const VotingView: React.FC<VotingViewProps> = ({
           )}
 
           <div className="h-4 shrink-0" />
-        </div>
       </div>
     </div>
   );

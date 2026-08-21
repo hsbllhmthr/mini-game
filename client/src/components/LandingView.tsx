@@ -1,6 +1,7 @@
 import React from 'react';
 import { Languages } from 'lucide-react';
 import govImage from '../assets/image1.png';
+import desktopBg from '../assets/desktop1.png';
 import { useI18n } from '../i18n.js';
 
 interface LandingViewProps {
@@ -15,17 +16,29 @@ export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRo
 
   return (
     <div className="relative min-h-screen w-full bg-white flex justify-center items-center overflow-hidden">
-      {/* Background Image - Seamless full height, centered without card wrapper */}
-      <div className="absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center">
+      {/* Outer Full Desktop Background (desktop1.png) - Visible on desktop screens */}
+      {desktopBg && (
+        <div className="hidden sm:block absolute inset-0 w-full h-full overflow-hidden pointer-events-none z-0">
+          <img 
+            className="w-full h-full object-cover object-center" 
+            src={desktopBg} 
+            alt="Desktop Background" 
+          />
+          <div className="absolute inset-0 bg-black/30" />
+        </div>
+      )}
+
+      {/* Background Image - Mobile View (image1.png) - Visible ONLY on small mobile screens */}
+      <div className="sm:hidden absolute inset-0 w-full h-full overflow-hidden flex justify-center items-center pointer-events-none z-0">
         <img 
-          className="w-full h-full max-w-[480px] object-cover" 
+          className="w-full h-full max-w-[480px] object-cover object-top" 
           src={govImage} 
           alt="The People's Assembly" 
         />
       </div>
 
       {/* Content Container - No card styling */}
-      <div className="relative z-10 w-full max-w-[480px] min-h-screen flex flex-col justify-between px-6 py-8 sm:py-12">
+      <div className="relative z-10 w-full max-w-[480px] sm:max-w-[520px] min-h-screen flex flex-col justify-between px-6 py-8 sm:py-12">
         
         {/* Top Header: Language Select Button */}
         <div className="w-full flex justify-end">
@@ -44,7 +57,7 @@ export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRo
           <div className="text-white text-xs sm:text-sm font-extrabold font-['Nunito'] leading-6 uppercase tracking-wider opacity-95">
             {t('landing.badge')}
           </div>
-          <h1 className="text-white text-[clamp(18.5px,5.6vw,26px)] sm:text-[26px] font-extrabold font-['Nunito'] leading-tight whitespace-pre-line max-w-[440px]">
+          <h1 className="text-white text-[clamp(18.5px,5.6vw,26px)] sm:text-[28px] font-extrabold font-['Nunito'] leading-tight whitespace-pre-line max-w-[440px] sm:max-w-[480px]">
             {t('landing.subtitle')}
           </h1>
         </div>
@@ -55,9 +68,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRo
             type="button"
             onClick={onCreateRoom}
             data-button="Primary"
-            className="w-full max-w-[384px] h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 sm:h-13 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
           >
-            <div className="justify-start text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+            <div className="justify-start text-white text-sm sm:text-base font-extrabold font-['Nunito'] uppercase tracking-wide">
               {t('landing.create_btn')}
             </div>
           </button>
@@ -66,9 +79,9 @@ export const LandingView: React.FC<LandingViewProps> = ({ onCreateRoom, onJoinRo
             type="button"
             onClick={onJoinRoom}
             data-button="Outline-Secondary"
-            className="w-full max-w-[384px] h-12 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5"
+            className="w-full max-w-[384px] sm:max-w-[420px] h-12 sm:h-13 p-2.5 bg-cyan-700 rounded-md shadow-[0px_2px_0px_0px_rgba(29,90,130,1.00)] outline outline-2 outline-offset-[-2px] outline-cyan-800 inline-flex justify-center items-center gap-2.5 transition-all hover:bg-cyan-600 cursor-pointer active:translate-y-0.5"
           >
-            <div className="justify-start text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+            <div className="justify-start text-white text-sm sm:text-base font-extrabold font-['Nunito'] uppercase tracking-wide">
               {t('landing.join_btn')}
             </div>
           </button>
