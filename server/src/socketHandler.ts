@@ -582,7 +582,10 @@ export function registerSocketHandlers(io: Server) {
         // Private messaging: Assign role to each player socket
         const clientSockets = await io.in(roomCode).fetchSockets();
         for (const player of assigned) {
-          const clientSock = clientSockets.find(s => s.data.fullName === player.fullName);
+          const clientSock = clientSockets.find(s => 
+            s.data.playerId === player.id || 
+            (s.data.fullName && s.data.fullName.toLowerCase() === player.fullName.toLowerCase())
+          );
           if (clientSock) {
             clientSock.data.role = player.role;
             const pLang = clientSock.data.lang || 'en';
@@ -786,11 +789,53 @@ export function registerSocketHandlers(io: Server) {
         });
 
         if (!session) return;
-        if (session.facilitatorToken !== facilitator_token) return;
+        if (session.facilitatorToken !== facilitator_token && socket.data.isFacilitator !== true) return;
 
         await triggerMayorDecisionPhase(io, session.id, roomCode, session.scenarioIndex);
       } catch (error) {
         console.error('Error force closing voting:', error);
+      }
+    });
+
+    // --- FORCE CLOSE MAYOR DECISION (FACILITATOR) ---
+    socket.on('facilitator:force_close_mayor_decision', async ({ room_code, facilitator_token, choice }) => {
+      try {
+        const roomCode = room_code.toUpperCase();
+        const session = await prisma.session.findUnique({
+          where: { roomCode },
+          include: { gameState: true }
+        });
+
+        if (!session || !session.gameState) return;
+        if (session.facilitatorToken !== facilitator_token && socket.data.isFacilitator !== true) {
+          socket.emit('error', { code: 'UNAUTHORIZED', message: 'Invalid facilitator token' });
+          return;
+        }
+
+        if (session.phase !== 'mayor_decision') {
+          socket.emit('error', { code: 'INVALID_PHASE', message: 'Not in mayor decision phase' });
+          return;
+        }
+
+        let selectedChoice = choice;
+        if (!selectedChoice) {
+          // Calculate vote summary
+          const votes = await prisma.vote.findMany({
+            where: { sessionId: session.id, scenarioIndex: session.scenarioIndex }
+          });
+          const summary = resolveVotes(votes.map(v => ({ choice: v.choice })));
+          if (summary.majority) {
+            selectedChoice = summary.majority;
+          } else if (summary.is_tie && summary.tied_options.length > 0) {
+            selectedChoice = summary.tied_options[0];
+          } else {
+            selectedChoice = 'A';
+          }
+        }
+
+        await executeDecision(io, session.id, roomCode, selectedChoice, false, null);
+      } catch (error) {
+        console.error('Error in facilitator:force_close_mayor_decision:', error);
       }
     });
 
@@ -1042,6 +1087,26 @@ async function handleMayorSubmission(
     throw new Error('Game state not initialized');
   }
 
+  await executeDecision(io, session.id, roomCode, choice, vetoUsed, justification);
+}
+
+async function executeDecision(
+  io: Server,
+  sessionId: string,
+  roomCode: string,
+  choice: string,
+  vetoUsed: boolean,
+  justification: string | null
+) {
+  const session = await prisma.session.findUnique({
+    where: { id: sessionId },
+    include: { gameState: true }
+  });
+
+  if (!session || !session.gameState) {
+    throw new Error('Session or game state not found');
+  }
+
   const actualIdx = getActualScenarioIndex(session.gameState.scenarioOrder, session.scenarioIndex);
   const currentScenario = SCENARIOS[actualIdx];
   const option = currentScenario.options[choice as 'A' | 'B' | 'C'];
@@ -1054,12 +1119,12 @@ async function handleMayorSubmission(
 
   // Compute updated indicators (clamped 0 - 100)
   const updatedIndicators = {
-    economicGrowth: gs.economicGrowth + changes.economicGrowth,
-    governmentBudget: gs.governmentBudget + changes.governmentBudget,
-    peopleWelfare: gs.peopleWelfare + changes.peopleWelfare,
-    publicTrust: gs.publicTrust + changes.publicTrust,
-    environmentalQuality: gs.environmentalQuality + changes.environmentalQuality,
-    transparency: gs.transparency + changes.transparency
+    economicGrowth: Math.min(100, Math.max(0, gs.economicGrowth + changes.economicGrowth)),
+    governmentBudget: Math.min(100, Math.max(0, gs.governmentBudget + changes.governmentBudget)),
+    peopleWelfare: Math.min(100, Math.max(0, gs.peopleWelfare + changes.peopleWelfare)),
+    publicTrust: Math.min(100, Math.max(0, gs.publicTrust + changes.publicTrust)),
+    environmentalQuality: Math.min(100, Math.max(0, gs.environmentalQuality + changes.environmentalQuality)),
+    transparency: Math.min(100, Math.max(0, gs.transparency + changes.transparency))
   };
 
   // Prepare game state updates

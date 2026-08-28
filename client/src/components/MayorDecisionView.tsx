@@ -22,6 +22,7 @@ interface MayorDecisionViewProps {
   voteSummary: VoteSummary | null;
   onMayorAccept: (choice: string) => void;
   onMayorVeto: (choice: string, justification: string) => void;
+  onForceCloseMayorDecision?: (choice?: string) => void;
   scenarioIndex?: number;
   onCancelSession?: () => void;
   indicators?: Indicators;
@@ -36,6 +37,7 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
   voteSummary,
   onMayorAccept,
   onMayorVeto,
+  onForceCloseMayorDecision,
   scenarioIndex = 0,
   onCancelSession,
   indicators,
@@ -260,7 +262,7 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-center gap-2 py-4 shrink-0 mt-auto">
+            <div className="flex items-center justify-center gap-2 py-2 shrink-0">
               <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
               <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
               <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce" />
@@ -269,6 +271,24 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
               </span>
             </div>
           </div>
+
+        {/* Bottom Section: Action Buttons (Facilitator Force-Close) */}
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex flex-col items-center mx-auto space-y-3.5 pb-6 sm:pb-8 shrink-0 z-20">
+          <button
+            type="button"
+            onClick={() => onForceCloseMayorDecision?.()}
+            data-button="Primary"
+            className="w-full h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
+          >
+            <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+              {lang === 'id' 
+                ? 'Tutup Paksa Keputusan Walikota' 
+                : lang === 'th' 
+                ? 'ปิดการตัดสินใจของนายกเทศมนตรี' 
+                : 'Force Close Mayor Decision'}
+            </div>
+          </button>
+        </div>
 
         {/* Stats Modal Overlay */}
         {showStatsModal && (

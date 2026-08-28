@@ -465,9 +465,10 @@ All Socket.io events join the room identified by `room_code`. Every player and t
 | `facilitator:open_scenario`      | `{ room_code, facilitator_token }`                   | Pushes current scenario to all players                     |
 | `facilitator:start_discussion`   | `{ room_code, facilitator_token, duration_seconds }` | Starts countdown timer                                     |
 | `facilitator:end_discussion`     | `{ room_code, facilitator_token }`                   | Ends discussion early or on timer expiry; opens voting     |
-| `facilitator:force_close_voting` | `{ room_code, facilitator_token }`                   | Closes voting even if not all players voted                |
-| `facilitator:next_scenario`      | `{ room_code, facilitator_token }`                   | Increments `scenario_index`, goes to `scenario_display`    |
-| `facilitator:end_game`           | `{ room_code, facilitator_token }`                   | Calculates final scores, transitions to `final_reflection` |
+| `facilitator:force_close_voting`         | `{ room_code, facilitator_token }`                   | Closes voting even if not all players voted                |
+| `facilitator:force_close_mayor_decision` | `{ room_code, facilitator_token, choice? }`          | Force-closes Mayor decision phase (resolves to vote result) |
+| `facilitator:next_scenario`              | `{ room_code, facilitator_token }`                   | Increments `scenario_index`, goes to `scenario_display`    |
+| `facilitator:end_game`                   | `{ room_code, facilitator_token }`                   | Calculates final scores, transitions to `final_reflection` |
 
 #### Player Events
 
@@ -777,13 +778,15 @@ Each section uses this format:
 
 - Vote summary (same as Mayor) for oversight.
 - Status indicator showing Mayor is deciding.
+- "Force Close Mayor Decision" button (allows the facilitator to override or immediately finalize the decision based on majority / vote tally if the Mayor is unresponsive).
 
 **AC:**
 
-- [ ] Only the Mayor can submit a decision. Other players' inputs are disabled.
+- [ ] Only the Mayor (or Facilitator via Force Close) can submit a decision. Other players' inputs are disabled.
+- [ ] Facilitator has a "Force Close Mayor Decision" button that resolves the decision using majority or tie-break logic, advancing to Outcome Reveal.
 - [ ] Veto justification is mandatory if veto is used. Submit button disabled if field is empty.
 - [ ] Veto justification character limit: 300 characters.
-- [ ] On Mayor decision, server emits `game:mayor_decided` to all clients.
+- [ ] On Mayor (or Facilitator force-close) decision, server emits `game:mayor_decided` and `game:outcome_revealed` to all clients.
 - [ ] Veto decision and justification are saved to `game_states` table.
 
 ---

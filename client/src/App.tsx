@@ -500,6 +500,8 @@ function App() {
     setIsCancelled(false);
     
     // Explicitly store room code for facilitator auto-reconnection
+    sessionStorage.setItem('tpa_facilitator_room_code', code);
+    sessionStorage.setItem('tpa_facilitator_token', token);
     localStorage.setItem('tpa_facilitator_room_code', code);
     localStorage.setItem('tpa_facilitator_token', token);
 
@@ -523,7 +525,10 @@ function App() {
       // If reconnecting, show a simple loading/lobby state until state is restored
       setScreen('lobby');
 
-      // Cache details in localStorage
+      // Cache details in sessionStorage (isolated per tab) & localStorage
+      sessionStorage.setItem('tpa_player_room_code', code);
+      sessionStorage.setItem('tpa_player_name', name);
+      sessionStorage.setItem('tpa_player_country', userCountry);
       localStorage.setItem('tpa_player_room_code', code);
       localStorage.setItem('tpa_player_name', name);
       localStorage.setItem('tpa_player_country', userCountry);
@@ -537,13 +542,14 @@ function App() {
 
   // Auto-restore session state on mount / page refresh
   useEffect(() => {
-    const facilRoomCode = localStorage.getItem('tpa_facilitator_room_code');
-    const facilToken = localStorage.getItem('tpa_facilitator_token');
-    const playerRoomCode = localStorage.getItem('tpa_player_room_code');
-    const playerName = localStorage.getItem('tpa_player_name');
-    const playerCountry = localStorage.getItem('tpa_player_country') || '';
+    // Prioritize sessionStorage (tab-isolated) over shared localStorage
+    const facilRoomCode = sessionStorage.getItem('tpa_facilitator_room_code') || localStorage.getItem('tpa_facilitator_room_code');
+    const facilToken = sessionStorage.getItem('tpa_facilitator_token') || localStorage.getItem('tpa_facilitator_token');
+    const playerRoomCode = sessionStorage.getItem('tpa_player_room_code') || localStorage.getItem('tpa_player_room_code');
+    const playerName = sessionStorage.getItem('tpa_player_name') || localStorage.getItem('tpa_player_name');
+    const playerCountry = sessionStorage.getItem('tpa_player_country') || localStorage.getItem('tpa_player_country') || '';
 
-    if (facilRoomCode && facilToken) {
+    if (facilRoomCode && facilToken && !playerRoomCode) {
       console.log('[Auto-Reconnect] Restoring facilitator session:', facilRoomCode);
       handleFacilitatorSuccess(facilRoomCode, facilToken);
     } else if (playerRoomCode && playerName) {
@@ -560,6 +566,11 @@ function App() {
   };
 
   const clearSessionStorage = () => {
+    sessionStorage.removeItem('tpa_player_room_code');
+    sessionStorage.removeItem('tpa_player_name');
+    sessionStorage.removeItem('tpa_player_country');
+    sessionStorage.removeItem('tpa_facilitator_token');
+    sessionStorage.removeItem('tpa_facilitator_room_code');
     localStorage.removeItem('tpa_player_room_code');
     localStorage.removeItem('tpa_player_name');
     localStorage.removeItem('tpa_player_country');
@@ -598,13 +609,19 @@ function App() {
   };
 
   // Facilitator socket controls
-  const startSession = () => socket.emit('facilitator:start_game', { room_code: roomCode, facilitator_token: facilitatorToken });
-  const openScenario = () => socket.emit('facilitator:open_scenario', { room_code: roomCode, facilitator_token: facilitatorToken });
-  const startDiscussion = (duration: number) => socket.emit('facilitator:start_discussion', { room_code: roomCode, facilitator_token: facilitatorToken, duration_seconds: duration });
-  const endDiscussionEarly = () => socket.emit('facilitator:end_discussion', { room_code: roomCode, facilitator_token: facilitatorToken });
-  const forceCloseVoting = () => socket.emit('facilitator:force_close_voting', { room_code: roomCode, facilitator_token: facilitatorToken });
-  const nextScenario = () => socket.emit('facilitator:next_scenario', { room_code: roomCode, facilitator_token: facilitatorToken });
-  const endGame = () => socket.emit('facilitator:end_game', { room_code: roomCode, facilitator_token: facilitatorToken });
+  const startSession = () => socket.emit('facilitator:start_game', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
+  const openScenario = () => socket.emit('facilitator:open_scenario', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
+  const startDiscussion = (duration: number) => socket.emit('facilitator:start_discussion', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token'), duration_seconds: duration });
+  const endDiscussionEarly = () => socket.emit('facilitator:end_discussion', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
+  const forceCloseVoting = () => socket.emit('facilitator:force_close_voting', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
+  const forceCloseMayorDecision = (choiceVal?: string) => {
+    const rCode = roomCode || localStorage.getItem('tpa_facilitator_room_code') || '';
+    const fToken = facilitatorToken || localStorage.getItem('tpa_facilitator_token') || '';
+    console.log('[Facilitator] Emitting force_close_mayor_decision for room:', rCode, 'choice:', choiceVal);
+    socket.emit('facilitator:force_close_mayor_decision', { room_code: rCode, facilitator_token: fToken, choice: choiceVal });
+  };
+  const nextScenario = () => socket.emit('facilitator:next_scenario', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
+  const endGame = () => socket.emit('facilitator:end_game', { room_code: roomCode || localStorage.getItem('tpa_facilitator_room_code'), facilitator_token: facilitatorToken || localStorage.getItem('tpa_facilitator_token') });
 
   // Player socket controls
   const submitVote = (choiceVal: string) => socket.emit('player:vote', { room_code: roomCode, player_id: playerId || fullName, choice: choiceVal });
@@ -669,6 +686,7 @@ function App() {
               voteSummary={voteSummary}
               onMayorAccept={mayorAccept}
               onMayorVeto={mayorVeto}
+              onForceCloseMayorDecision={forceCloseMayorDecision}
               scenarioIndex={scenarioIndex}
               onCancelSession={cancelSession}
               indicators={indicators}
