@@ -217,77 +217,79 @@ export const MayorDecisionView: React.FC<MayorDecisionViewProps> = ({
         </div>
 
         {/* Scrollable Content Area */}
-        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-start mx-auto px-4 py-6 space-y-6 overflow-y-auto no-scrollbar z-10">
+        <div className="w-full max-w-[384px] sm:max-w-[420px] flex-grow flex flex-col items-center justify-between mx-auto px-4 pt-4 pb-8 sm:pb-12 text-center overflow-y-auto no-scrollbar z-10 space-y-6">
             
-            {/* Facilitator Title section */}
-            <div className="w-full flex flex-col items-center space-y-1 text-center shrink-0">
-              <h2 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
-                {lang === 'id' ? 'Musyawarah Walikota' : lang === 'th' ? 'การพิจารณาของนายกเทศมนตรี' : 'Mayor Deliberation'}
-              </h2>
-              <p className="text-white text-base font-semibold font-['Nunito'] leading-6 max-w-xs mx-auto">
-                {lang === 'id' ? (
-                  <>Walikota sedang meninjau suara dan membuat keputusan akhir</>
-                ) : lang === 'th' ? (
-                  <>นายกเทศมนตรีกำลังตรวจสอบผลการลงมติและตัดสินใจขั้นสุดท้าย</>
-                ) : (
-                  <>The Mayor is currently reviewing the votes and making the final choice</>
-                )}
-              </p>
-            </div>
+            <div className="w-full flex flex-col items-center space-y-6 shrink-0">
+              {/* Facilitator Title section */}
+              <div className="w-full flex flex-col items-center space-y-1 text-center shrink-0">
+                <h2 className="text-white text-xl font-extrabold font-['Nunito'] leading-9">
+                  {lang === 'id' ? 'Musyawarah Walikota' : lang === 'th' ? 'การพิจารณาของนายกเทศมนตรี' : 'Mayor Deliberation'}
+                </h2>
+                <p className="text-white text-base font-semibold font-['Nunito'] leading-6 max-w-xs mx-auto">
+                  {lang === 'id' ? (
+                    <>Walikota sedang meninjau suara dan membuat keputusan akhir</>
+                  ) : lang === 'th' ? (
+                    <>นายกเทศมนตรีกำลังตรวจสอบผลการลงมติและตัดสินใจขั้นสุดท้าย</>
+                  ) : (
+                    <>The Mayor is currently reviewing the votes and making the final choice</>
+                  )}
+                </p>
+              </div>
 
-            {/* Voting Card */}
-            <div className="w-full bg-gray-800 rounded-xl border-2 border-zinc-700 p-5 space-y-4 text-left shrink-0">
-              {optionKeys.map((key) => {
-                const votes = key === 'A' ? A : key === 'B' ? B : C;
-                const percent = getVotePercent(votes);
-                return (
-                  <div key={key} className="space-y-1.5">
-                    <div className="flex justify-between items-center gap-3">
-                      <span className="text-white text-base font-extrabold font-['Nunito'] leading-snug flex-1 min-w-0 pr-2">
-                        {lang === 'id' ? `Opsi ${key}` : lang === 'th' ? `ตัวเลือก ${key}` : `Option ${key}`}: {scenario.options[key].label}
-                      </span>
-                      <span className="text-zinc-400 text-sm sm:text-base font-semibold font-['Nunito'] whitespace-nowrap shrink-0 text-right">
-                        {votes} {lang === 'id' ? 'Suara' : lang === 'th' ? 'เสียง' : votes === 1 ? 'Vote' : 'Votes'} ({percent}%)
-                      </span>
+              {/* Voting Card */}
+              <div className="w-full bg-gray-800 rounded-xl border-2 border-zinc-700 p-5 space-y-4 text-left shrink-0">
+                {optionKeys.map((key) => {
+                  const votes = key === 'A' ? A : key === 'B' ? B : C;
+                  const percent = getVotePercent(votes);
+                  return (
+                    <div key={key} className="space-y-1.5">
+                      <div className="flex justify-between items-center gap-3">
+                        <span className="text-white text-base font-extrabold font-['Nunito'] leading-snug flex-1 min-w-0 pr-2">
+                          {lang === 'id' ? `Opsi ${key}` : lang === 'th' ? `ตัวเลือก ${key}` : `Option ${key}`}: {scenario.options[key].label}
+                        </span>
+                        <span className="text-zinc-400 text-sm sm:text-base font-semibold font-['Nunito'] whitespace-nowrap shrink-0 text-right">
+                          {votes} {lang === 'id' ? 'Suara' : lang === 'th' ? 'เสียง' : votes === 1 ? 'Vote' : 'Votes'} ({percent}%)
+                        </span>
+                      </div>
+                      <div className="w-full h-4 bg-neutral-200 rounded-lg overflow-hidden relative">
+                        <div 
+                          className={`h-full rounded-lg transition-all duration-500 ${percent > 0 ? 'bg-[#5CACE2]' : ''}`}
+                          style={{ width: `${percent}%` }}
+                        />
+                      </div>
                     </div>
-                    <div className="w-full h-4 bg-neutral-200 rounded-lg overflow-hidden relative">
-                      <div 
-                        className={`h-full rounded-lg transition-all duration-500 ${percent > 0 ? 'bg-[#5CACE2]' : ''}`}
-                        style={{ width: `${percent}%` }}
-                      />
-                    </div>
-                  </div>
-                );
-              })}
+                  );
+                })}
+              </div>
+
+              {/* Status with animated dots */}
+              <div className="flex items-center justify-center gap-2 py-2 shrink-0">
+                <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce" />
+                <span className="text-white text-base font-semibold font-['Nunito']">
+                  {lang === 'id' ? 'Walikota sedang menentukan...' : lang === 'th' ? 'นายกเทศมนตรีกำลังตัดสินใจ...' : 'Mayor is deciding...'}
+                </span>
+              </div>
             </div>
 
-            {/* Footer */}
-            <div className="flex items-center justify-center gap-2 py-2 shrink-0">
-              <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
-              <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
-              <span className="inline-block w-2 h-2 bg-white rounded-full animate-bounce" />
-              <span className="text-white text-base font-semibold font-['Nunito']">
-                {lang === 'id' ? 'Walikota sedang menentukan...' : lang === 'th' ? 'นายกเทศมนตรีกำลังตัดสินใจ...' : 'Mayor is deciding...'}
-              </span>
+            {/* Bottom Section: Action Buttons (Facilitator Force-Close) */}
+            <div className="w-full flex flex-col items-center mx-auto space-y-3.5 mt-auto pt-4 shrink-0 z-20">
+              <button
+                type="button"
+                onClick={() => onForceCloseMayorDecision?.()}
+                data-button="Primary"
+                className="w-full h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
+              >
+                <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
+                  {lang === 'id' 
+                    ? 'Tutup Paksa Keputusan Walikota' 
+                    : lang === 'th' 
+                    ? 'ปิดการตัดสินใจของนายกเทศมนตรี' 
+                    : 'Force Close Mayor Decision'}
+                </div>
+              </button>
             </div>
-          </div>
-
-        {/* Bottom Section: Action Buttons (Facilitator Force-Close) */}
-        <div className="w-full max-w-[384px] sm:max-w-[420px] flex flex-col items-center mx-auto space-y-3.5 pb-6 sm:pb-8 shrink-0 z-20">
-          <button
-            type="button"
-            onClick={() => onForceCloseMayorDecision?.()}
-            data-button="Primary"
-            className="w-full h-12 p-2.5 bg-[#5CACE2] rounded-md shadow-[0px_4px_0px_0px_rgba(36,112,162,1.00)] inline-flex justify-center items-center gap-2.5 transition-all hover:opacity-90 cursor-pointer active:translate-y-0.5"
-          >
-            <div className="text-white text-sm font-extrabold font-['Nunito'] uppercase tracking-wide">
-              {lang === 'id' 
-                ? 'Tutup Paksa Keputusan Walikota' 
-                : lang === 'th' 
-                ? 'ปิดการตัดสินใจของนายกเทศมนตรี' 
-                : 'Force Close Mayor Decision'}
-            </div>
-          </button>
         </div>
 
         {/* Stats Modal Overlay */}
