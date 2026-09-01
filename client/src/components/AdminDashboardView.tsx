@@ -22,7 +22,9 @@ import {
   Heart,
   Globe2,
   TreePine,
-  MoreVertical
+  MoreVertical,
+  Calendar,
+  X
 } from 'lucide-react';
 import { formatRoleTitle } from '../gameConstants.js';
 
@@ -136,8 +138,8 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
   const [authError, setAuthError] = useState<string | null>(null);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
 
-  // satnaing/shadcn-admin Sidebar Navigation State ('overview' | 'sessions' | 'players' | 'settings')
-  const [currentNav, setCurrentNav] = useState<'overview' | 'sessions' | 'players' | 'settings'>('overview');
+  // satnaing/shadcn-admin Sidebar Navigation State ('overview' | 'sessions' | 'players' | 'reports' | 'settings')
+  const [currentNav, setCurrentNav] = useState<'overview' | 'sessions' | 'players' | 'reports' | 'settings'>('overview');
 
   // Timeframe Filter State ('3m' | '30d' | '7d')
   const [timeframe, setTimeframe] = useState<'3m' | '30d' | '7d'>('3m');
@@ -148,6 +150,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
   const [isLoading, setIsLoading] = useState(false);
   const [statusFilter, setStatusFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState<string>('');
+  const [selectedDate, setSelectedDate] = useState<string>('');
 
   const filteredChartData = useMemo(() => {
     // Map actual sessions player counts & session counts per date
@@ -343,14 +346,37 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
     }
   };
 
-  const handleExportExcel = (roomCode: string) => {
+  const handleExportExcel = async (roomCode: string) => {
     if (!token) return;
-    window.open(`${API_BASE}/api/v1/admin/sessions/${roomCode}/export?token=${token}`, '_blank');
+    try {
+      const res = await fetch(`${API_BASE}/api/v1/admin/sessions/${roomCode}/export?token=${token}`, {
+        headers: { 'x-admin-token': token }
+      });
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        alert(errData.error || 'Failed to download report');
+        return;
+      }
+      const blob = await res.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `TPA_Admin_Export_${roomCode.toUpperCase()}_${new Date().toISOString().split('T')[0]}.xlsx`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Failed to export Excel:', err);
+      alert('Failed to download Excel report');
+    }
   };
 
-  const filteredSessions = sessions.filter(s => 
-    s.room_code.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredSessions = sessions.filter(s => {
+    const matchesSearch = s.room_code.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDate = !selectedDate || (s.created_at && s.created_at.startsWith(selectedDate));
+    return matchesSearch && matchesDate;
+  });
 
   // --- AUTHENTICATION CARD ---
   if (!token) {
@@ -488,8 +514,12 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
                 <div className="space-y-0.5">
                   <button
                     type="button"
-                    onClick={() => setCurrentNav('sessions')}
-                    className="w-full flex items-center gap-3 px-5 py-2 text-xs sm:text-sm font-medium text-slate-700 hover:bg-slate-100/80 hover:text-slate-900 transition-colors cursor-pointer"
+                    onClick={() => setCurrentNav('reports')}
+                    className={`w-full flex items-center gap-3 px-5 py-2 text-xs sm:text-sm font-medium transition-colors cursor-pointer ${
+                      currentNav === 'reports' 
+                        ? 'bg-slate-200/70 text-slate-900 font-semibold' 
+                        : 'text-slate-700 hover:bg-slate-100/80 hover:text-slate-900'
+                    }`}
                   >
                     <FileSpreadsheet className="h-4 w-4 text-slate-800 shrink-0" />
                     <span>Reports & Excel</span>
@@ -546,7 +576,7 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
             <div className="flex items-center gap-2 text-xs text-slate-500">
               <span className="font-medium text-slate-400">Admin Console</span>
               <span>/</span>
-              <span className="font-semibold text-slate-900 capitalize">{currentNav === 'overview' ? 'Overview' : currentNav === 'sessions' ? 'Game Sessions' : currentNav === 'players' ? 'Player Roster' : 'Settings'}</span>
+              <span className="font-semibold text-slate-900 capitalize">{currentNav === 'overview' ? 'Overview' : currentNav === 'sessions' ? 'Game Sessions' : currentNav === 'players' ? 'Player Roster' : currentNav === 'reports' ? 'Reports & Excel' : 'Settings'}</span>
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200 ml-2">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" /> Live Auto-Sync
               </span>
@@ -843,15 +873,39 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
                     </TabsList>
                   </Tabs>
 
-                  <div className="relative w-full sm:w-64">
-                    <Input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Search Room Code..."
-                      className="pl-8"
-                    />
-                    <Search className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    {/* Date Picker Filter */}
+                    <div className="relative w-full sm:w-44">
+                      <Input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="pl-8 text-xs font-mono"
+                      />
+                      <Calendar className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                      {selectedDate && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate('')}
+                          className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-700"
+                          title="Clear date filter"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Room Code Search */}
+                    <div className="relative w-full sm:w-52">
+                      <Input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search Room Code..."
+                        className="pl-8"
+                      />
+                      <Search className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                    </div>
                   </div>
                 </div>
 
@@ -954,6 +1008,125 @@ export const AdminDashboardView: React.FC<AdminDashboardViewProps> = ({ onBackTo
                   </div>
                 </CardContent>
               </Card>
+            )}
+
+            {/* VIEW 3.5: REPORTS & EXCEL EXPORTS */}
+            {currentNav === 'reports' && (
+              <div className="space-y-4">
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
+                  <Tabs value={statusFilter} onValueChange={setStatusFilter}>
+                    <TabsList>
+                      <TabsTrigger value="all">All Categories</TabsTrigger>
+                      <TabsTrigger value="completed">Completed Sessions (.xlsx)</TabsTrigger>
+                      <TabsTrigger value="active">Active Live Sessions</TabsTrigger>
+                      <TabsTrigger value="waiting">Waiting Lobby</TabsTrigger>
+                    </TabsList>
+                  </Tabs>
+
+                  <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+                    {/* Date Picker Filter */}
+                    <div className="relative w-full sm:w-44">
+                      <Input
+                        type="date"
+                        value={selectedDate}
+                        onChange={(e) => setSelectedDate(e.target.value)}
+                        className="pl-8 text-xs font-mono"
+                      />
+                      <Calendar className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                      {selectedDate && (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedDate('')}
+                          className="absolute right-2 top-2.5 text-slate-400 hover:text-slate-700"
+                          title="Clear date filter"
+                        >
+                          <X className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                    </div>
+
+                    {/* Room Code Search */}
+                    <div className="relative w-full sm:w-52">
+                      <Input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Search Room Code..."
+                        className="pl-8"
+                      />
+                      <Search className="h-3.5 w-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                    </div>
+                  </div>
+                </div>
+
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="text-sm font-semibold flex items-center gap-2">
+                      <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
+                      Reports & Excel Exports
+                    </CardTitle>
+                    <CardDescription>Download detailed .xlsx session reports for data analysis and facilitator auditing.</CardDescription>
+                  </CardHeader>
+                  <CardContent>
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Room Code</TableHead>
+                          <TableHead>Status</TableHead>
+                          <TableHead>Date & Time</TableHead>
+                          <TableHead>Players</TableHead>
+                          <TableHead>FPS Score</TableHead>
+                          <TableHead>Archetypes</TableHead>
+                          <TableHead className="text-right">Excel Download</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {isLoading ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="h-24 text-center text-slate-400">
+                              <RefreshCw className="h-4 w-4 animate-spin mx-auto mb-1 text-slate-500" />
+                              Loading reports data...
+                            </TableCell>
+                          </TableRow>
+                        ) : filteredSessions.length === 0 ? (
+                          <TableRow>
+                            <TableCell colSpan={7} className="h-24 text-center text-slate-400">
+                              No session reports found.
+                            </TableCell>
+                          </TableRow>
+                        ) : (
+                          filteredSessions.map((s) => (
+                            <TableRow key={s.id}>
+                              <TableCell className="font-mono font-bold text-slate-900">{s.room_code}</TableCell>
+                              <TableCell>
+                                {s.status === 'active' ? (
+                                  <Badge variant="success">Active</Badge>
+                                ) : s.status === 'completed' ? (
+                                  <Badge variant="info">Completed</Badge>
+                                ) : (
+                                  <Badge variant="secondary">Waiting</Badge>
+                                )}
+                              </TableCell>
+                              <TableCell className="text-slate-500 font-mono text-xs">
+                                {new Date(s.created_at).toLocaleDateString()} {new Date(s.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                              </TableCell>
+                              <TableCell className="font-medium text-slate-900">{s.player_count}</TableCell>
+                              <TableCell className="font-semibold text-amber-700 font-mono">{s.fps !== null ? s.fps.toFixed(1) : '—'}</TableCell>
+                              <TableCell className="text-slate-600 max-w-xs truncate">{s.archetypes || '—'}</TableCell>
+                              <TableCell className="text-right">
+                                <Button variant="outline" size="sm" onClick={() => handleExportExcel(s.room_code)} className="border-emerald-200 hover:bg-emerald-50 text-emerald-700">
+                                  <FileSpreadsheet className="h-3.5 w-3.5 mr-1.5 text-emerald-600" />
+                                  Download .XLSX
+                                </Button>
+                              </TableCell>
+                            </TableRow>
+                          ))
+                        )}
+                      </TableBody>
+                    </Table>
+                  </CardContent>
+                </Card>
+              </div>
             )}
 
             {/* VIEW 4: SETTINGS & RESET */}

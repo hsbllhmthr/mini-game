@@ -9,7 +9,7 @@ export const adminRouter = Router();
 
 // Middleware to verify admin token
 function verifyAdminToken(req: Request, res: Response, next: () => void) {
-  const rawToken = req.headers['x-admin-token'];
+  const rawToken = req.headers['x-admin-token'] || req.query.token;
   const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
   if (!token || token !== ADMIN_TOKEN) {
     res.status(401).json({ error: 'Unauthorized admin access' });
