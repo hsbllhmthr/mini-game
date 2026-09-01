@@ -74,10 +74,6 @@ export async function generateExport(roomCode: string): Promise<Buffer> {
     type: 'pattern',
     pattern: 'solid',
     fgColor: { argb: 'FF1F4E79' }
-  };
-  
-  const gs = session.gameState;
-  
   // Date and Time formatting
   const dateStr = session.startedAt ? session.startedAt.toISOString().split('T')[0] : '';
   const startTime = session.startedAt ? session.startedAt.toISOString().split('T')[1].substring(0, 8) : '';
