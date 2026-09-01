@@ -17,9 +17,35 @@ export async function generateExport(roomCode: string): Promise<Buffer> {
     throw new Error('Session not found');
   }
 
-  if (session.status !== 'completed' || !session.gameState) {
-    throw new Error('Session is not completed or game state is missing');
-  }
+  const gs = session.gameState || {
+    scenario0Choice: 'N/A',
+    scenario1Choice: 'N/A',
+    scenario2Choice: 'N/A',
+    scenario3Choice: 'N/A',
+    scenario4Choice: 'N/A',
+    scenario0Veto: false,
+    scenario0VetoReason: '',
+    scenario1Veto: false,
+    scenario1VetoReason: '',
+    scenario2Veto: false,
+    scenario2VetoReason: '',
+    scenario3Veto: false,
+    scenario3VetoReason: '',
+    scenario4Veto: false,
+    scenario4VetoReason: '',
+    economicGrowth: 50,
+    governmentBudget: 50,
+    peopleWelfare: 50,
+    publicTrust: 50,
+    environmentalQuality: 50,
+    transparency: 50,
+    ps: null,
+    gqs: null,
+    ss: null,
+    fps: null,
+    archetypes: session.status === 'waiting' ? 'Waiting Lobby' : 'In Progress',
+    beneficiaries: ''
+  };
 
   const wb = new ExcelJS.Workbook();
   const ws = wb.addWorksheet('Session Results');

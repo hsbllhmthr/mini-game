@@ -154,10 +154,7 @@ app.get('/api/v1/rooms/:code/export', async (req, res, next) => {
       return;
     }
 
-    if (session.status !== 'completed') {
-      res.status(400).json({ error: 'Session is not completed' });
-      return;
-    }
+    // Allow export for any session status (waiting, active, or completed)
 
     const buffer = await generateExport(code);
     const dateStr = new Date().toISOString().split('T')[0];
